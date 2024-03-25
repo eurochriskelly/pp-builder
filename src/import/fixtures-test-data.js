@@ -29,7 +29,6 @@ schedule:
     - ["10:30", "p1", "group", "Mens", "g1", "Amsterdam A", "Amsterdam B", "Leuven A", 15]
     - ["11:00", "p1", "group", "Ladies", "g1", "Amsterdam B", "Earls of Brussels", "Amsterdam A", 12]
 `,
-
     'bad pitch': `
 pitches: ["p1"]
 schedule:
