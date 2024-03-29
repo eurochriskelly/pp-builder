@@ -1,6 +1,6 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
-const { validateFixtures } = require('./validate');
+const { validateFixtures } = require('gcp-core');
 
 const importFixtures = config => {
   try {
