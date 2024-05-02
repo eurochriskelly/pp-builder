@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "gcp-import": "./bin/gcp-import.js"
+    "gcp-import": "./dist/bin/gcp.js"
   },
   "scripts": {
-    "import": "node bin/gcp-import.js",
+    "build": "tsc",
+    "import": "node ./dist/bin/gcp.js --import",
     "test": "jest",
     "test:watch": "jest --watch"
   },

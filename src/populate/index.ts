@@ -5,6 +5,8 @@ import { validation } from 'gcp-core'
 import { writeFileSync, readFileSync } from 'fs';
 import Table from 'cli-table3'; // Updated import syntax for TypeScript
 
+const { validateFixtures } = validation;
+
 const { green, yellow } = chalk;
 
 interface Fixture {
@@ -19,7 +21,6 @@ interface Fixture {
     duration: number;
 }
 
-const fixturesYamlPath = '/home/chris/Workspace/repos/gcp-events/events/t06/schedule.yaml';
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -33,6 +34,7 @@ interface ITData {
     pitches: string[],
     stages: string[]
 } 
+const fixturesYamlPath = 'test/fixtures.yaml';
 const tournamentData: any = yaml.load(readFileSync(fixturesYamlPath, 'utf8'));
 
 export const recursiveAddFixture = () => {
@@ -115,7 +117,7 @@ const nextFixture = (callback: () => void) => {
         let prompt = `${green(question.label)} (${yellow(question.value !== "?" ? question.value : "not set")}): `;
 
         if (question.choices) {
-            prompt += ` [${question.choices.map((x, i) => `\x1b[33m${i + 1}\x1b[0m` + '.' + x).join(", ")}] `;
+            prompt += ` [${question.choices.map((x: string, i: number) => `\x1b[33m${i + 1}\x1b[0m` + '.' + x).join(", ")}] `;
         }
 
         rl.question(prompt, (answer) => {
