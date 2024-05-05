@@ -10,7 +10,7 @@
     "outDir": "./dist"
   },
   "include": ["src/**/*", "bin/**/*"],
-  "exclude": ["node_modules", "src/**/*.spec.ts", "bin/**/*.spec.ts", "src/**/*.test.ts", "bin/**/*.test.ts"],
+  "exclude": [ "src/**/*.spec.ts", "bin/**/*.spec.ts", "src/**/*.test.ts", "bin/**/*.test.ts"],
 
 }
 
