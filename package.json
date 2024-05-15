@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "gcp": "clear;node ./dist/bin/gcp.js",
-    "gcp:test": "node ./dist/bin/gcp.js --import -s test/fixtures.csv",
+    "gcp:test": "node ./dist/bin/gcp.js --import -s test/fixtures.csv -o output.sql",
     "test": "jest",
     "test:watch": "jest --watch"
   },

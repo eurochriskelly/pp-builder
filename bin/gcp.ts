@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execSync } from 'child_process';
-import { readFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { Command } from 'commander';
 
@@ -15,6 +15,7 @@ const program = new Command();
 const main = async () => {
   program
     .option('-s, --schedule <path>', 'Path to the schedule file')
+    .option('-o, --output <path>', 'Path to the output file')
     .option('-b, --build', 'Path to the schedule file')
     .option('-p, --populate', 'Transcribe schedule to fixtures')
     .option('-i, --import', 'Transcribe schedule into sql db')
@@ -47,7 +48,8 @@ const main = async () => {
 
   if (options.import) {
     console.log('Importing');
-    importFixturesCsv(schedule);
+    const csv = importFixturesCsv(schedule);
+    writeFileSync(options.output, csv);
     process.exit(0);
   }
 }
