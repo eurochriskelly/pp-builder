@@ -30,7 +30,6 @@ export const importFixturesCsv = (csv:string) => {
     activities: rows
   }
   const inserts = generateFixturesImport(data);
-  console.log(inserts);
 }
 
 // This function is used to generate the SQL insert statements for the fixtures
