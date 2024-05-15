@@ -5,7 +5,6 @@ import { validation } from 'gcp-core';
 
 const { validateFixtures }  = validation // require('gcp-core/cjs').validation;
 
-
 // Import fixtures from a yaml file and load into a JSON object
 export const importFixtures = (config: string) => {
   console.log('Importing fixtures')
@@ -30,6 +29,7 @@ export const importFixturesCsv = (csv:string) => {
     activities: rows
   }
   const inserts = generateFixturesImport(data);
+  return inserts
 }
 
 // This function is used to generate the SQL insert statements for the fixtures
