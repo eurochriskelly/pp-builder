@@ -43,9 +43,16 @@ export const importFixturesCsv = (
 const generateFixturesImport = (data: any) => {
   const { tournamentId, startDate, title, location } = data
   const rows = [
+    'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + (tournamentId-1) + ';',
     'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + tournamentId + ';',
+    // Ensure the tournament exists
+    'INSERT INTO `EuroTourno`.`tournaments` (id, Date, Title, Location, Lat, Lon)',
+    `VALUES (${tournamentId}, '${startDate}', '${title}', '${location}', 52.2942, 4.842)`,
+    'ON DUPLICATE KEY UPDATE',
+    ' Date = VALUES(Date), Title = VALUES(Title), Location = VALUES(Location), Lat = VALUES(Lat), Lon = VALUES(Lon);',
     ...data.activities
       .filter((row: any) => row[0] !== 'matchId') // remove header ow if it exists
+      .filter((row: any) => !!(row[0]).trim())
       .map((fixture: any) => {
         const [id, time, pitch, stage, category, group, team1, team2, umpireTeam] = fixture;
         return [
@@ -56,7 +63,7 @@ const generateFixturesImport = (data: any) => {
           " `team2Planned`, `team2Id`, `goals2`, `points2`, ",
           " `umpireTeamPlanned`, `umpireTeamId` ",
           ") VALUES ( ",
-          ` '${id}', '${tournamentId}', '${category}', '${group}', '${stage}', '${pitch}', `,
+          ` '${parseInt(id)}', '${tournamentId}', '${category}', '${parseInt(group)}', '${stage}', '${pitch}', `,
           ` '${startDate} ${time}:00', NULL, `,
           ` '${team1}', '${team1}', NULL, NULL, `,
           ` '${team2}', '${team2}', NULL, NULL, `,
