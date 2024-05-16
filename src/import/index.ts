@@ -21,20 +21,27 @@ export const importFixtures = (config: string) => {
   }
 }
 
-export const importFixturesCsv = (csv:string) => {
+export const importFixturesCsv = (
+  csv: string,
+  tournamentId: string,
+  startDate: string,
+  title: string,
+  location: string
+) => {
   const rows = csv.split('\n').map(row => row.split(','));
   const data = {
-    tournamentId: 7,
-    startDate: '2024-05-04',
+    tournamentId: +tournamentId,
+    startDate,
+    title,
+    location,
     activities: rows
   }
-  const inserts = generateFixturesImport(data);
-  return inserts
+  return generateFixturesImport(data);
 }
 
 // This function is used to generate the SQL insert statements for the fixtures
 const generateFixturesImport = (data: any) => {
-  const { tournamentId, startDate } = data
+  const { tournamentId, startDate, title, location } = data
   const rows = [
     'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + tournamentId + ';',
     ...data.activities
