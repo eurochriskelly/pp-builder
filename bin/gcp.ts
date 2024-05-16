@@ -7,18 +7,23 @@ import { Command } from 'commander';
 
 const fs = require('fs');
 const { resolve } = require('path');
-const { importFixtures, importFixturesCsv } = require('../src/import');
+const { importFixturesCsv } = require('../src/import');
 const { populate } = require('../src/populate');
 const { organize } = require('../src/populate/organize');
 const program = new Command();
 
 const main = async () => {
   program
-    .option('-s, --schedule <path>', 'Path to the schedule file')
-    .option('-o, --output <path>', 'Path to the output file')
     .option('-b, --build', 'Path to the schedule file')
     .option('-p, --populate', 'Transcribe schedule to fixtures')
     .option('-i, --import', 'Transcribe schedule into sql db')
+    // sub options
+    .option('-s, --schedule <path>', 'Path to the schedule file')
+    .option('-o, --output <path>', 'Path to the output file')
+    .option('-d, --date <path>', 'Date of tournament')
+    .option('-t, --tournament-id <number>', 'Tournament ID')
+    .option('-e, --title <string>', 'The title of the event')
+    .option('-l, --location <string>', 'Location of the tournament')
     ;
 
   program.parse(process.argv);
@@ -48,7 +53,15 @@ const main = async () => {
 
   if (options.import) {
     console.log('Importing');
-    const csv = importFixturesCsv(schedule);
+    const requiredKeys = ['location', 'title', 'date', 'tournamentId'];
+    if (!requiredKeys.every(key => key in options)) {
+      console.log(`Not all required keys [${requiredKeys.join(',')}]`)
+      process.exit(1);
+    }
+    const { tournamentId, date, title, location } = options
+    const csv = importFixturesCsv(
+      schedule, tournamentId, date, title, location
+    );
     writeFileSync(options.output, csv);
     process.exit(0);
   }
