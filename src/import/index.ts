@@ -41,18 +41,41 @@ export const importFixturesCsv = (
 
 // This function is used to generate the SQL insert statements for the fixtures
 const generateFixturesImport = (data: any) => {
+ const dataRows = data.activities
+      .filter((row: any) => row[0] !== 'matchId') // remove header ow if it exists
+      .filter((row: any) => !!(row[0]).trim())
   const { tournamentId, startDate, title, location } = data
+  const pitches = new Set()
+  dataRows.forEach((fixture: any) => {
+    const [,, pitch ] = fixture;
+    pitches.add(pitch);
+  });
+  const insertPitch = (p: string) => {
+    // Ensure pitches exist
+    return [
+      'INSERT INTO `EuroTourno`.`pitches` (pitch, location, type, tournamentId)',
+      `VALUES ('${p}', '${location.substring(0, 10)}', 'grass', ${tournamentId})`,
+      'ON DUPLICATE KEY UPDATE',
+      '    pitch = VALUES(pitch),',
+      '    location = VALUES(location),',
+      '    type = VALUES(type),',
+      '    tournamentId = VALUES(tournamentId);'
+    ].join(' ')
+  }
+  const p = [...pitches].map((p: any) => insertPitch(p));
   const rows = [
     'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + (tournamentId-1) + ';',
     'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + tournamentId + ';',
+    'DELETE FROM `EuroTourno`.`pitches` WHERE `tournamentId` = ' + tournamentId + ';',
     // Ensure the tournament exists
     'INSERT INTO `EuroTourno`.`tournaments` (id, Date, Title, Location, Lat, Lon)',
     `VALUES (${tournamentId}, '${startDate}', '${title}', '${location}', 52.2942, 4.842)`,
     'ON DUPLICATE KEY UPDATE',
     ' Date = VALUES(Date), Title = VALUES(Title), Location = VALUES(Location), Lat = VALUES(Lat), Lon = VALUES(Lon);',
-    ...data.activities
-      .filter((row: any) => row[0] !== 'matchId') // remove header ow if it exists
-      .filter((row: any) => !!(row[0]).trim())
+    '-- Update pitches',
+    ...p,
+    '-- Update fixtures',
+    ...dataRows
       .map((fixture: any) => {
         const [id, time, pitch, stage, category, group, team1, team2, umpireTeam] = fixture;
         return [
