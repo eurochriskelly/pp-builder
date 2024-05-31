@@ -39,12 +39,20 @@ export const importFixturesCsv = (
   return generateFixturesImport(data);
 }
 
+const fixMatchIds = (team: string, add: number) => {
+  if (!team.startsWith('~match:')) return team
+  return team.replace(/(~match:)(\d+)/, (_, p1, p2) => {
+    return p1 + (parseInt(p2) + add);
+  })
+}
+
 // This function is used to generate the SQL insert statements for the fixtures
 const generateFixturesImport = (data: any) => {
  const dataRows = data.activities
       .filter((row: any) => row[0] !== 'matchId') // remove header ow if it exists
       .filter((row: any) => !!(row[0]).trim())
   const { tournamentId, startDate, title, location } = data
+  const tOffset = +tournamentId * 1000; // add 1000 x tournament id to ensure uniqueness
   const pitches = new Set()
   dataRows.forEach((fixture: any) => {
     const [,, pitch ] = fixture;
@@ -64,7 +72,6 @@ const generateFixturesImport = (data: any) => {
   }
   const p = [...pitches].map((p: any) => insertPitch(p));
   const rows = [
-    'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + (tournamentId-1) + ';',
     'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + tournamentId + ';',
     'DELETE FROM `EuroTourno`.`pitches` WHERE `tournamentId` = ' + tournamentId + ';',
     // Ensure the tournament exists
@@ -75,25 +82,27 @@ const generateFixturesImport = (data: any) => {
     '-- Update pitches',
     ...p,
     '-- Update fixtures',
-    ...dataRows
-      .map((fixture: any) => {
-        const [id, time, pitch, stage, category, group, team1, team2, umpireTeam] = fixture;
-        return [
-          "INSERT INTO `EuroTourno`.`fixtures` (",
-          " `id`, `tournamentId`, `category`, `groupNumber`, `stage`, `pitch`, ",
-          " `scheduled`, `started`, ",
-          " `team1Planned`, `team1Id`, `goals1`, `points1`,",
-          " `team2Planned`, `team2Id`, `goals2`, `points2`, ",
-          " `umpireTeamPlanned`, `umpireTeamId` ",
-          ") VALUES ( ",
-          ` '${parseInt(id)}', '${tournamentId}', '${category}', '${parseInt(group)}', '${stage}', '${pitch}', `,
-          ` '${startDate} ${time}:00', NULL, `,
-          ` '${team1}', '${team1}', NULL, NULL, `,
-          ` '${team2}', '${team2}', NULL, NULL, `,
-          ` '${umpireTeam}', '${umpireTeam}'`,
-          ");"
-        ].join('');
-      })
+    ...dataRows.map((fixture: any) => {
+      const [id, time, pitch, stage, category, group, team1, team2, umpireTeam] = fixture;
+      const useTeam1 = fixMatchIds(team1, tOffset);
+      const useTeam2 = fixMatchIds(team2, tOffset);
+      const useUmpireTeam = fixMatchIds(umpireTeam, tOffset);
+      return [
+        "INSERT INTO `EuroTourno`.`fixtures` (",
+        " `id`, `tournamentId`, `category`, `groupNumber`, `stage`, `pitch`, ",
+        " `scheduled`, `started`, ",
+        " `team1Planned`, `team1Id`, `goals1`, `points1`,",
+        " `team2Planned`, `team2Id`, `goals2`, `points2`, ",
+        " `umpireTeamPlanned`, `umpireTeamId` ",
+        ") VALUES ( ",
+        ` '${tOffset + parseInt(id)}', '${tournamentId}', '${category}', '${parseInt(group)}', '${stage}', '${pitch}', `,
+        ` '${startDate} ${time}:00', NULL, `,
+        ` '${useTeam1}', '${useTeam1}', NULL, NULL, `,
+        ` '${useTeam2}', '${useTeam2}', NULL, NULL, `,
+        ` '${useUmpireTeam}', '${useUmpireTeam}'`,
+        ");"
+      ].join('');
+    })
   ];
   return rows.join('\n');
 }
