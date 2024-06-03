@@ -39,6 +39,7 @@ export const importFixturesCsv = (
   return generateFixturesImport(data);
 }
 
+// if team is in form ~match:nnn/p:m, update teh value of nnn to include tourmanet
 const fixMatchIds = (team: string, add: number) => {
   if (!team.startsWith('~match:')) return team
   return team.replace(/(~match:)(\d+)/, (_, p1, p2) => {
@@ -46,6 +47,14 @@ const fixMatchIds = (team: string, add: number) => {
   })
 }
 
+
+const concatIfTilda = (team: string, colName: number, colGroup: number, colPosition: number, fixture: any) => {
+  if (team !== '~') return team;
+  const name = fixture[colName];
+  const group = fixture[colGroup];
+  const position = fixture[colPosition];
+  return `~${name}:${group}/p:${position}`;
+}
 // This function is used to generate the SQL insert statements for the fixtures
 const generateFixturesImport = (data: any) => {
  const dataRows = data.activities
@@ -84,9 +93,9 @@ const generateFixturesImport = (data: any) => {
     '-- Update fixtures',
     ...dataRows.map((fixture: any) => {
       const [id, time, pitch, stage, category, group, team1, team2, umpireTeam] = fixture;
-      const useTeam1 = fixMatchIds(team1, tOffset);
-      const useTeam2 = fixMatchIds(team2, tOffset);
-      const useUmpireTeam = fixMatchIds(umpireTeam, tOffset);
+      const useTeam1 = concatIfTilda(fixMatchIds(team1, tOffset), 10,11,12, fixture);
+      const useTeam2 = concatIfTilda(fixMatchIds(team2, tOffset), 13,14,15, fixture);
+      const useUmpireTeam = concatIfTilda(fixMatchIds(umpireTeam, tOffset), 16, 17, 18, fixture);
       return [
         "INSERT INTO `EuroTourno`.`fixtures` (",
         " `id`, `tournamentId`, `category`, `groupNumber`, `stage`, `pitch`, ",
