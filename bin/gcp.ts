@@ -52,7 +52,7 @@ const main = async () => {
   }
 
   if (options.import) {
-    console.log('Importing');
+    console.log('Generating SQL import');
     const requiredKeys = ['location', 'title', 'date', 'tournamentId'];
     if (!requiredKeys.every(key => key in options)) {
       console.log(`Not all required keys [${requiredKeys.join(',')}]`)
@@ -63,6 +63,7 @@ const main = async () => {
       schedule, tournamentId, date, title, location
     );
     writeFileSync(options.output, csv);
+    console.log(`Written to file [${options.output}]`);
     process.exit(0);
   }
 }
