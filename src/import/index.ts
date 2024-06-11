@@ -47,14 +47,19 @@ const fixMatchIds = (team: string, add: number) => {
   })
 }
 
-
-const concatIfTilda = (team: string, colName: number, colGroup: number, colPosition: number, fixture: any) => {
+const concatIfTilda = (
+  team: string, 
+  colName: number, colGroup: number, colPosition: number, colCategory: (number|null),
+  fixture: any
+) => {
   if (team !== '~') return team;
   const name = fixture[colName];
   const group = fixture[colGroup];
   const position = fixture[colPosition];
-  return `~${name}:${group}/p:${position}`;
+  const category = (colCategory && fixture[colCategory]) ? `&${fixture[colCategory]}` : ''
+  return `~${name}:${group}/p:${position}${category}`;
 }
+
 // This function is used to generate the SQL insert statements for the fixtures
 const generateFixturesImport = (data: any) => {
  const dataRows = data.activities
@@ -93,9 +98,11 @@ const generateFixturesImport = (data: any) => {
     '-- Update fixtures',
     ...dataRows.map((fixture: any) => {
       const [id, time, pitch, stage, category, group, team1, team2, umpireTeam] = fixture;
-      const useTeam1 = concatIfTilda(fixMatchIds(team1, tOffset), 10,11,12, fixture);
-      const useTeam2 = concatIfTilda(fixMatchIds(team2, tOffset), 13,14,15, fixture);
-      const useUmpireTeam = concatIfTilda(fixMatchIds(umpireTeam, tOffset), 16, 17, 18, fixture);
+      const cOffset = [...categories].indexOf(category) * 1000;
+      const offset = tOffset + cOffset;
+      const useTeam1 = fixMatchIds(concatIfTilda(team1, 10,11,12, null, fixture), offset);
+      const useTeam2 = fixMatchIds(concatIfTilda(team2, 13,14,15, null, fixture), offset);
+      const useUmpireTeam = fixMatchIds(concatIfTilda(umpireTeam, 16, 17, 18, 19, fixture), offset);
       return [
         "INSERT INTO `EuroTourno`.`fixtures` (",
         " `id`, `tournamentId`, `category`, `groupNumber`, `stage`, `pitch`, ",
