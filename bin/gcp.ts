@@ -67,11 +67,12 @@ const main = async () => {
     const csv = importFixturesCsv(
       schedule, tournamentId, date, title, location
     );
-    writeFileSync(options.output, csv);
-    console.log(`Written to file [${options.output}]`);
+    if (csv) {
+      writeFileSync(options.output, csv);
+      console.log(`Written to file [${options.output}]`);
+    }
     process.exit(0);
   }
-
 
   if (options.schedule) {
     console.log('Generating SQL import');
