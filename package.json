@@ -23,11 +23,12 @@
     "jest": "^29.7.0"
   },
   "dependencies": {
-    "gcp-core": "file:../gcp-core",
     "@types/js-yaml": "^4.0.9",
+    "axios": "^1.7.2",
     "chalk": "^5.3.0",
     "cli-table3": "^0.6.3",
     "commander": "^12.0.0",
+    "gcp-core": "file:../gcp-core",
     "inquirer": "^9.2.16",
     "ts-jest": "^29.1.2"
   }

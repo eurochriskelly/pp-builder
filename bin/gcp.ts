@@ -14,13 +14,17 @@ const program = new Command();
 
 const main = async () => {
   program
-    .option('-b, --build', 'Path to the schedule file')
-    .option('-p, --populate', 'Transcribe schedule to fixtures')
-    .option('-i, --import', 'Transcribe schedule into sql db')
+    .option('-build', 'Path to the schedule file')
+    .option('--populate', 'Transcribe schedule to fixtures')
+    .option('--import', 'Transcribe schedule into sql db')
+    .option('--play', 'Play a match by id')
     // sub options
-    .option('-s, --schedule <path>', 'Path to the schedule file')
+    .option('--schedule <path>', 'Path to the schedule file')
     .option('-o, --output <path>', 'Path to the output file')
     .option('-d, --date <path>', 'Date of tournament')
+    .option('-m, --match-id <string>', 'Match ID')
+    .option('-c, --category <string>', 'Competition category')
+    .option('--score <string>', 'Score. e.g. 0-01/2-12  or ?-??/?-??')
     .option('-t, --tournament-id <number>', 'Tournament ID')
     .option('-e, --title <string>', 'The title of the event')
     .option('-l, --location <string>', 'Location of the tournament')
@@ -30,9 +34,10 @@ const main = async () => {
 
   const options = program.opts();
 
-  if (!options.schedule) {
-    console.error('Schedule file is required using -s or --schedule option');
-    process.exit(1);
+  if (options.play) {
+    const { play } = require('../src/execute');
+    await play(+options.tournamentId, options.category);
+    process.exit(0);
   }
 
   if (options.populate) {
@@ -52,6 +57,23 @@ const main = async () => {
   }
 
   if (options.import) {
+    console.log('Generating SQL import');
+    const requiredKeys = ['location', 'title', 'date', 'tournamentId'];
+    if (!requiredKeys.every(key => key in options)) {
+      console.log(`Not all required keys [${requiredKeys.join(',')}]`)
+      process.exit(1);
+    }
+    const { tournamentId, date, title, location } = options
+    const csv = importFixturesCsv(
+      schedule, tournamentId, date, title, location
+    );
+    writeFileSync(options.output, csv);
+    console.log(`Written to file [${options.output}]`);
+    process.exit(0);
+  }
+
+
+  if (options.schedule) {
     console.log('Generating SQL import');
     const requiredKeys = ['location', 'title', 'date', 'tournamentId'];
     if (!requiredKeys.every(key => key in options)) {
