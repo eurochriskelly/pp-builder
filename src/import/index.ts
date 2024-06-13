@@ -1,32 +1,5 @@
-import yaml from 'js-yaml';
-
-
-import { validation } from 'gcp-core';
-
-const { validateFixtures }  = validation // require('gcp-core/cjs').validation;
-
-const validateFixtures2 = (rows: any) => {
-  /**
-    Validate that genearte umpire teams relate to an actual fixutre
-    e.g. ~match:12314/p:1&Ladies must have a fixture 12314 and category Ladies
-   */
-}
-
-// Import fixtures from a yaml file and load into a JSON object
-export const importFixtures = (config: string) => {
-  console.log('Importing fixtures')
-  try {
-    const data = yaml.load(config);
-    const issues: string[] = [];
-    if (!validateFixtures(data, issues)) {
-      issues.forEach(issue => console.log(issue))
-      throw new Error('Invalid fixtures')
-    }
-    const inserts = generateFixturesImport(data);
-  } catch (e) {
-    console.error(e);
-  }
-}
+import { wrapRows, getScheduleProps } from './utils';
+import { validateFixtures } from './validate';
 
 export const importFixturesCsv = (
   csv: string,
@@ -43,27 +16,29 @@ export const importFixturesCsv = (
     location,
     activities: rows
   }
-  const { properties, sql} = generateFixturesImport(dataIn);
-  Object.keys(properties).forEach((prop: string) => {
-    console.log(`${prop}:`);
-    properties[prop].forEach((p: string) => console.log(`  ${p}`));
-  })
-  return sql 
+  const { fixtures, sql} = generateFixturesImport(dataIn);
+  const { isValid, warnings } = validateFixtures(fixtures);
+  if (isValid) {
+    return sql;
+  } else {
+    console.log(`ERROR: Validation failed with the the following issues:`);
+    warnings.forEach(warn => {
+      console.log(`  ${warn}`);
+    })
+  }
 }
 
 // if team is in form ~match:nnn/p:m, update teh value of nnn to include tourmanet
 const fixMatchIds = (team: string, add: number) => {
   if (!team.startsWith('~match:')) return team
-  const newval = team.replace(/(~match:)(\d+)/, (_, p1, p2) => {
+  return team.replace(/(~match:)(\d+)/, (_, p1, p2) => {
     return p1 + (parseInt(p2) + add);
   })
-  console.log(`Change from [${team}] to [${newval}]`);
-  return newval
 }
 
 const concatIfTilda = (
   team: string, 
-  colName: number, colGroup: number, colPosition: number, colCategory: (number|null),
+  colName: string, colGroup: string, colPosition: string, colCategory: (string|null),
   fixture: any
 ) => {
   if (team !== '~') return team;
@@ -76,28 +51,15 @@ const concatIfTilda = (
 
 // This function is used to generate the SQL insert statements for the fixtures
 const generateFixturesImport = (data: any) => {
- const dataRows = data.activities
-      .filter((row: any) => row[0] !== 'matchId') // remove header ow if it exists
-      .filter((row: any) => !!(row[0]).trim())
+  const dataRows = wrapRows(data.activities
+    .filter((row: any) => row[0] !== 'matchId') // remove header ow if it exists
+    .filter((row: any) => !!(row[0]).trim())
+  )
   const { tournamentId, startDate, title, location } = data
   const tOffset = +tournamentId * 10000; // add 1000 x tournament id to ensure uniqueness
+  const { pitches, categories, teams, groups }= getScheduleProps(dataRows);
   // Find unique list of values
-  const pitches = new Set()
-  const categories = new Set()
-  const teams = new Set()
-  dataRows.forEach((fixture: any) => {
-    const [,,pitch,stage,category,,team1,team2,umpire] = fixture;
-    categories.add(category);
-    pitches.add(pitch);
-    if (stage === 'group') {
-      // build a list of unique teams
-      teams.add(team1);
-      teams.add(team2);
-      teams.add(umpire);
-    }
-  });
   const insertPitch = (p: string) => {
-    // Ensure pitches exist
     return [
       'INSERT INTO `EuroTourno`.`pitches` (pitch, location, type, tournamentId)',
       `VALUES ('${p}', '${location.substring(0, 10)}', 'grass', ${tournamentId})`,
@@ -108,7 +70,7 @@ const generateFixturesImport = (data: any) => {
       '  tournamentId = VALUES(tournamentId);'
     ].join(' ')
   }
-  const p = [...pitches].map((p: any) => insertPitch(p));
+  const p = pitches.map((p: any) => insertPitch(p));
   const rows = [
     `-- CREATED AT TIME: ${new Date().toISOString()}`,
     'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + tournamentId + ';',
@@ -122,12 +84,18 @@ const generateFixturesImport = (data: any) => {
     ...p,
     '-- Update fixtures',
     ...dataRows.map((fixture: any) => {
-      const [id, time, pitch, stage, category, group, team1, team2, umpireTeam] = fixture;
-      const cOffset = [...categories].indexOf(category) * 1000;
+      const {matchId, time, pitch, stage, category, group, team1, team2, umpireTeam} = fixture;
+      const cOffset = categories.indexOf(category) * 1000;
       const offset = tOffset + cOffset;
-      const useTeam1 = fixMatchIds(concatIfTilda(team1, 10,11,12, null, fixture), offset);
-      const useTeam2 = fixMatchIds(concatIfTilda(team2, 13,14,15, null, fixture), offset);
-      const useUmpireTeam = fixMatchIds(concatIfTilda(umpireTeam, 16, 17, 18, 19, fixture), offset);
+      const useTeam1 = fixMatchIds(concatIfTilda(team1, 'pool1', 'pool1Id', 'position1', null, fixture), offset);
+      const useTeam2 = fixMatchIds(concatIfTilda(team2, 'pool2', 'pool2Id', 'position2', null, fixture), offset);
+      const useUmpireTeam = fixMatchIds(concatIfTilda(umpireTeam, 'poolUmp', 'poolUmpId', 'positionUmp', 'categoryUmp', fixture), offset);
+      fixture.team1 = useTeam1
+      fixture.team2 = useTeam2
+      fixture.umpireTeam = useUmpireTeam
+      fixture.matchId = offset + parseInt(matchId)
+      fixture.group = +fixture.group
+      fixture.duration = +fixture.duration
       return [
         "INSERT INTO `EuroTourno`.`fixtures` (",
         " `id`, `tournamentId`, `category`, `groupNumber`, `stage`, `pitch`, ",
@@ -136,7 +104,7 @@ const generateFixturesImport = (data: any) => {
         " `team2Planned`, `team2Id`, `goals2`, `points2`, ",
         " `umpireTeamPlanned`, `umpireTeamId` ",
         ") VALUES ( ",
-        ` '${offset + parseInt(id)}', '${tournamentId}', '${category}', '${parseInt(group)}', '${stage}', '${pitch}', `,
+        ` '${fixture.matchId}', '${tournamentId}', '${category}', '${parseInt(group)}', '${stage}', '${pitch}', `,
         ` '${startDate} ${time}:00', NULL, `,
         ` '${useTeam1}', '${useTeam1}', NULL, NULL, `,
         ` '${useTeam2}', '${useTeam2}', NULL, NULL, `,
@@ -146,11 +114,8 @@ const generateFixturesImport = (data: any) => {
     })
   ];
   const result: any = {
-    properties: {
-      pitches: [...pitches].sort(),
-      categories: [...categories].sort(),
-      teams: [...teams].sort(),
-    },
+    properties: { pitches, categories, teams, groups },
+    fixtures: dataRows,
     sql: rows.join('\n')
   }
   return result;
