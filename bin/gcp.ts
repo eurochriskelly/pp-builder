@@ -35,7 +35,7 @@ const main = async () => {
   const options = program.opts();
 
   if (options.play) {
-    const { play } = require('../src/execute');
+    const { play } = require('../src/simulation');
     await play(+options.tournamentId, options.category);
     process.exit(0);
   }
