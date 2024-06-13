@@ -5,7 +5,7 @@ import { validation } from 'gcp-core';
 
 const { validateFixtures }  = validation // require('gcp-core/cjs').validation;
 
-const validateFixtures2 = (rows) => {
+const validateFixtures2 = (rows: any) => {
   /**
     Validate that genearte umpire teams relate to an actual fixutre
     e.g. ~match:12314/p:1&Ladies must have a fixture 12314 and category Ladies
