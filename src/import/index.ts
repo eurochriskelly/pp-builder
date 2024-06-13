@@ -42,10 +42,10 @@ const concatIfTilda = (
   fixture: any
 ) => {
   if (team !== '~') return team;
-  const name = fixture[colName];
-  const group = fixture[colGroup];
-  const position = fixture[colPosition];
-  const category = (colCategory && fixture[colCategory]) ? `&${fixture[colCategory]}` : ''
+  const name = fixture[colName].trim()
+  const group = parseInt(fixture[colGroup.trim()]);
+  const position = parseInt(fixture[colPosition.trim()]);
+  const category = (colCategory && fixture[colCategory]) ? `&${fixture[colCategory.trim()]}` : ''
   return `~${name}:${group}/p:${position}${category}`;
 }
 

@@ -24,6 +24,7 @@ const main = async () => {
     .option('-d, --date <path>', 'Date of tournament')
     .option('-m, --match-id <string>', 'Match ID')
     .option('-c, --category <string>', 'Competition category')
+    .option('--count <number>', 'number of matches to simulate')
     .option('--score <string>', 'Score. e.g. 0-01/2-12  or ?-??/?-??')
     .option('-t, --tournament-id <number>', 'Tournament ID')
     .option('-e, --title <string>', 'The title of the event')
@@ -31,13 +32,12 @@ const main = async () => {
     ;
 
   program.parse(process.argv);
-
   const options = program.opts();
 
   if (options.play) {
     const { play } = require('../src/simulation');
-    await play(+options.tournamentId, options.category);
-    process.exit(0);
+    await play(+options.tournamentId, options.category, +options.count);
+    process.exit(0)
   }
 
   if (options.populate) {
