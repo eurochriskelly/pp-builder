@@ -7,7 +7,7 @@ import { Command } from 'commander';
 
 const fs = require('fs');
 const { resolve } = require('path');
-const { importFixturesCsv } = require('../src/import');
+const { importFixturesCsv, importClubsCsv } = require('../src/import');
 const { populate } = require('../src/populate');
 const { organize } = require('../src/populate/organize');
 const program = new Command();
@@ -17,6 +17,7 @@ const main = async () => {
     .option('-build', 'Path to the schedule file')
     .option('--populate', 'Transcribe schedule to fixtures')
     .option('--import', 'Transcribe schedule into sql db')
+    .option('--import-clubs <path>', 'Import clubs sheet')
     .option('--play', 'Play a match by id')
     // sub options
     .option('--schedule <path>', 'Path to the schedule file')
@@ -47,6 +48,12 @@ const main = async () => {
     await populate('/tmp/fixtures.yaml');
   }
 
+  if (options.importClubs) {
+    const clubdata = fs.readFileSync(resolve(options.importClubs), 'utf8');
+    await importClubsCsv(clubdata);
+    process.exit(0)
+  }
+
   const schedule = fs.readFileSync(resolve(options.schedule), 'utf8');
 
   if (options.build) {
@@ -55,6 +62,7 @@ const main = async () => {
     organize(tournamentData)
     process.exit(0);
   }
+
 
   if (options.import) {
     console.log('Generating SQL import');
@@ -92,3 +100,4 @@ const main = async () => {
 }
 
 main()
+

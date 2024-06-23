@@ -1,5 +1,55 @@
 import { wrapRows, getScheduleProps } from './utils';
 import { validateFixtures } from './validate';
+import { generateClubInsertStatement, generateTeamInsertStatement } from './club-update';
+
+export const importClubsCsv = (
+  csv: string
+) => {
+  const sqlInserts : string[] = [
+    `DELETE * FROM clubs`,
+    `DELETE * FROM clubTeams`,
+  ];
+  const rows = csv.split('\n').map(row => row.split(','));
+  rows.slice(1, 3).forEach(r => {
+    const [
+      id, student, clubName,
+      yearFounded, yearAffiliated, yearDissolved,
+      countryCode, city, region, subregion, status,
+      teamGAA, teamLGFA, teamHurling, teamCamogie, teamHandball, teamRounders, teamYouthFootball, teamYouthHurling,
+      domain ] = r
+    const teams: any = {
+      teamGAA, teamLGFA, teamHurling, teamCamogie, teamHandball, teamRounders, teamYouthFootball, teamYouthHurling,
+    }
+    console.log(teams)
+    sqlInserts.push(generateClubInsertStatement({
+      clubId: +id, 
+      isStudent: student.toLowerCase() === 'yes',
+      clubName, 
+      founded: +yearFounded, 
+      affiliated: yearAffiliated ? +yearAffiliated : +yearFounded,
+      deactivated: yearDissolved ? +yearDissolved : null,
+      country: countryCode,
+      city, 
+      region, 
+      subregion: subregion|| null,
+      status,
+      domain
+    }));
+    Object.keys(teams).forEach((team: any) => {
+      if (teams[team] && +teams[team] > 0) {
+        sqlInserts.push(generateTeamInsertStatement({
+          clubId: id,
+          teamName: 'Senior Team',
+          category: 'gaa',
+          foundedYear: 1971,
+          status: 'active',
+          contactEmail: 'contact@example.com'
+        }))
+      }
+    })
+  })
+  console.log(sqlInserts.join('\n'));
+}
 
 export const importFixturesCsv = (
   csv: string,
