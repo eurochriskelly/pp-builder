@@ -10,8 +10,8 @@ export const importClubsCsv = (
     `DELETE FROM clubTeams;`,
     `DELETE FROM clubs;`,
   ];
-  const rows = csv.split('\n').map(row => row.split(','));
-  rows.slice(1, 3).forEach(r => {
+  const rows = csv.split('\n').filter(x => x.trim()).map(row => row.split(','));
+  rows.slice(1).forEach(r => {
     const [
       id, student, clubName,
       yearFounded, yearAffiliated, yearDissolved,
@@ -25,7 +25,7 @@ export const importClubsCsv = (
     const clubId = 1000 + +id
     sqlInserts.push(generateClubInsertStatement({
       clubId,
-      isStudent: student.toLowerCase() === 'yes',
+      isStudent: !!(student?.toLowerCase() === 'yes'),
       clubName, 
       founded: +yearFounded, 
       affiliated: yearAffiliated ? +yearAffiliated : +yearFounded,
@@ -43,7 +43,7 @@ export const importClubsCsv = (
           clubId,
           teamName: null,
           category: team.substring(4).toLowerCase(),
-          foundedYear: 1971,
+          foundedYear: null,
           status: 'active',
           contactEmail: null
         }))

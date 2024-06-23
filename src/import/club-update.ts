@@ -19,7 +19,7 @@ interface IClubTeam {
   clubId: number,
   teamName: string|null,
   category: TeamTypes,
-  foundedYear: number,
+  foundedYear: number|null,
   status: string,
   contactEmail: string|null
 }
@@ -32,12 +32,12 @@ export const generateClubInsertStatement = (club: IClub) => {
         ) VALUES (
             ${club.clubId}, 
             ${club.isStudent},
-            '${club.clubName}', 
+            "${club.clubName}",
             ${club.founded ? club.founded : 'NULL'}, 
             ${club.affiliated ? club.affiliated : 'NULL'},
             ${club.deactivated ? club.deactivated : 'NULL'},
             '${club.country}', '${club.city}',
-            '${club.region}', ${club.subregion || 'NULL'}, '${club.status}', ${club.domain ? `'${club.domain}'` : 'NULL' }
+            '${club.region}', ${club.subregion ? `'${club.subregion}'` : 'NULL'}, '${club.status}', ${club.domain ? `'${club.domain}'` : 'NULL' }
         );
     `;
     return query;
@@ -55,3 +55,4 @@ export const generateTeamInsertStatement = (team: IClubTeam) => {
     `;
     return query;
 }
+
