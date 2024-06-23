@@ -12,24 +12,16 @@ interface IClub {
   region: string;
   subregion: string|null;
   status: string;
-  domain: string;
+  domain: string|null;
 }
 
 interface IClubTeam {
-  clubId: string,
-  teamName: string,
+  clubId: number,
+  teamName: string|null,
   category: TeamTypes,
   foundedYear: number,
   status: string,
-  contactEmail: string
-}
-
-export const generateTeamInsertStatement = (team: IClubTeam) => {
-    const query = `
-        INSERT INTO clubTeams (clubId, teamName, category, foundedYear, status, contactEmail)
-        VALUES (${team.clubId}, '${team.teamName}', '${team.category}', ${team.foundedYear}, '${team.status}', ${team.contactEmail}');
-    `;
-    return query;
+  contactEmail: string|null
 }
 
 export const generateClubInsertStatement = (club: IClub) => {
@@ -38,13 +30,28 @@ export const generateClubInsertStatement = (club: IClub) => {
             clubId, isStudent, clubName, founded, affiliated, deactivated,
             country, city, region, subregion, status, domain
         ) VALUES (
-            club.clubId, '${club.isStudent}', '${club.clubName}', 
-            ${club.founded ? club.founded : 'NULL'}, ${club.affiliated ? club.affiliated : 'NULL'},
+            ${club.clubId}, 
+            ${club.isStudent},
+            '${club.clubName}', 
+            ${club.founded ? club.founded : 'NULL'}, 
+            ${club.affiliated ? club.affiliated : 'NULL'},
             ${club.deactivated ? club.deactivated : 'NULL'},
             '${club.country}', '${club.city}',
-            '${club.region}', '${club.subregion}', '${club.status}', '${club.domain}'
+            '${club.region}', ${club.subregion || 'NULL'}, '${club.status}', ${club.domain ? `'${club.domain}'` : 'NULL' }
         );
     `;
     return query;
 }
 
+export const generateTeamInsertStatement = (team: IClubTeam) => {
+    const query = `
+        INSERT INTO clubTeams (clubId, teamName, category, foundedYear, status, contactEmail)
+        VALUES (
+          ${team.clubId}, ${team.teamName || 'NULL'}, 
+          '${team.category}',
+          ${team.foundedYear ? team.foundedYear : 'NULL'},
+          '${team.status}', ${team.contactEmail || 'NULL'}
+        );
+    `;
+    return query;
+}
