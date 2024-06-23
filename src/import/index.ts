@@ -6,8 +6,9 @@ export const importClubsCsv = (
   csv: string
 ) => {
   const sqlInserts : string[] = [
-    `DELETE * FROM clubs`,
-    `DELETE * FROM clubTeams`,
+    'USE EuroTourno;',
+    `DELETE FROM clubTeams;`,
+    `DELETE FROM clubs;`,
   ];
   const rows = csv.split('\n').map(row => row.split(','));
   rows.slice(1, 3).forEach(r => {
@@ -18,11 +19,12 @@ export const importClubsCsv = (
       teamGAA, teamLGFA, teamHurling, teamCamogie, teamHandball, teamRounders, teamYouthFootball, teamYouthHurling,
       domain ] = r
     const teams: any = {
-      teamGAA, teamLGFA, teamHurling, teamCamogie, teamHandball, teamRounders, teamYouthFootball, teamYouthHurling,
+      teamGAA, teamLGFA, teamHurling, teamCamogie, 
+      teamHandball, teamRounders, teamYouthFootball, teamYouthHurling,
     }
-    console.log(teams)
+    const clubId = 1000 + +id
     sqlInserts.push(generateClubInsertStatement({
-      clubId: +id, 
+      clubId,
       isStudent: student.toLowerCase() === 'yes',
       clubName, 
       founded: +yearFounded, 
@@ -33,22 +35,22 @@ export const importClubsCsv = (
       region, 
       subregion: subregion|| null,
       status,
-      domain
+      domain: domain?.startsWith('xxx.') ? domain.substring(4) : null
     }));
     Object.keys(teams).forEach((team: any) => {
       if (teams[team] && +teams[team] > 0) {
         sqlInserts.push(generateTeamInsertStatement({
-          clubId: id,
-          teamName: 'Senior Team',
-          category: 'gaa',
+          clubId,
+          teamName: null,
+          category: team.substring(4).toLowerCase(),
           foundedYear: 1971,
           status: 'active',
-          contactEmail: 'contact@example.com'
+          contactEmail: null
         }))
       }
     })
   })
-  console.log(sqlInserts.join('\n'));
+  console.log(sqlInserts.join('\n').split('\n').map(line => line.trim()).filter(x => x).join('\n'));
 }
 
 export const importFixturesCsv = (
