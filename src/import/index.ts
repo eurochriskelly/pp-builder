@@ -2,6 +2,12 @@ import { wrapRows, getScheduleProps } from './utils';
 import { validateFixtures } from './validate';
 import { generateClubInsertStatement, generateTeamInsertStatement } from './club-update';
 
+const csvRows = (csv: string) => {
+  const lines = csv.split('\n').filter(x => x.trim())
+  const delim = lines.includes(',') ? ',' : ';';
+  return lines.slice(1).map(row => row.split(delim));
+}
+
 export const importClubsCsv = (
   csv: string
 ) => {
@@ -10,10 +16,7 @@ export const importClubsCsv = (
     `DELETE FROM clubTeams;`,
     `DELETE FROM clubs;`,
   ];
-  const lines = csv.split('\n').filter(x => x.trim())
-  const delim = lines.includes(',') ? ',' : ';';
-  const rows = lines.map(row => row.split(delim));
-  
+  const rows = csvRows(csv);
   rows.slice(1).forEach(r => {
     const [
       id, student, clubName,
@@ -63,7 +66,7 @@ export const importFixturesCsv = (
   title: string,
   location: string
 ) => {
-  const rows = csv.split('\n').map(row => row.split(','));
+  const rows = csvRows(csv);
   const dataIn: any = {
     tournamentId: +tournamentId,
     startDate,
