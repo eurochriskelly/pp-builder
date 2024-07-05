@@ -10,7 +10,10 @@ export const importClubsCsv = (
     `DELETE FROM clubTeams;`,
     `DELETE FROM clubs;`,
   ];
-  const rows = csv.split('\n').filter(x => x.trim()).map(row => row.split(','));
+  const lines = csv.split('\n').filter(x => x.trim())
+  const delim = lines.includes(',') ? ',' : ';';
+  const rows = lines.map(row => row.split(delim));
+  
   rows.slice(1).forEach(r => {
     const [
       id, student, clubName,
