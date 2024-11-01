@@ -4,8 +4,10 @@ import { generateClubInsertStatement, generateTeamInsertStatement } from './club
 
 const csvRows = (csv: string) => {
   const lines = csv.split('\n').filter(x => x.trim())
-  const delim = lines.includes(',') ? ',' : ';';
-  return lines.slice(1).map(row => row.split(delim));
+  const delim = lines[0].includes(',') ? ',' : ';';
+  const rows = lines.slice(1).map(row => row.split(delim));
+  console.table(rows.slice(0, 3));
+  return rows
 }
 
 export const importClubsCsv = (
@@ -64,7 +66,8 @@ export const importFixturesCsv = (
   tournamentId: string,
   startDate: string,
   title: string,
-  location: string
+  location: string,
+  pinCode: string
 ) => {
   const rows = csvRows(csv);
   const dataIn: any = {
@@ -72,6 +75,7 @@ export const importFixturesCsv = (
     startDate,
     title,
     location,
+    pinCode,
     activities: rows
   }
   const { fixtures, sql} = generateFixturesImport(dataIn);
@@ -88,7 +92,7 @@ export const importFixturesCsv = (
 
 // if team is in form ~match:nnn/p:m, update teh value of nnn to include tourmanet
 const fixMatchIds = (team: string, add: number) => {
-  if (!team.startsWith('~match:')) return team
+  if (!team?.startsWith('~match:')) return team
   return team.replace(/(~match:)(\d+)/, (_, p1, p2) => {
     return p1 + (parseInt(p2) + add);
   })
@@ -113,7 +117,7 @@ const generateFixturesImport = (data: any) => {
     .filter((row: any) => row[0] !== 'matchId') // remove header ow if it exists
     .filter((row: any) => !!(row[0]).trim())
   )
-  const { tournamentId, startDate, title, location } = data
+  const { tournamentId, startDate, title, location, pinCode } = data
   const tOffset = +tournamentId * 10000; // add 1000 x tournament id to ensure uniqueness
   const { pitches, categories, teams, groups }= getScheduleProps(dataRows);
   // Find unique list of values
@@ -128,14 +132,17 @@ const generateFixturesImport = (data: any) => {
       '  tournamentId = VALUES(tournamentId);'
     ].join(' ')
   }
+
   const p = pitches.map((p: any) => insertPitch(p));
   const rows = [
     `-- CREATED AT TIME: ${new Date().toISOString()}`,
     'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + tournamentId + ';',
     'DELETE FROM `EuroTourno`.`pitches` WHERE `tournamentId` = ' + tournamentId + ';',
+    'DELETE FROM `EuroTourno`.`tournaments` WHERE `id` = ' + tournamentId + ';',
+    'DELETE FROM `EuroTourno`.`cards` WHERE `tournamentd` = ' + tournamentId + ';',
     // Ensure the tournament exists
-    'INSERT INTO `EuroTourno`.`tournaments` (id, Date, Title, Location, Lat, Lon)',
-    `VALUES (${tournamentId}, '${startDate}', '${title}', '${location}', 52.2942, 4.842)`,
+    'INSERT INTO `EuroTourno`.`tournaments` (id, Date, Title, Location, Lat, Lon, code)',
+    `VALUES (${tournamentId}, '${startDate}', '${title}', '${location}', 52.2942, 4.842, '${pinCode}')`,
     'ON DUPLICATE KEY UPDATE',
     ' Date = VALUES(Date), Title = VALUES(Title), Location = VALUES(Location), Lat = VALUES(Lat), Lon = VALUES(Lon);',
     '-- Update pitches',
