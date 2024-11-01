@@ -139,7 +139,7 @@ const generateFixturesImport = (data: any) => {
     'DELETE FROM `EuroTourno`.`fixtures` WHERE `tournamentId` = ' + tournamentId + ';',
     'DELETE FROM `EuroTourno`.`pitches` WHERE `tournamentId` = ' + tournamentId + ';',
     'DELETE FROM `EuroTourno`.`tournaments` WHERE `id` = ' + tournamentId + ';',
-    'DELETE FROM `EuroTourno`.`cards` WHERE `tournamentd` = ' + tournamentId + ';',
+    'DELETE FROM `EuroTourno`.`cards` WHERE `tournament` = ' + tournamentId + ';',
     // Ensure the tournament exists
     'INSERT INTO `EuroTourno`.`tournaments` (id, Date, Title, Location, Lat, Lon, code)',
     `VALUES (${tournamentId}, '${startDate}', '${title}', '${location}', 52.2942, 4.842, '${pinCode}')`,
