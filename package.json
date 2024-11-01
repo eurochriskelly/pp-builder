@@ -9,6 +9,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
+    "integration": "bash test/integration/execute.sh",
     "gcp": "clear;node ./dist/bin/gcp.js",
     "gcp:test": "node ./dist/bin/gcp.js --import --schedule test/fixtures.csv -o output.sql --date 2027-01-01 --tournament-id 7 --title 'testing the title' --location 'Address, 123, foo' ",
     "gcp:test-import": "node ./dist/bin/gcp.js --import-clubs data/teams.csv > data/insert-clubs.sql",
