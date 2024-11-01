@@ -30,6 +30,7 @@ const main = async () => {
     .option('-t, --tournament-id <number>', 'Tournament ID')
     .option('-e, --title <string>', 'The title of the event')
     .option('-l, --location <string>', 'Location of the tournament')
+    .option('-x, --pin-code <string>', 'Log in code')
     ;
 
   program.parse(process.argv);
@@ -63,18 +64,15 @@ const main = async () => {
     process.exit(0);
   }
 
-
   if (options.import) {
     console.log('Generating SQL import');
-    const requiredKeys = ['location', 'title', 'date', 'tournamentId'];
+    const requiredKeys = ['location', 'title', 'date', 'tournamentId', 'pinCode'];
     if (!requiredKeys.every(key => key in options)) {
       console.log(`Not all required keys [${requiredKeys.join(',')}]`)
       process.exit(1);
     }
-    const { tournamentId, date, title, location } = options
-    const csv = importFixturesCsv(
-      schedule, tournamentId, date, title, location
-    );
+    const { tournamentId, date, title, location, pinCode } = options
+    const csv = importFixturesCsv(schedule, tournamentId, date, title, location, pinCode);
     if (csv) {
       writeFileSync(options.output, csv);
       console.log(`Written to file [${options.output}]`);
