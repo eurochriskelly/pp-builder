@@ -4,6 +4,8 @@ import { execSync } from 'child_process';
 import { writeFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { Command } from 'commander';
+import { spawn } from 'child_process';
+import readline from 'readline';
 
 const fs = require('fs');
 const { resolve } = require('path');
@@ -11,6 +13,11 @@ const { importFixturesCsv, importClubsCsv } = require('../src/import');
 const { populate } = require('../src/populate');
 const { organize } = require('../src/populate/organize');
 const program = new Command();
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 const main = async () => {
   program
@@ -21,6 +28,8 @@ const main = async () => {
     .option('--import', 'Generate SQL import for fixtures from a schedule')
     .option('--import-clubs <path>', 'Import club data from a CSV file')
     .option('--play', 'Simulate matches for a tournament')
+    .option('--list-tournaments', 'List all available tournaments')
+    .option('--serve', 'Launch a web server to view tournament details')  // New option
     // Sub-options
     .option('--schedule <path>', 'Path to the schedule file')
     .option('-o, --output <path>', 'Path to the output file')
@@ -37,11 +46,77 @@ const main = async () => {
   program.parse(process.argv);
   const options = program.opts();
 
-  // Show help if no arguments are provided
   if (process.argv.length <= 2) {
     console.log('Welcome to GCP CLI Tools!');
     console.log('Run tournament management commands with ease.\n');
     program.help();
+  }
+
+  if (options.listTournaments) {
+    const { getTournaments } = require('../src/simulation/retrieve');
+    console.log('Fetching available tournaments ...');
+    const tournaments = await getTournaments();
+    if (tournaments.length === 0) {
+      console.log('No tournaments found or API is unavailable.');
+    } else {
+      console.table(
+        tournaments.map((t: any) => ({
+          ID: t.id,
+          Title: t.Title || t.title,
+          Date: t.Date || t.date,
+          Location: t.Location || t.location,
+        }))
+      );
+    }
+    process.exit(0);
+  }
+
+  if (options.serve) {
+    const { getTournaments } = require('../src/simulation/retrieve');
+    console.log('Fetching available tournaments...');
+    const tournaments = await getTournaments();
+    if (tournaments.length === 0) {
+      console.log('No tournaments found or API is unavailable.');
+      process.exit(1);
+    }
+
+    console.table(
+      tournaments.map((t: any) => ({
+        ID: t.id,
+        Title: t.Title || t.title,
+        Date: t.Date || t.date,
+        Location: t.Location || t.location,
+      }))
+    );
+
+    const tournamentId = await new Promise((resolve) => {
+      rl.question('Enter the Tournament ID to serve: ', (answer) => {
+        resolve(parseInt(answer, 10));
+      });
+    });
+
+    const validIds = tournaments.map((t: any) => t.id);
+    if (!validIds.includes(tournamentId)) {
+      console.error('Invalid Tournament ID. Please select from the list.');
+      rl.close();
+      process.exit(1);
+    }
+
+    rl.close();
+
+    console.log(`Starting server for Tournament ID ${tournamentId} on port 5421...`);
+    const serverProcess = spawn('node', ['src/ui/server.js', tournamentId], {
+      stdio: 'inherit', // Inherit stdio to see server output
+      cwd: process.cwd()
+    });
+
+    serverProcess.on('error', (err) => {
+      console.error('Failed to start server:', err.message);
+      process.exit(1);
+    });
+
+    // Don't exit the process, let the server run
+    return;
   }
 
   if (options.play) {
@@ -100,6 +175,54 @@ const main = async () => {
     console.log(`SQL written to [${options.output}]`);
     process.exit(0);
   }
+
+  if (options.serve) {
+      const { getTournaments } = require('../src/simulation/retrieve');
+      console.log('Fetching available tournaments ...');
+      const tournaments = await getTournaments();
+      if (tournaments.length === 0) {
+        console.log('No tournaments found or API is unavailable.');
+        process.exit(1);
+      }
+
+      console.table(
+        tournaments.map((t: any) => ({
+          ID: t.id,
+          Title: t.Title || t.title,
+          Date: t.Date || t.date,
+          Location: t.Location || t.location,
+        }))
+      );
+
+      const tournamentId = await new Promise((resolve) => {
+        rl.question('Enter the Tournament ID to serve: ', (answer) => {
+          resolve(parseInt(answer, 10));
+        });
+      });
+
+      const validIds = tournaments.map((t: any) => t.id);
+      if (!validIds.includes(tournamentId)) {
+        console.error('Invalid Tournament ID. Please select from the list.');
+        rl.close();
+        process.exit(1);
+      }
+
+      rl.close();
+
+      console.log(`Starting server for Tournament ID ${tournamentId} on port 5421...`);
+      const serverProcess = spawn('node', ['src/ui/server.js', tournamentId], {
+        stdio: 'inherit',
+        cwd: process.cwd()
+      });
+
+      serverProcess.on('error', (err) => {
+        console.error('Failed to start server:', err.message);
+        process.exit(1);
+      });
+
+      return;
+  }
+
 };
 
 main().catch((err) => {
