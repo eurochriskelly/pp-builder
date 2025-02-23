@@ -1,4 +1,4 @@
-const { processTeamName } = require('../../utils');
+const { processTeamName } = require('../../../utils');
 
 module.exports = function generateGroupFixturesView(data) {
 

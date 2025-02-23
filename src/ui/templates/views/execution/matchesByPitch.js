@@ -1,4 +1,4 @@
-const { processTeamName, formatScore } = require('../../utils');
+const { processTeamName, formatScore } = require('../../../utils');
 
 module.exports = function generateMatchesByPitch(data) {
     let html = '<div id="matches-by-pitch">';
