@@ -1,4 +1,4 @@
-const { processTeamName } = require('../../utils');
+const { processTeamName } = require('../../../utils');
 
 module.exports = function generateRecentView(data, count) {
     let html = `<h2>Number of matches started: ${count}</h2>`;

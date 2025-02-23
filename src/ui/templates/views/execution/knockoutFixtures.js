@@ -1,4 +1,4 @@
-const { processTeamName, formatScore } = require('../../utils');
+const { processTeamName, formatScore } = require('../../../utils');
 
 module.exports = function generateKnockoutFixtures(data) {
     let html = '<div id="knockout-fixtures">';
