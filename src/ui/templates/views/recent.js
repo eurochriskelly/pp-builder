@@ -1,9 +1,10 @@
 const { processTeamName } = require('../../utils');
 
 module.exports = function generateRecentView(data, count) {
-    const headers = ['ID', 'Start', 'Pitch', '👥', 'Stage', 'Competition', 'Team 1', 'Score 1', 'Team 2', 'Score 2', 'Umpire Team'];
     let html = `<h2>Number of matches started: ${count}</h2>`;
-    html += '<table hx-get="/" hx-trigger="every 30s" hx-swap="outerHTML"><tr>';
+    html += '<div id="recent-table">';
+    html += '<table><tr>';
+    const headers = ['ID', 'Start', 'Pitch', '👥', 'Stage', 'Competition', 'Team 1', 'Score 1', 'Team 2', 'Score 2', 'Umpire Team'];
     headers.forEach(header => {
         html += header === 'ID' ? `<th class="id-column">${header}</th>` : `<th>${header}</th>`;
     });
@@ -28,5 +29,6 @@ module.exports = function generateRecentView(data, count) {
         html += '</tr>';
     });
     html += '</table>';
+    html += '</div>';
     return html;
 };
