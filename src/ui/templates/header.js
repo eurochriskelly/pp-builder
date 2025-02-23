@@ -1,5 +1,15 @@
-module.exports = function generateHeader(title, tournamentId = null, area = null) {
+module.exports = function generateHeader(title, tournamentId = null, area = null, currentView = null) {
     const basePath = tournamentId ? (area === 'planning' ? `/planning/${tournamentId}` : `/execution/${tournamentId}`) : '';
+    const viewTitles = {
+        'recent': 'Most Recent Changes',
+        'view2': 'Group Fixtures',
+        'view3': 'Group Standings',
+        'view4': 'Knockout Fixtures',
+        'view5': 'Carded Players',
+        'view6': 'Matches by Pitch',
+        'view7': 'Finals Results'
+    };
+
     return `
         <!DOCTYPE html>
         <html>
@@ -7,36 +17,48 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
             <title>${title}</title>
             <link rel="stylesheet" href="/styles/main.css">
             <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+            <script>
+                function toggleDropdown(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const dropdown = event.target.closest('.dropdown');
+                    const isActive = dropdown.classList.contains('active');
+                    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+                    if (!isActive) dropdown.classList.add('active');
+                }
+                document.addEventListener('click', function(event) {
+                    const dropdowns = document.querySelectorAll('.dropdown');
+                    dropdowns.forEach(dropdown => {
+                        if (!dropdown.contains(event.target)) {
+                            dropdown.classList.remove('active');
+                        }
+                    });
+                });
+            </script>
         </head>
         <body>
             <article>
-                <h1>${title}</h1>
-                <nav class="links">
-                    <div>
-                        <a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Tournament Selection</a>
-                    </div>
+                <nav class="breadcrumbs">
+                    <a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Home</a>
                     ${tournamentId ? `
-                    <div>
-                        <a href="/planning/${tournamentId}" hx-get="/planning/${tournamentId}" hx-target="body" hx-swap="outerHTML"${area === 'planning' ? ' class="active"' : ''}>Planning</a>
-                        <a href="/execution/${tournamentId}/recent" hx-get="/execution/${tournamentId}/recent" hx-target="body" hx-swap="outerHTML"${area === 'execution' ? ' class="active"' : ''}>Execution</a>
-                    </div>
-                    ${area === 'execution' ? `
-                    <div>
-                        <a href="${basePath}/recent" hx-get="${basePath}/recent" hx-target="body" hx-swap="outerHTML">Most Recent Changes</a>
-                        <a href="${basePath}/view2" hx-get="${basePath}/view2" hx-target="body" hx-swap="outerHTML">Group Fixtures</a>
-                        <a href="${basePath}/view3" hx-get="${basePath}/view3" hx-target="body" hx-swap="outerHTML">Group Standings</a>
-                        <a href="${basePath}/view7" hx-get="${basePath}/view7" hx-target="body" hx-swap="outerHTML">Finals Results</a>
-                    </div>
-                    <div>
-                        <a href="${basePath}/view4" hx-get="${basePath}/view4" hx-target="body" hx-swap="outerHTML">Knockout Fixtures</a>
-                        <a href="${basePath}/view5" hx-get="${basePath}/view5" hx-target="body" hx-swap="outerHTML">Carded Players</a>
-                        <a href="${basePath}/view6" hx-get="${basePath}/view6" hx-target="body" hx-swap="outerHTML">Matches by Pitch</a>
-                    </div>
-                    ` : area === 'planning' ? `
-                    <div>
-                        <p>Planning features coming soon...</p>
-                    </div>
-                    ` : ''}
+                        <span class="separator">>></span>
+                        <div class="dropdown">
+                            <a href="#" onclick="toggleDropdown(event)"${area ? ' class="active"' : ''}>${area === 'planning' ? 'Planning' : 'Execution'}</a>
+                            <div class="dropdown-content">
+                                <a href="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}" hx-get="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}" hx-target="body" hx-swap="outerHTML">${area === 'planning' ? 'Execution' : 'Planning'}</a>
+                            </div>
+                        </div>
+                        ${area === 'execution' && currentView ? `
+                            <span class="separator">>></span>
+                            <div class="dropdown">
+                                <a href="#" onclick="toggleDropdown(event)" class="active">${viewTitles[currentView]}</a>
+                                <div class="dropdown-content">
+                                    ${Object.entries(viewTitles).map(([key, value]) => `
+                                        ${key !== currentView ? `<a href="${basePath}/${key}" hx-get="${basePath}/${key}" hx-target="body" hx-swap="outerHTML">${value}</a>` : ''}
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
                     ` : ''}
                 </nav>
                 <hr/>

@@ -9,7 +9,7 @@ const {
     getMatchesByPitch,
     getFinalsResults
 } = require('./queries');
-const { getTournaments } = require('../../dist/src/simulation/retrieve'); // Adjusted path per your note
+const { getTournaments } = require('../../dist/src/simulation/retrieve');
 const generateHeader = require('./templates/header');
 const generateFooter = require('./templates/footer');
 const generateTournamentSelection = require('./templates/views/tournamentSelection');
@@ -63,7 +63,7 @@ app.get('/execution/:id/recent', async (req, res) => {
     try {
         const { count, matches } = await getRecentMatches(tournamentId);
         const content = generateRecentView(matches, count);
-        const html = `${generateHeader('Tournament Status Page', tournamentId, 'execution')}<div id="content" hx-get="/execution/${tournamentId}/recent-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        const html = `${generateHeader('Tournament Status', tournamentId, 'execution', 'recent')}<div id="content" hx-get="/execution/${tournamentId}/recent-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error:', error);
@@ -76,7 +76,7 @@ app.get('/execution/:id/view2', async (req, res) => {
     try {
         const data = await getGroupFixtures(tournamentId);
         const content = generateGroupFixtures(data);
-        const html = `${generateHeader('Group Fixtures', tournamentId, 'execution')}<div id="content" hx-get="/execution/${tournamentId}/view2-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        const html = `${generateHeader('Group Fixtures', tournamentId, 'execution', 'view2')}<div id="content" hx-get="/execution/${tournamentId}/view2-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error:', error);
@@ -89,7 +89,7 @@ app.get('/execution/:id/view3', async (req, res) => {
     try {
         const data = await getGroupStandings(tournamentId);
         const content = generateGroupStandings(data);
-        const html = `${generateHeader('Group Standings', tournamentId, 'execution')}<div id="content" hx-get="/execution/${tournamentId}/view3-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        const html = `${generateHeader('Group Standings', tournamentId, 'execution', 'view3')}<div id="content" hx-get="/execution/${tournamentId}/view3-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error:', error);
@@ -102,7 +102,7 @@ app.get('/execution/:id/view4', async (req, res) => {
     try {
         const data = await getKnockoutFixtures(tournamentId);
         const content = generateKnockoutFixtures(data);
-        const html = `${generateHeader('Knockout Fixtures', tournamentId, 'execution')}<div id="content" hx-get="/execution/${tournamentId}/view4-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        const html = `${generateHeader('Knockout Fixtures', tournamentId, 'execution', 'view4')}<div id="content" hx-get="/execution/${tournamentId}/view4-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error:', error);
@@ -115,7 +115,7 @@ app.get('/execution/:id/view5', async (req, res) => {
     try {
         const data = await getCardedPlayers(tournamentId);
         const content = generateCardedPlayers(data);
-        const html = `${generateHeader('Carded Players', tournamentId, 'execution')}<div id="content" hx-get="/execution/${tournamentId}/view5-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        const html = `${generateHeader('Carded Players', tournamentId, 'execution', 'view5')}<div id="content" hx-get="/execution/${tournamentId}/view5-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error:', error);
@@ -128,7 +128,7 @@ app.get('/execution/:id/view6', async (req, res) => {
     try {
         const data = await getMatchesByPitch(tournamentId);
         const content = generateMatchesByPitch(data);
-        const html = `${generateHeader('Matches by Pitch', tournamentId, 'execution')}<div id="content" hx-get="/execution/${tournamentId}/view6-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        const html = `${generateHeader('Matches by Pitch', tournamentId, 'execution', 'view6')}<div id="content" hx-get="/execution/${tournamentId}/view6-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error:', error);
@@ -141,7 +141,7 @@ app.get('/execution/:id/view7', async (req, res) => {
     try {
         const data = await getFinalsResults(tournamentId);
         const content = generateFinalsResults(data);
-        const html = `${generateHeader('Finals Results', tournamentId, 'execution')}<div id="content" hx-get="/execution/${tournamentId}/view7-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        const html = `${generateHeader('Finals Results', tournamentId, 'execution', 'view7')}<div id="content" hx-get="/execution/${tournamentId}/view7-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error:', error);
