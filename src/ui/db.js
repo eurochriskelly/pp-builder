@@ -1,10 +1,11 @@
 const mysql = require('mysql');
 
+// TODO: Use API
 const MYSQL_CONFIG = {
-    host: 'localhost',
-    user: 'root', // Replace with your MySQL username
-    password: 'AsQ3Dx!AsQ3Dx', // Replace with your MySQL password
-    database: 'EuroTourno'
+    host: process.env('GCP_DB_HOST'),
+    user: process.env('GCP_DB_USER'),
+    password: process.env('GCP_DB_PWD'),
+    database: process.env('GCP_DB_NAME'),
 };
 
 const connection = mysql.createConnection(MYSQL_CONFIG);
