@@ -271,12 +271,57 @@ async function getFinalsResults(tournamentId) {
     return await executeQuery(query, [tournamentId]);
 }
 
+async function getAllMatches(tournamentId) {
+    const query = `
+        SELECT 
+            id,
+            category,
+            groupNumber AS grp,
+            stage,
+            pitch,
+            scheduledTime,
+            team1,
+            goals1,
+            points1,
+            team2,
+            goals2,
+            points2,
+            umpireTeam,
+            IF(started IS NULL, 'false', 'true') AS started
+        FROM EuroTourno.v_fixture_information
+        WHERE tournamentId = ?
+        ORDER BY scheduledTime;
+    `;
+    return await executeQuery(query, [tournamentId]);
+}
+
+async function loginUser(email, password) {
+    const query = `
+        SELECT * FROM sec_users 
+        WHERE Email = ? AND Pass = ? AND IsActive = 1
+    `;
+    const updateQuery = `
+        UPDATE sec_users 
+        SET LastAuthenticated = CURDATE() 
+        WHERE id = ?
+    `;
+    const [users] = await executeQuery(query, [email, password]);
+    if (users && users.length > 0) {
+        const user = users[0];
+        await executeQuery(updateQuery, [user.id]);
+        return user;
+    }
+    return null;
+}
+
 module.exports = {
-    getRecentMatches,
-    getGroupFixtures,
-    getGroupStandings,
-    getKnockoutFixtures,
-    getCardedPlayers,
-    getMatchesByPitch,
-    getFinalsResults
+  getRecentMatches,
+  getGroupFixtures,
+  getGroupStandings,
+  getKnockoutFixtures,
+  getCardedPlayers,
+  getMatchesByPitch,
+  getFinalsResults,
+  getAllMatches,
+  loginUser,
 };
