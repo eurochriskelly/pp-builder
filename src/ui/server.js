@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 const { processTeamName, formatScore } = require('./utils');
 const {
     getRecentMatches,
@@ -7,9 +8,12 @@ const {
     getKnockoutFixtures,
     getCardedPlayers,
     getMatchesByPitch,
-    getFinalsResults
+    getFinalsResults,
+    getAllMatches,
+    loginUser,
 } = require('./queries');
 const { getTournaments } = require('../../dist/src/simulation/retrieve');
+const { play } = require('../../dist/src/simulation');
 const generateHeader = require('./templates/header');
 const generateFooter = require('./templates/footer');
 const generateTournamentSelection = require('./templates/views/tournamentSelection');
@@ -20,12 +24,13 @@ const generateKnockoutFixtures = require('./templates/views/execution/knockoutFi
 const generateCardedPlayers = require('./templates/views/execution/cardedPlayers');
 const generateMatchesByPitch = require('./templates/views/execution/matchesByPitch');
 const generateFinalsResults = require('./templates/views/execution/finalsResults');
-const generatePlanningIndex = require('./templates/views/planning/index');
+const generateMatchesPlanning = require('./templates/views/planning/matches');
 
 const app = express();
 const PORT = 5421;
 
 app.use('/styles', express.static(__dirname + '/styles'));
+app.use(express.json());
 
 // Tournament selection page
 app.get('/', async (req, res) => {
@@ -48,12 +53,27 @@ app.get('/', async (req, res) => {
 app.get('/planning/:id', async (req, res) => {
     const tournamentId = parseInt(req.params.id, 10);
     try {
-        const content = generatePlanningIndex();
+        const matches = await getAllMatches(tournamentId);
+        const content = generateMatchesPlanning({ tournamentId, matches });
         const html = `${generateHeader('Planning - Tournament ' + tournamentId, tournamentId, 'planning')}<div id="content">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Server Error');
+    }
+});
+
+app.post('/planning/:id/simulate/:count', async (req, res) => {
+    const tournamentId = parseInt(req.params.id, 10);
+    const count = parseInt(req.params.count, 10);
+    try {
+        await play(tournamentId, null, count);
+        const matches = await getAllMatches(tournamentId);
+        const content = generateMatchesPlanning({ tournamentId, matches });
+        res.send(content);
+    } catch (error) {
+        console.error('Error simulating matches:', error);
+        res.status(500).send('Simulation Error');
     }
 });
 
@@ -225,6 +245,52 @@ app.get('/execution/:id/view7-update', async (req, res) => {
         console.error('Error:', error);
         res.status(500).send('Server Error');
     }
+});
+
+app.get('/planning/:id/reset', async (req, res) => {
+    const tournamentId = parseInt(req.params.id, 10);
+    try {
+        await axios.get(`http://localhost:4000/api/tournaments/${tournamentId}/reset`);
+        const matches = await getAllMatches(tournamentId); // Refresh match list
+        const content = generateMatchesPlanning({ tournamentId, matches });
+        res.send(content);
+    } catch (error) {
+        console.error('Error resetting tournament:', error);
+        res.status(500).send('Reset Error');
+    }
+});
+
+app.post('/login', async (req, res) => {
+    console.log('logging in ..')
+  console.log(req.body)
+    const { email, password } = req.body;
+    try {
+        const user = await loginUser(email, password);
+    console.log("user isn't ...", user)
+        if (user) {
+            const html = `${generateHeader('Home')}<p>Logged in successfully as ${user.Name}.</p>${generateFooter()}`;
+            res.send(html);
+        } else {
+            const html = `${generateHeader('Log In Failed')}<p>Invalid email or password.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+            res.send(html);
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).send('Server Error');
+    }
+});
+
+app.get('/request-access', (req, res) => {
+    const html = `
+        ${generateHeader('Request Access')}
+        <div id="request-access">
+            <h2>Request Access</h2>
+            <p>Please contact the administrator to request access.</p>
+            <a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>
+        </div>
+        ${generateFooter()}
+    `;
+    res.send(html);
 });
 
 app.listen(PORT, () => {

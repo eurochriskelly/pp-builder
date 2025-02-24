@@ -27,8 +27,7 @@ h2 {
     margin-bottom: 15px;
 }
 
-/* Fixed Breadcrumb Navigation */
-nav.breadcrumbs {
+nav.navbar {
     position: fixed;
     top: 0;
     left: 0;
@@ -38,11 +37,17 @@ nav.breadcrumbs {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav.navbar .breadcrumbs {
+    display: flex;
     align-items: center;
     font-size: 1em;
 }
 
-nav.breadcrumbs a {
+nav.navbar .breadcrumbs a {
     color: #ecf0f1;
     text-decoration: none;
     text-transform: uppercase;
@@ -51,27 +56,27 @@ nav.breadcrumbs a {
     transition: background-color 0.3s, color 0.3s;
 }
 
-nav.breadcrumbs a:hover {
+nav.navbar .breadcrumbs a:hover {
     background-color: #34495e;
 }
 
-nav.breadcrumbs a.active {
+nav.navbar .breadcrumbs a.active {
     background-color: #3498db;
     color: #fff;
 }
 
-nav.breadcrumbs span.separator {
+nav.navbar .breadcrumbs span.separator {
     color: #ecf0f1;
     margin: 0 5px;
 }
 
-/* Dropdown */
-nav.breadcrumbs .dropdown {
+/* Dropdown (unchanged except for selector adjustment) */
+nav.navbar .dropdown {
     position: relative;
     display: inline-block;
 }
 
-nav.breadcrumbs .dropdown-content {
+nav.navbar .dropdown-content {
     display: none;
     position: absolute;
     background-color: #34495e;
@@ -83,18 +88,45 @@ nav.breadcrumbs .dropdown-content {
     left: 0;
 }
 
-nav.breadcrumbs .dropdown-content a {
+nav.navbar .dropdown-content a {
     display: block;
     padding: 8px 16px;
     color: #ecf0f1;
     text-transform: uppercase;
 }
 
-nav.breadcrumbs .dropdown-content a:hover {
+nav.navbar .dropdown-content a:hover {
     background-color: #3e5c76;
 }
 
-nav.breadcrumbs .dropdown.active .dropdown-content {
+nav.navbar .dropdown.active .dropdown-content {
+    display: block;
+}
+
+/* Login dropdown (adjusted selector) */
+nav.navbar .login-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+nav.navbar .login-dropdown a {
+  color:white;
+}
+
+nav.navbar .login-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #34495e;
+    min-width: 300px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    border-radius: 5px;
+    top: 100%;
+    right: 0;
+    padding: 15px;
+}
+
+nav.navbar .login-dropdown.active .login-dropdown-content {
     display: block;
 }
 
