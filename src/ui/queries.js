@@ -296,16 +296,20 @@ async function getAllMatches(tournamentId) {
 }
 
 async function loginUser(email, password) {
+    console.log(' hay we go 1') 
     const query = `
         SELECT * FROM sec_users 
         WHERE Email = ? AND Pass = ? AND IsActive = 1
     `;
+  
     const updateQuery = `
         UPDATE sec_users 
         SET LastAuthenticated = CURDATE() 
         WHERE id = ?
     `;
+  console.log('email', email, password)
     const [users] = await executeQuery(query, [email, password]);
+  console.log("u", users)
     if (users && users.length > 0) {
         const user = users[0];
         await executeQuery(updateQuery, [user.id]);
