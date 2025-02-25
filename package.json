@@ -33,7 +33,6 @@
     "express": "^4.21.2",
     "gcp-core": "file:../gcp-core",
     "inquirer": "^9.2.16",
-    "mysql": "^2.18.1",
     "ts-jest": "^29.1.2"
   }
 }
