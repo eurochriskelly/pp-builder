@@ -1,6 +1,6 @@
 const express = require('express');
 const session = require('express-session');
-
+const fileUpload = require('express-fileupload');
 const { apiRequest } = require('./api');
 const { processTeamName, formatScore } = require('./utils');
 const {
@@ -15,6 +15,8 @@ const {
     loginUser,
 } = require('./queries');
 const { getTournaments } = require('../../dist/src/simulation/retrieve');
+const { csvRows } = require('../../dist/src/import');
+const { validateFixtures } = require('../../dist/src/import/validate');
 const { play } = require('../../dist/src/simulation');
 const generateHeader = require('./templates/header');
 const generateFooter = require('./templates/footer');
@@ -28,6 +30,7 @@ const generateMatchesByPitch = require('./templates/views/execution/matchesByPit
 const generateFinalsResults = require('./templates/views/execution/finalsResults');
 const generateMatchesPlanning = require('./templates/views/planning/matches');
 const generateCreateTournament = require('./templates/views/createTournament');
+const generateImportFixtures = require('./templates/views/importFixtures');
 
 const app = express();
 const PORT = 5421;
@@ -35,6 +38,7 @@ const PORT = 5421;
 app.use('/styles', express.static(__dirname + '/styles'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload());
 app.use(session({
     secret: 'your-secret-key', // Replace with a secure key in production
     resave: false,
@@ -69,9 +73,7 @@ app.post('/create-tournament', async (req, res) => {
             ...(lat && { lat: parseFloat(lat) }),
             ...(lon && { lon: parseFloat(lon) }),
         };
-        console.log('Creating tournament with data:', tournamentData);
         const response = await apiRequest('post', '/tournaments', tournamentData);
-        console.log('Tournament created:', response);
         const tournaments = await getTournaments();
         const content = generateTournamentSelection(tournaments, true);
         const html = `${generateHeader('Tournament Selection', null, null, null, true)}${content}${generateFooter()}`;
@@ -373,13 +375,149 @@ app.get('/planning/:id/reset', async (req, res) => {
     }
 });
 
+app.get('/planning/:id/import-fixtures', (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    const tournamentId = parseInt(req.params.id, 10);
+    if (!isLoggedIn) {
+        const html = `${generateHeader('Access Denied', null, null, null, false)}<p>Please log in to import fixtures.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+    const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId)}${generateFooter()}`;
+    res.send(html);
+});
+
+app.post('/planning/:id/import-fixtures', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    const tournamentId = parseInt(req.params.id, 10);
+    if (!isLoggedIn) {
+        const html = `${generateHeader('Access Denied', null, null, null, false)}<p>Please log in to import fixtures.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+
+    if (!req.files || !req.files.file) {
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId)}<p style="color: red;">No file uploaded.</p>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+
+    try {
+        const file = req.files.file;
+        const csvContent = file.data.toString('utf8');
+        const rows = csvRows(csvContent);
+        const csvData = rows.map(row => ({
+            matchId: row[0],
+            startTime: row[1],
+            pitch: row[2],
+            stage: row[3],
+            category: row[4],
+            group: row[5],
+            team1: row[6],
+            team2: row[7],
+            umpireTeam: row[8],
+            duration: row[9],
+        }));
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId, csvData)}${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error processing file:', error.message);
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId)}<p style="color: red;">Error processing file: ${error.message}</p>${generateFooter()}`;
+        res.send(html);
+    }
+});
+
+app.post('/planning/:id/check-import', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    const tournamentId = parseInt(req.params.id, 10);
+    if (!isLoggedIn) {
+        const html = `${generateHeader('Access Denied', null, null, null, false)}<p>Please log in to import fixtures.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+
+    try {
+        const { csvContent } = req.body;
+        const csvData = JSON.parse(decodeURIComponent(csvContent));
+        const { isValid, warnings } = validateFixtures(csvData);
+        console.log('Validation result:', { isValid, warnings });
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId, csvData, warnings)}${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error validating import:', error.message);
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId)}<p style="color: red;">Error validating import: ${error.message}</p>${generateFooter()}`;
+        res.send(html);
+    }
+});
+
+app.post('/planning/:id/import-fixtures', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    const tournamentId = parseInt(req.params.id, 10);
+    if (!isLoggedIn) {
+        const html = `${generateHeader('Access Denied', null, null, null, false)}<p>Please log in to import fixtures.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+
+    if (!req.files || !req.files.file) {
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId)}<p style="color: red;">No file uploaded.</p>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+
+    try {
+        const file = req.files.file;
+        const csvContent = file.data.toString('utf8');
+        const rows = csvRows(csvContent);
+        const csvData = rows.map(row => ({
+            matchId: row[0],
+            startTime: row[1],
+            pitch: row[2],
+            stage: row[3],
+            category: row[4],
+            group: row[5],
+            team1: row[6],
+            team2: row[7],
+            umpireTeam: row[8],
+            duration: row[9],
+        }));
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId, csvData)}${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error processing file:', error.message);
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId)}<p style="color: red;">Error processing file: ${error.message}</p>${generateFooter()}`;
+        res.send(html);
+    }
+});
+
+
+app.post('/planning/:id/validate-fixtures', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    const tournamentId = parseInt(req.params.id, 10);
+    if (!isLoggedIn) {
+        const html = `${generateHeader('Access Denied', null, null, null, false)}<p>Please log in to import fixtures.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+
+    try {
+        const { csvData: csvDataString } = req.body;
+        const csvData = JSON.parse(decodeURIComponent(csvDataString));
+        const validationResult = validateFixtures(csvData);
+        console.log('Validation result:', validationResult);
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId, csvData, validationResult)}${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error validating fixtures:', error.message);
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId)}<p style="color: red;">Error validating fixtures: ${error.message}</p>${generateFooter()}`;
+        res.send(html);
+    }
+});
+
 app.post('/login', async (req, res) => {
-    console.log('Logging in...');
-    console.log('Request body:', req.body);
     const { email, password } = req.body;
     try {
         const user = await loginUser(email, password);
-        console.log('Login result:', user);
         if (user) {
             req.session.user = { id: user.id, name: user.Name, email: user.email };
             const html = `${generateHeader('Home', null, null, null, true)}<p>Logged in successfully as ${user.Name}.</p>${generateFooter()}`;

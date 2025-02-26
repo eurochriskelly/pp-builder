@@ -3,16 +3,17 @@ const { processTeamName, formatScore } = require('../../../utils');
 module.exports = function generateMatchesPlanning(data) {
     let html = '<div id="planning-matches">';
     html += '<h2>Simulate running tournament</h2>';
-    html += '<p>Simulate tournament scenarios by playing upcoming matches.</p>';
+    html += '<p>Simulate tournament scenarios by playing upcoming matches or import fixtures from a CSV.</p>';
 
     html += '<div style="margin-bottom: 20px;">';
     html += '<button style="background-color: #e74c3c;" hx-get="/planning/' + data.tournamentId + '/reset" hx-target="#planning-matches" hx-swap="outerHTML" hx-trigger="click" hx-on::after-request="htmx.ajax(\'GET\', \'/planning/' + data.tournamentId + '\', \'#planning-matches\')">Reset Tournament</button> ';
     html += '<button hx-post="/planning/' + data.tournamentId + '/simulate/1" hx-target="#planning-matches" hx-swap="outerHTML">Play Next Match</button> ';
     html += '<button hx-post="/planning/' + data.tournamentId + '/simulate/5" hx-target="#planning-matches" hx-swap="outerHTML">Play Next 5 Matches</button> ';
-    html += '<button hx-post="/planning/' + data.tournamentId + '/simulate/10" hx-target="#planning-matches" hx-swap="outerHTML">Play Next 10 Matches</button>';
+    html += '<button hx-post="/planning/' + data.tournamentId + '/simulate/10" hx-target="#planning-matches" hx-swap="outerHTML">Play Next 10 Matches</button> ';
+    html += '<button hx-get="/planning/' + data.tournamentId + '/import-fixtures" hx-target="body" hx-swap="outerHTML" style="background-color: #e67e22; color: white; margin-left: 10px;">Import Fixtures</button>';
     html += '</div>';
     
-    // results table
+    // Results table (unchanged)
     html += '<table>';
     const headers = ['ID', 'Category', 'Group', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Team 2', 'Score', 'Umpire', 'Started'];
     html += `<tr>${headers.map(h => h === 'ID' ? `<th class="id-column">${h}</th>` : `<th>${h}</th>`).join('')}</tr>`;
