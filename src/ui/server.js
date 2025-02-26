@@ -27,6 +27,7 @@ const generateCardedPlayers = require('./templates/views/execution/cardedPlayers
 const generateMatchesByPitch = require('./templates/views/execution/matchesByPitch');
 const generateFinalsResults = require('./templates/views/execution/finalsResults');
 const generateMatchesPlanning = require('./templates/views/planning/matches');
+const generateCreateTournament = require('./templates/views/createTournament');
 
 const app = express();
 const PORT = 5421;
@@ -41,12 +42,82 @@ app.use(session({
     cookie: { secure: false } // Set to true if using HTTPS
 }));
 
+app.get('/create-tournament', (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    if (!isLoggedIn) {
+        const html = `${generateHeader('Access Denied', null, null, null, false)}<p>Please log in to create a tournament.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+    const html = `${generateHeader('Create Tournament', null, null, null, true)}${generateCreateTournament()}${generateFooter()}`;
+    res.send(html);
+});
+
+app.post('/create-tournament', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    if (!isLoggedIn) {
+        const html = `${generateHeader('Access Denied', null, null, null, false)}<p>Please log in to create a tournament.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+    const { title, date, location, lat, lon } = req.body;
+    try {
+        const tournamentData = {
+            title,
+            date,
+            location,
+            ...(lat && { lat: parseFloat(lat) }),
+            ...(lon && { lon: parseFloat(lon) }),
+        };
+        console.log('Creating tournament with data:', tournamentData);
+        const response = await apiRequest('post', '/tournaments', tournamentData);
+        console.log('Tournament created:', response);
+        const tournaments = await getTournaments();
+        const content = generateTournamentSelection(tournaments, true);
+        const html = `${generateHeader('Tournament Selection', null, null, null, true)}${content}${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error creating tournament:', error.message);
+        const html = `${generateHeader('Error', null, null, null, true)}<p>Failed to create tournament: ${error.message}</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+    }
+});
+
+app.post('/create-tournament', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    if (!isLoggedIn) {
+        const html = `${generateHeader('Access Denied', null, null, null, false)}<p>Please log in to create a tournament.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+    const { title, date, location, lat, lon } = req.body;
+    try {
+        const tournamentData = {
+            title,
+            date,
+            location,
+            ...(lat && { lat: parseFloat(lat) }), // Only include if provided
+            ...(lon && { lon: parseFloat(lon) }),
+        };
+        console.log('Creating tournament with data:', tournamentData);
+        const response = await apiRequest('post', '/tournaments', tournamentData);
+        console.log('Tournament created:', response);
+        // Redirect to refreshed tournament list
+        const tournaments = await getTournaments();
+        const content = generateTournamentSelection(tournaments, true);
+        const html = `${generateHeader('Tournament Selection', null, null, null, true)}${content}${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error creating tournament:', error.message);
+        const html = `${generateHeader('Error', null, null, null, true)}<p>Failed to create tournament: ${error.message}</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+    }
+});
+
 // Tournament selection page
 app.get('/', async (req, res) => {
     try {
-        console.log('Fetching tournaments for root route...');
         const tournaments = await getTournaments();
-        console.log('Tournaments received:', tournaments);
         const isLoggedIn = !!req.session.user;
         if (tournaments.length === 0) {
             console.log('No tournaments found.');
