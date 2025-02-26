@@ -1,5 +1,7 @@
 const express = require('express');
-const axios = require('axios');
+const session = require('express-session');
+
+const { apiRequest } = require('./api');
 const { processTeamName, formatScore } = require('./utils');
 const {
     getRecentMatches,
@@ -30,8 +32,14 @@ const app = express();
 const PORT = 5421;
 
 app.use('/styles', express.static(__dirname + '/styles'));
-app.use(express.json()); // For JSON payloads
-app.use(express.urlencoded({ extended: true })); // For form submissions like login
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'your-secret-key', // Replace with a secure key in production
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } // Set to true if using HTTPS
+}));
 
 // Tournament selection page
 app.get('/', async (req, res) => {
@@ -39,14 +47,15 @@ app.get('/', async (req, res) => {
         console.log('Fetching tournaments for root route...');
         const tournaments = await getTournaments();
         console.log('Tournaments received:', tournaments);
+        const isLoggedIn = !!req.session.user;
         if (tournaments.length === 0) {
             console.log('No tournaments found.');
-            res.send(`${generateHeader('Tournament Selection')}No tournaments available.${generateFooter()}`);
+            res.send(`${generateHeader('Tournament Selection', null, null, null, isLoggedIn)}No tournaments available.${generateFooter()}`);
             return;
         }
-        const content = generateTournamentSelection(tournaments);
+        const content = generateTournamentSelection(tournaments, isLoggedIn);
         console.log('Rendering tournament selection page.');
-        const html = `${generateHeader('Tournament Selection')}${content}${generateFooter()}`;
+        const html = `${generateHeader('Tournament Selection', null, null, null, isLoggedIn)}${content}${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error fetching tournaments:', error.message);
@@ -61,8 +70,9 @@ app.get('/planning/:id', async (req, res) => {
         console.log(`Fetching all matches for tournament ${tournamentId}...`);
         const matches = await getAllMatches(tournamentId);
         console.log(`Matches received: ${matches.length} items`);
+        const isLoggedIn = !!req.session.user;
         const content = generateMatchesPlanning({ tournamentId, matches });
-        const html = `${generateHeader('Planning - Tournament ' + tournamentId, tournamentId, 'planning')}<div id="content">${content}</div>${generateFooter()}`;
+        const html = `${generateHeader('Planning - Tournament ' + tournamentId, tournamentId, 'planning', null, isLoggedIn)}<div id="content">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error in /planning/:id:', error.message);
@@ -281,7 +291,7 @@ app.get('/planning/:id/reset', async (req, res) => {
     const tournamentId = parseInt(req.params.id, 10);
     try {
         console.log(`Resetting tournament ${tournamentId}...`);
-        await axios.get(`http://localhost:4000/api/tournaments/${tournamentId}/reset`);
+        await apiRequest('post', `/tournaments/${tournamentId}/reset`); // Changed to POST per OpenAPI spec
         const matches = await getAllMatches(tournamentId);
         console.log(`Post-reset matches: ${matches.length} items`);
         const content = generateMatchesPlanning({ tournamentId, matches });
@@ -300,7 +310,8 @@ app.post('/login', async (req, res) => {
         const user = await loginUser(email, password);
         console.log('Login result:', user);
         if (user) {
-            const html = `${generateHeader('Home')}<p>Logged in successfully as ${user.Name}.</p>${generateFooter()}`;
+            req.session.user = { id: user.id, name: user.Name, email: user.email };
+            const html = `${generateHeader('Home', null, null, null, true)}<p>Logged in successfully as ${user.Name}.</p>${generateFooter()}`;
             res.send(html);
         } else {
             const html = `${generateHeader('Log In Failed')}<p>Invalid email or password.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
@@ -310,6 +321,18 @@ app.post('/login', async (req, res) => {
         console.error('Error during login:', error.message);
         res.status(500).send('Server Error');
     }
+});
+
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            res.status(500).send('Logout Error');
+        } else {
+            const html = `${generateHeader('Logged Out')}<p>You have been logged out.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+            res.send(html);
+        }
+    });
 });
 
 app.get('/request-access', (req, res) => {

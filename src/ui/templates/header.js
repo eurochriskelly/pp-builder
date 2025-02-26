@@ -1,4 +1,4 @@
-module.exports = function generateHeader(title, tournamentId = null, area = null, currentView = null) {
+module.exports = function generateHeader(title, tournamentId = null, area = null, currentView = null, isLoggedIn = false) {
     const basePath = tournamentId ? (area === 'planning' ? `/planning/${tournamentId}` : `/execution/${tournamentId}`) : '';
     const viewTitles = {
         'recent': 'Most Recent Changes',
@@ -62,18 +62,21 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
                             ` : ''}
                         ` : ''}
                     </div>
-
-                  <div class="login-dropdown">
-                      <a href="#" onclick="toggleDropdown(event)">Log In</a>
-                      <div class="login-dropdown-content">
-                          <form class="login-form" hx-post="/login" hx-target="body" hx-swap="outerHTML" hx-headers='{"Content-Type": "application/x-www-form-urlencoded"}'>
-                              <input type="email" name="email" placeholder="Email" required>
-                              <input type="password" name="password" placeholder="Password" required>
-                              <button type="submit">Log In</button>
-                          </form>
-                          <a href="/request-access" hx-get="/request-access" hx-target="body" hx-swap="outerHTML">Request Access</a>
-                      </div>
-                  </div>
+                    <div class="login-dropdown">
+                        ${isLoggedIn ? `
+                            <a href="/logout" hx-get="/logout" hx-target="body" hx-swap="outerHTML">Log Out</a>
+                        ` : `
+                            <a href="#" onclick="toggleDropdown(event)">Log In</a>
+                            <div class="login-dropdown-content">
+                                <form class="login-form" hx-post="/login" hx-target="body" hx-swap="outerHTML" hx-headers='{"Content-Type": "application/x-www-form-urlencoded"}'>
+                                    <input type="email" name="email" placeholder="Email" required>
+                                    <input type="password" name="password" placeholder="Password" required>
+                                    <button type="submit">Log In</button>
+                                </form>
+                                <a href="/request-access" hx-get="/request-access" hx-target="body" hx-swap="outerHTML">Request Access</a>
+                            </div>
+                        `}
+                    </div>
                 </nav>
                 <hr/>
     `;
