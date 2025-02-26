@@ -136,9 +136,7 @@ async function getFinalsResults(tournamentId) {
 
 // Fetch all matches
 async function getAllMatches(tournamentId) {
-  console.log('yess we are here')
     const data = await apiRequest('get', `/tournaments/${tournamentId}/all-matches`);
-  console.log('yess we are here 3')
     return data.map(fixture => ({
         id: fixture.id,
         category: fixture.category || 'N/A',

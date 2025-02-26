@@ -1,63 +1,54 @@
-import axios from 'axios';
-const API = `http://localhost:4000/api/tournaments`;
+const { apiRequest } = require('../../../src/ui/api');
 
-export async function getSchedule(
-  id: number,
-  category: string | null
-): Promise<any> {  // Changed return type to any for consistency
-  try {
-    const endpoint = `${API}/${id}/fixtures/nextup`;
-    const response = await axios.get(endpoint);
-    if (category) {
-      return response.data.data.filter((x: any) => x.category === category);
-    } else {
-      return response.data.data;
+async function getSchedule(id, category) {
+    try {
+        const data = await apiRequest('get', `/tournaments/${id}/fixtures/nextup`);
+        return category ? data.data.filter(x => x.category === category) : data.data;
+    } catch (error) {
+        console.error('Error fetching schedule:', error.message);
+        return [];
     }
-  } catch (error: any) {
-    console.error('Error fetching schedule:', error?.code);
-  }
 }
 
-export const playMatch = async (
-  fixture: any,
-  score: any,
-) => {
-  const generateTeamData = (
-    name1: string,
-    name2: string,
-    category: string
-  ) => {
-    const getRandomInt = (max: number) => Math.floor(Math.random() * max);
-    const team1 = { name: name1, goals: getRandomInt(6), points: getRandomInt(23), category };
-    const team2 = { name: name2, goals: getRandomInt(6), points: getRandomInt(23), category };
-    return { team1: team1, team2: team2 };
-  };
-  const { tournamentId, matchId, team1, team2, category } = fixture;
-  try {
-    await axios.get(`${API}/${tournamentId}/fixtures/${matchId}/start`);
-    const data = generateTeamData(team1, team2, category);
-    await axios.post(`${API}/${tournamentId}/fixtures/${matchId}/score`, data);
-  } catch (error: any) {
-    console.error('Error playing match:', error?.code);
-  }
-};
+async function playMatch(fixture, score) {
+    console.log('Now playing match ...')
+    const generateTeamData = (name1, name2) => {
+        const getRandomInt = max => Math.floor(Math.random() * max);
+        const safeName1 = name1 && typeof name1 === 'string' ? name1 : 'Team1';
+        const safeName2 = name2 && typeof name2 === 'string' ? name2 : 'Team2';
+        return {
+            team1: { name: safeName1, goals: getRandomInt(6), points: getRandomInt(23) },
+            team2: { name: safeName2, goals: getRandomInt(6), points: getRandomInt(23) },
+        };
+    };
+    const { tournamentId, matchId, team1, team2 } = fixture || {};
+    if (!tournamentId || !matchId) {
+        console.error('Invalid fixture:', fixture);
+        return;
+    }
+    try {
+    console.log('we are here')
+        const res = await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/start`);
+        console.log('res', res)
+        const data = generateTeamData(team1, team2);
+        await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/score`, data);
+    } catch (error) {
+        console.error('Error playing match:', error.message);
+    }
+}
 
-export const getFixtures = async (
-  id: number
-): Promise<any> => {  // Changed return type to any for consistency
-  const endpoint = `${API}/${id}/fixtures`;
-  const response = await axios.get(endpoint);
-  return response.data.data;
-};
+async function getFixtures(id) {
+    return await apiRequest('get', `/tournaments/${id}/fixtures`);
+}
 
-// New function to fetch all tournaments
-export const getTournaments = async (): Promise<any> => {
-  try {
-    const endpoint = `${API}`;
-    const response = await axios.get(endpoint);
-    return response.data.data;  // Assumes API returns { data: [...] }
-  } catch (error: any) {
-    console.error('Error fetching tournaments:', error?.code);
-    return [];
-  }
-};
+async function getTournaments() {
+    try {
+        const data = await apiRequest('get', '/tournaments');
+        return data.data; // Assumes { data: [...] }
+    } catch (error) {
+        console.error('Error fetching tournaments:', error.message);
+        return [];
+    }
+}
+
+module.exports = { getSchedule, playMatch, getFixtures, getTournaments };
