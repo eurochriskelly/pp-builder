@@ -37,7 +37,6 @@ module.exports = function generateTournamentSelection(tournaments, isLoggedIn = 
         html += `
             <div style="margin-bottom: 20px;">
                 <button hx-get="/create-tournament" hx-target="body" hx-swap="outerHTML" style="background-color: #3498db; color: white;">Create Tournament</button>
-                <button hx-get="/import-fixtures" hx-target="body" hx-swap="outerHTML" style="background-color: #e67e22; color: white; margin-left: 10px;">Import Fixtures</button>
             </div>
         `;
     }

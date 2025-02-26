@@ -2,13 +2,14 @@ import { wrapRows, getScheduleProps } from './utils';
 import { validateFixtures } from './validate';
 import { generateClubInsertStatement, generateTeamInsertStatement } from './club-update';
 
-const csvRows = (csv: string) => {
-  const lines = csv.split('\n').filter(x => x.trim())
+
+export const csvRows = (csv: string): string[][] => {
+  const lines = csv.split('\n').filter(x => x.trim());
   const delim = lines[0].includes(',') ? ',' : ';';
   const rows = lines.slice(1).map(row => row.split(delim));
   console.table(rows.slice(0, 3));
-  return rows
-}
+  return rows;
+};
 
 export const importClubsCsv = (
   csv: string
