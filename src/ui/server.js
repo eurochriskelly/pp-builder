@@ -16,6 +16,7 @@ const {
 } = require('./queries');
 const { getTournaments } = require('../../dist/src/simulation/retrieve');
 const { csvRows } = require('../../dist/src/import');
+const { generateFixturesImport } = require('../../dist/src/import');
 const { validateFixtures } = require('../../dist/src/import/validate');
 const { play } = require('../../dist/src/simulation');
 const generateHeader = require('./templates/header');
@@ -440,7 +441,6 @@ app.post('/planning/:id/check-import', async (req, res) => {
         const { csvContent } = req.body;
         const csvData = JSON.parse(decodeURIComponent(csvContent));
         const { isValid, warnings } = validateFixtures(csvData);
-        console.log('Validation result:', { isValid, warnings });
         const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId, csvData, warnings)}${generateFooter()}`;
         res.send(html);
     } catch (error) {
@@ -499,12 +499,10 @@ app.post('/planning/:id/validate-fixtures', async (req, res) => {
         res.send(html);
         return;
     }
-
     try {
         const { csvData: csvDataString } = req.body;
         const csvData = JSON.parse(decodeURIComponent(csvDataString));
         const validationResult = validateFixtures(csvData);
-        console.log('Validation result:', validationResult);
         const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId, csvData, validationResult)}${generateFooter()}`;
         res.send(html);
     } catch (error) {
@@ -556,6 +554,42 @@ app.get('/request-access', (req, res) => {
         ${generateFooter()}
     `;
     res.send(html);
+});
+
+app.post('/planning/:id/confirm-import', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    const tournamentId = parseInt(req.params.id, 10);
+    if (!isLoggedIn) {
+        const html = `${generateHeader('Access Denied', null, null, null, false)}<p>Please log in to import fixtures.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+
+    const { csvData: csvDataString } = req.body;
+    let csvData; 
+    try {
+        csvData = JSON.parse(decodeURIComponent(csvDataString));
+        console.log('Parsed csvData for import:', csvData);
+        const tournamentResponse = await apiRequest('get', `/tournaments/${tournamentId}`);
+        const { Date: startDate, Title: title, Location: location } = tournamentResponse.data;
+        const importData = {
+            tournamentId,
+            startDate,
+            title,
+            location,
+            pinCode: 'default',
+            activities: csvData,
+        };
+        await generateFixturesImport(importData);
+        const matches = await getAllMatches(tournamentId);
+        const content = generateMatchesPlanning({ tournamentId, matches });
+        const html = `${generateHeader('Planning - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${content}${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error confirming import:', error.message);
+        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId, csvData || [])}<p style="color: red;">Error importing fixtures: ${error.message}</p>${generateFooter()}`;
+        res.send(html);
+    }
 });
 
 app.listen(PORT, () => {

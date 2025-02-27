@@ -45,7 +45,7 @@ module.exports = function generateImportFixtures(tournamentId, csvData = null, v
         html += '</table>';
 
         if (validationResult) {
-            const { warnings, props } = validationResult;
+            const { warnings, props, isValid } = validationResult;
             if (warnings && warnings.length > 0) {
                 html += `
                     <h3>Warnings</h3>
@@ -58,9 +58,16 @@ module.exports = function generateImportFixtures(tournamentId, csvData = null, v
                 html += '</table>';
             } else {
                 html += '<p style="color: green; margin-top: 20px;">No warnings found. Data looks valid.</p>';
+                if (isValid) {
+                    html += `
+                        <form hx-post="/planning/${tournamentId}/confirm-import" hx-target="body" hx-swap="outerHTML">
+                            <input type="hidden" name="csvData" value="${encodeURIComponent(JSON.stringify(csvData))}">
+                            <button type="submit" style="background-color: #2ecc71; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 10px;">Confirm Import</button>
+                        </form>
+                    `;
+                }
             }
 
-            // Summary Info
             html += `
                 <h3>Summary</h3>
                 <p><strong>Categories:</strong> ${props.categories.join(', ')}</p>
