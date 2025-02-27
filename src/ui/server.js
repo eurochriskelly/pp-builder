@@ -33,8 +33,11 @@ const generateMatchesPlanning = require('./templates/views/planning/matches');
 const generateCreateTournament = require('./templates/views/createTournament');
 const generateImportFixtures = require('./templates/views/importFixtures');
 
+const args = process.argv.slice(2);
+const port = args[0] ? parseInt(args[0], 10) : 5421;
+const bypassAuth = args.includes('--bypass-auth');
+
 const app = express();
-const PORT = 5421;
 
 app.use('/styles', express.static(__dirname + '/styles'));
 app.use(express.json());
@@ -46,6 +49,14 @@ app.use(session({
     saveUninitialized: false,
     cookie: { secure: false } // Set to true if using HTTPS
 }));
+
+// Bypass authentication if flag is set
+if (bypassAuth) {
+    app.use((req, res, next) => {
+        req.session.user = { id: 1, name: 'TestUser', email: 'test@example.com' };
+        next();
+    });
+}
 
 app.get('/create-tournament', (req, res) => {
     const isLoggedIn = !!req.session.user;
@@ -120,8 +131,10 @@ app.post('/create-tournament', async (req, res) => {
 // Tournament selection page
 app.get('/', async (req, res) => {
     try {
+        console.log('Fetching tournaments for root route...');
         const tournaments = await getTournaments();
-        const isLoggedIn = !!req.session.user;
+        console.log('Tournaments received:', tournaments);
+        const isLoggedIn = !!req.session.user || bypassAuth;
         if (tournaments.length === 0) {
             console.log('No tournaments found.');
             res.send(`${generateHeader('Tournament Selection', null, null, null, isLoggedIn)}No tournaments available.${generateFooter()}`);
@@ -513,9 +526,17 @@ app.post('/planning/:id/validate-fixtures', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
+    if (bypassAuth) {
+        const html = `${generateHeader('Home', null, null, null, true)}<p>Logged in as TestUser (bypass mode).</p>${generateFooter()}`;
+        res.send(html);
+        return;
+    }
+    console.log('Logging in...');
+    console.log('Request body:', req.body);
     const { email, password } = req.body;
     try {
         const user = await loginUser(email, password);
+        console.log('Login result:', user);
         if (user) {
             req.session.user = { id: user.id, name: user.Name, email: user.email };
             const html = `${generateHeader('Home', null, null, null, true)}<p>Logged in successfully as ${user.Name}.</p>${generateFooter()}`;
@@ -566,7 +587,7 @@ app.post('/planning/:id/confirm-import', async (req, res) => {
     }
 
     const { csvData: csvDataString } = req.body;
-    let csvData; 
+    let csvData;
     try {
         csvData = JSON.parse(decodeURIComponent(csvDataString));
         console.log('Parsed csvData for import:', csvData);
@@ -577,7 +598,7 @@ app.post('/planning/:id/confirm-import', async (req, res) => {
             startDate,
             title,
             location,
-            pinCode: 'default',
+            pinCode: 'default', // Still needed for compatibility, adjust if not required
             activities: csvData,
         };
         await generateFixturesImport(importData);
@@ -592,6 +613,6 @@ app.post('/planning/:id/confirm-import', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}. Visit http://localhost:${PORT} to select a tournament.`);
+app.listen(port, () => {
+    console.log(`Server running on port ${port}. Visit http://localhost:${port} to select a tournament.${bypassAuth ? ' Authentication bypassed.' : ''}`);
 });
