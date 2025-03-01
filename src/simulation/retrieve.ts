@@ -11,7 +11,6 @@ async function getSchedule(id, category) {
 }
 
 async function playMatch(fixture, score) {
-    console.log('Now playing match ...')
     const generateTeamData = (name1, name2) => {
         const getRandomInt = max => Math.floor(Math.random() * max);
         const safeName1 = name1 && typeof name1 === 'string' ? name1 : 'Team1';
@@ -27,9 +26,7 @@ async function playMatch(fixture, score) {
         return;
     }
     try {
-    console.log('we are here')
         const res = await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/start`);
-        console.log('res', res)
         const data = generateTeamData(team1, team2);
         await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/score`, data);
     } catch (error) {
@@ -44,7 +41,7 @@ async function getFixtures(id) {
 async function getTournaments() {
     try {
         const data = await apiRequest('get', '/tournaments');
-        return data.data; // Assumes { data: [...] }
+        return data.data; 
     } catch (error) {
         console.error('Error fetching tournaments:', error.message);
         return [];

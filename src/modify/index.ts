@@ -5,7 +5,7 @@ export const modify = async (
   id: number, 
   count: number
 ) => {
-  let fixtures: any = await getFixtures(id);
+  let fixtures: any 
   const play = async (n: number) => {
     n++
     const schedule: any = await getSchedule(id, category);
@@ -22,7 +22,7 @@ export const modify = async (
   if (count > 0) {
     await play(0)
   }
-  fixtures= await getFixtures(id);
+  fixtures = (await getFixtures(id)).data;
   await showCompetition(fixtures, category);
   const schedule: any = await getSchedule(id, category);
   const nextMatch = schedule.filter((x: any) => x.isType !== 'recent')
