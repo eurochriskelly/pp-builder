@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllMatches } = require('../queries');
+const { getAllMatches } = require('../queries/tournaments');
 const { play } = require('../../../dist/src/simulation');
 const generateHeader = require('../templates/header');
 const generateFooter = require('../templates/footer');
@@ -40,3 +40,4 @@ router.post('/planning/:id/simulate/:count', async (req, res) => {
 });
 
 module.exports = router;
+
