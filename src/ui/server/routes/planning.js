@@ -1,9 +1,9 @@
 const express = require('express');
-const { getAllMatches } = require('../queries/tournaments');
-const { play } = require('../../../dist/src/simulation');
-const generateHeader = require('../templates/header');
-const generateFooter = require('../templates/footer');
-const generateMatchesPlanning = require('../templates/views/planning/matches');
+const { getAllMatches } = require('../../queries/tournaments');
+const generateHeader = require('../../templates/header');
+const generateFooter = require('../../templates/footer');
+const generateMatchesPlanning = require('../../templates/views/planning/matches');
+const { play } = require('../../../../dist/src/simulation');
 
 const router = express.Router();
 
@@ -40,4 +40,3 @@ router.post('/planning/:id/simulate/:count', async (req, res) => {
 });
 
 module.exports = router;
-

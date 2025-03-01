@@ -1,11 +1,11 @@
 const express = require('express');
-const { getRecentMatches, getGroupFixtures, getGroupStandings, getKnockoutFixtures } = require('../queries/matches');
-const generateHeader = require('../templates/header');
-const generateFooter = require('../templates/footer');
-const generateRecentView = require('../templates/views/execution/recent');
-const generateGroupFixtures = require('../templates/views/execution/groupFixtures');
-const generateGroupStandings = require('../templates/views/execution/groupStandings');
-const generateKnockoutFixtures = require('../templates/views/execution/knockoutFixtures');
+const { getRecentMatches, getGroupFixtures, getGroupStandings, getKnockoutFixtures } = require('../../queries/matches');
+const generateHeader = require('../../templates/header');
+const generateFooter = require('../../templates/footer');
+const generateRecentView = require('../../templates/views/execution/recent');
+const generateGroupFixtures = require('../../templates/views/execution/groupFixtures');
+const generateGroupStandings = require('../../templates/views/execution/groupStandings');
+const generateKnockoutFixtures = require('../../templates/views/execution/knockoutFixtures');
 
 const router = express.Router();
 
