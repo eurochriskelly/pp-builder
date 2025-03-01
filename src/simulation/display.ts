@@ -27,6 +27,7 @@ export const showCompetition = async (
       })
     console.table(fixturesNeat);
   } catch (error: any) {
+    console.log(error)
     console.error('Error fetching data:', error?.code);
   }
 }

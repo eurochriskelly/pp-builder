@@ -4,7 +4,6 @@ import { execSync } from 'child_process';
 import { writeFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { Command } from 'commander';
-import { spawn } from 'child_process';
 import readline from 'readline';
 
 const fs = require('fs');
@@ -12,6 +11,7 @@ const { resolve } = require('path');
 const { importFixturesCsv, importClubsCsv } = require('../src/import');
 const { populate } = require('../src/populate');
 const { organize } = require('../src/populate/organize');
+const { startServer } = require('../../src/ui/server'); // Import server logic
 const program = new Command();
 
 const rl = readline.createInterface({
@@ -41,29 +41,21 @@ const main = async () => {
         .option('-l, --location <string>', 'Tournament location')
         .option('-x, --pin-code <string>', 'Tournament login code');
 
-    // Define serve command explicitly
     program
         .command('serve')
         .description('Launch a web server to view tournament details')
-        .option('-p, --port <port>', 'Port to run the server on', '5421')
+        .option('-p, --port <port>', 'Port to run the frontend server on', '5421')
+        .option('--rest-port <port>', 'Port to run the REST API on', '4000')
+        .option('--rest-host <host>', 'Host to run the REST API on', '192.168.1.147')
         .option('--bypass-auth', 'Bypass authentication for testing', false)
         .action((options) => {
             const port = parseInt(options.port, 10) || 5421;
+            const restPort = parseInt(options.restPort, 10) || 4000;
+            const restHost = options.restHost || '192.168.1.147';
             const bypassAuth = !!options.bypassAuth;
-            console.log(`Starting web server on port ${port}${bypassAuth ? ' with authentication bypassed' : ''}...`);
-            const serverArgs = ['src/ui/server.js', port.toString()];
-            if (bypassAuth) {
-                serverArgs.push('--bypass-auth');
-            }
-            const serverProcess = spawn('node', serverArgs, {
-                stdio: 'inherit',
-                cwd: process.cwd()
-            });
-
-            serverProcess.on('error', (err) => {
-                console.error('Failed to start server:', err.message);
-                process.exit(1);
-            });
+            console.log(`Starting web server on port ${port} with REST API at ${restHost}:${restPort}${bypassAuth ? ' with authentication bypassed' : ''}`);
+            // Run server directly
+            startServer(port, restPort, restHost, bypassAuth);
         });
 
     program.parse(process.argv);

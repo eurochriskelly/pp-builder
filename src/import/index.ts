@@ -1,14 +1,13 @@
 import axios from 'axios';
 import { getScheduleProps } from './utils';
 import { validateFixtures } from './validate';
-
-const API_BASE_URL = 'http://192.168.1.147:4000/api';
+const server = require('../../../src/ui/server');
+const API_BASE_URL = server.API_BASE_URL;
 
 export const csvRows = (csv: string): string[][] => {
     const lines = csv.split('\n').filter(x => x.trim());
     const delim = lines[0].includes(',') ? ',' : ';';
     const rows = lines.slice(1).map(row => row.split(delim));
-    console.table(rows.slice(0, 3));
     return rows;
 };
 
@@ -33,6 +32,7 @@ const concatIfTilda = (team: string, poolField: string, poolIdField: string, pos
 
 export const generateFixturesImport = async (data: any): Promise<any> => {
     let activities = data.activities;
+
     if (!Array.isArray(activities)) {
         activities = Object.keys(activities)
             .sort((a, b) => parseInt(a) - parseInt(b))
@@ -48,12 +48,11 @@ export const generateFixturesImport = async (data: any): Promise<any> => {
     const { pitches, categories, teams, groups } = getScheduleProps(dataRows);
 
     try {
-        // Step 1: Clear existing data
+        console.log('generateFixturesImport - Using API_BASE_URL:', API_BASE_URL);
         await axios.delete(`${API_BASE_URL}/tournaments/${tournamentId}/fixtures`);
         await axios.delete(`${API_BASE_URL}/tournaments/${tournamentId}/pitches`);
         await axios.delete(`${API_BASE_URL}/tournaments/${tournamentId}/cards`);
 
-        // Step 2: Insert pitches (bulk)
         const pitchData = pitches.map((p: string) => ({
             pitch: p,
             location: location.substring(0, 10),
@@ -62,14 +61,10 @@ export const generateFixturesImport = async (data: any): Promise<any> => {
         }));
         await axios.post(`${API_BASE_URL}/tournaments/${tournamentId}/pitches`, pitchData);
 
-        // Step 3: Prepare fixture data for bulk insert
         const fixtureData = dataRows.map((fixture: any) => {
             const { matchId, startTime, pitch, stage, category, group, team1, team2, umpireTeam } = fixture;
             const cOffset = categories.indexOf(category) * 1000;
             const offset = tOffset + cOffset;
-            const useTeam1 = fixMatchIds(concatIfTilda(team1, 'pool1', 'pool1Id', 'position1', null, fixture), offset);
-            const useTeam2 = fixMatchIds(concatIfTilda(team2, 'pool2', 'pool2Id', 'position2', null, fixture), offset);
-            const useUmpireTeam = fixMatchIds(concatIfTilda(umpireTeam, 'poolUmp', 'poolUmpId', 'positionUmp', 'categoryUmp', fixture), offset);
             const fullMatchId = offset + parseInt(matchId);
 
             return {
@@ -79,22 +74,21 @@ export const generateFixturesImport = async (data: any): Promise<any> => {
                 groupNumber: parseInt(group),
                 stage,
                 pitch,
-                scheduled: `${startDate.split('T')[0]}T${startTime}:00`,
+                scheduled: `${startDate.split('T')[0]}T${startTime}:00.000Z`,
                 started: null,
-                team1Planned: useTeam1,
-                team1Id: useTeam1,
+                team1Planned: team1,
+                team1Id: team1,
                 goals1: null,
                 points1: null,
-                team2Planned: useTeam2,
-                team2Id: useTeam2,
+                team2Planned: team2,
+                team2Id: team2,
                 goals2: null,
                 points2: null,
-                umpireTeamPlanned: useUmpireTeam,
-                umpireTeamId: useUmpireTeam,
+                umpireTeamPlanned: umpireTeam,
+                umpireTeamId: umpireTeam,
             };
         });
 
-        // Step 4: Insert fixtures (bulk)
         await axios.post(`${API_BASE_URL}/tournaments/${tournamentId}/fixtures`, fixtureData);
 
         return { properties: { pitches, categories, teams, groups }, fixtures: dataRows };
