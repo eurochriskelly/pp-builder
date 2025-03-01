@@ -1,7 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const fileUpload = require('express-fileupload');
-const { setApiBaseUrl } = require('./api');
+const { setApiBaseUrl } = require('../api');
 const authRoutes = require('./routes/auth');
 const tournamentRoutes = require('./routes/tournaments');
 const planningRoutes = require('./routes/planning');
@@ -15,7 +15,7 @@ function startServer(port, restPort, restHost, bypassAuth) {
 
     const app = express();
 
-    app.use('/styles', express.static(__dirname + '/styles'));
+    app.use('/styles', express.static(__dirname + '/../styles'));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(fileUpload());

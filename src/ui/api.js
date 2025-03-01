@@ -7,7 +7,7 @@ function setApiBaseUrl(url) {
     console.log('api.js - API_BASE_URL set to:', API_BASE_URL);
 }
 
-async function apiRequest(method, endpoint, data = null, params = {}) {
+async function apiRequest(method, endpoint, data = {}, params = {}) {
     if (!API_BASE_URL) {
         throw new Error('API_BASE_URL not set. Call setApiBaseUrl first.');
     }

@@ -1,18 +1,17 @@
 const express = require('express');
-const { apiRequest } = require('../api');
-const { getRecentMatches, getGroupFixtures } = require('../queries/matches');
-const generateHeader = require('../templates/header');
-const generateFooter = require('../templates/footer');
-const generateRecentView = require('../templates/views/execution/recent');
-const generateGroupFixtures = require('../templates/views/execution/groupFixtures');
-const generateEventManager = require('../templates/eventManager');
+const { getTournamentByUuid, getRecentMatches, getGroupFixtures } = require('../../queries/tournaments'); // Fixed path, added getTournamentByUuid
+const generateHeader = require('../../templates/header');
+const generateFooter = require('../../templates/footer');
+const generateRecentView = require('../../templates/views/execution/recent');
+const generateGroupFixtures = require('../../templates/views/execution/groupFixtures');
+const generateEventManager = require('../../templates/views/eventManager');
 
 const router = express.Router();
 
 router.get('/event/:uuid', async (req, res) => {
     const uuid = req.params.uuid;
     try {
-        const tournament = await apiRequest('get', `/tournaments/by-uuid/${uuid}`);
+        const tournament = await getTournamentByUuid(uuid);
         if (!tournament || !tournament.id) {
             const html = `${generateHeader('Not Found', null, null, null, false)}<p>Tournament not found for UUID: ${uuid}</p>${generateFooter()}`;
             res.status(404).send(html);
@@ -33,7 +32,7 @@ router.get('/event/:uuid/:view', async (req, res) => {
     const uuid = req.params.uuid;
     const view = req.params.view;
     try {
-        const tournament = await apiRequest('get', `/tournaments/by-uuid/${uuid}`);
+        const tournament = await getTournamentByUuid(uuid);
         if (!tournament || !tournament.id) {
             const html = `${generateHeader('Not Found', null, null, null, false)}<p>Tournament not found for UUID: ${uuid}</p>${generateFooter()}`;
             res.status(404).send(html);
@@ -70,7 +69,7 @@ Object.keys({
     router.get(`/event/:uuid/${view}-update`, async (req, res) => {
         const uuid = req.params.uuid;
         try {
-            const tournament = await apiRequest('get', `/tournaments/by-uuid/${uuid}`);
+            const tournament = await getTournamentByUuid(uuid);
             if (!tournament || !tournament.id) {
                 res.status(404).send('<p>Tournament not found.</p>');
                 return;

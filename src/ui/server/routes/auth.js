@@ -1,9 +1,9 @@
 const express = require('express');
-const { loginUser } = require('../queries/auth');
-const generateHeader = require('../templates/header');
-const generateFooter = require('../templates/footer');
-const generateTournamentSelection = require('../templates/views/tournamentSelection');
-const { getTournaments } = require('../../../dist/src/simulation/retrieve');
+const { loginUser } = require('../../queries/auth'); // Fixed path
+const generateHeader = require('../../templates/header');
+const generateFooter = require('../../templates/footer');
+const generateTournamentSelection = require('../../templates/views/tournamentSelection');
+const { getTournaments } = require('../../../../dist/src/simulation/retrieve');
 
 const router = express.Router();
 

@@ -57,4 +57,14 @@ async function getFinalsResults(tournamentId) {
     }));
 }
 
-module.exports = { getAllMatches, getGroupStandings, getFinalsResults };
+async function createTournament(tournamentData) {
+    const response = await apiRequest('post', '/tournaments', tournamentData);
+    return response; 
+}
+
+async function getTournamentByUuid(uuid) {
+    const tournament = await apiRequest('get', `/tournaments/by-uuid/${uuid}`);
+    return tournament;
+}
+
+module.exports = { getAllMatches, getGroupStandings, getFinalsResults, createTournament, getTournamentByUuid };

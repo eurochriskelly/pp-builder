@@ -1,5 +1,3 @@
-const { startServer } = require('./app');
-
 const args = process.argv.slice(2);
 console.log('Server received args:', args);
 
@@ -21,4 +19,9 @@ console.log('Parsed REST_PORT:', REST_PORT);
 console.log('Parsed REST_HOST:', REST_HOST);
 console.log('Parsed bypassAuth:', bypassAuth);
 
-startServer(FRONTEND_PORT, REST_PORT, REST_HOST, bypassAuth);
+module.exports = {
+    FRONTEND_PORT,
+    REST_PORT,
+    REST_HOST,
+    bypassAuth
+};

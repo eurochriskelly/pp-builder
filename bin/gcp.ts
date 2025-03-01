@@ -11,7 +11,7 @@ const { resolve } = require('path');
 const { importFixturesCsv, importClubsCsv } = require('../src/import');
 const { populate } = require('../src/populate');
 const { organize } = require('../src/populate/organize');
-const { startServer } = require('../../src/ui/server'); // Import server logic
+const { startServer } = require('../../src/ui/server/app'); // Import server logic
 const program = new Command();
 
 const rl = readline.createInterface({

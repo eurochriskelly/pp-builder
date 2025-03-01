@@ -1,10 +1,10 @@
 const express = require('express');
-const { apiRequest } = require('../api');
-const generateHeader = require('../templates/header');
-const generateFooter = require('../templates/footer');
-const generateTournamentSelection = require('../templates/views/tournamentSelection');
-const generateCreateTournament = require('../templates/views/createTournament');
-const { getTournaments } = require('../../../dist/src/simulation/retrieve');
+const { createTournament } = require('../../queries/tournaments'); // Fixed path
+const generateHeader = require('../../templates/header');
+const generateFooter = require('../../templates/footer');
+const generateTournamentSelection = require('../../templates/views/tournamentSelection');
+const generateCreateTournament = require('../../templates/views/createTournament');
+const { getTournaments } = require('../../../../dist/src/simulation/retrieve');
 
 const router = express.Router();
 
@@ -60,7 +60,7 @@ router.post('/create-tournament', async (req, res) => {
             ...(lat && { lat: parseFloat(lat) }),
             ...(lon && { lon: parseFloat(lon) }),
         };
-        const response = await apiRequest('post', '/tournaments', tournamentData);
+        const response = await createTournament(tournamentData);
         const tournaments = await getTournaments();
         const content = generateTournamentSelection(tournaments, true, `${req.protocol}://${req.get('host')}`);
         const html = `${generateHeader('Tournament Selection', null, null, null, true)}${content}${generateFooter()}`;
@@ -73,4 +73,3 @@ router.post('/create-tournament', async (req, res) => {
 });
 
 module.exports = router;
-
