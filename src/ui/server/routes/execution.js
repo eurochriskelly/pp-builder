@@ -1,5 +1,5 @@
 const express = require('express');
-const { getRecentMatches, getGroupFixtures, getGroupStandings, getKnockoutFixtures } = require('../queries');
+const { getRecentMatches, getGroupFixtures, getGroupStandings, getKnockoutFixtures } = require('../queries/matches');
 const generateHeader = require('../templates/header');
 const generateFooter = require('../templates/footer');
 const generateRecentView = require('../templates/views/execution/recent');
@@ -70,3 +70,4 @@ router.get('/execution/:id/view4', async (req, res) => {
 });
 
 module.exports = router;
+

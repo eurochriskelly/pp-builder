@@ -73,3 +73,4 @@ router.post('/create-tournament', async (req, res) => {
 });
 
 module.exports = router;
+

@@ -1,5 +1,6 @@
 const express = require('express');
-const { apiRequest, getRecentMatches, getGroupFixtures } = require('../queries');
+const { apiRequest } = require('../api');
+const { getRecentMatches, getGroupFixtures } = require('../queries/matches');
 const generateHeader = require('../templates/header');
 const generateFooter = require('../templates/footer');
 const generateRecentView = require('../templates/views/execution/recent');

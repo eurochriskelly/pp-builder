@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser } = require('../queries');
+const { loginUser } = require('../queries/auth');
 const generateHeader = require('../templates/header');
 const generateFooter = require('../templates/footer');
 const generateTournamentSelection = require('../templates/views/tournamentSelection');
