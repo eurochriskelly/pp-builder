@@ -1,89 +1,72 @@
 const express = require('express');
-const { getTournamentByUuid, getRecentMatches, getGroupFixtures } = require('../../queries/tournaments'); // Fixed path, added getTournamentByUuid
+const { getTournamentByUuid } = require('../../queries');
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
-const generateRecentView = require('../../templates/views/execution/recent');
-const generateGroupFixtures = require('../../templates/views/execution/groupFixtures');
-const generateEventManager = require('../../templates/views/eventManager');
+const { generateEventManager } = require('../../templates/views/eventManager');
+const { allowedViews } = require('../../config/allowedViews');
 
 const router = express.Router();
 
-router.get('/event/:uuid', async (req, res) => {
-    const uuid = req.params.uuid;
+async function getTournamentAndHandleErrors(uuid, res) {
     try {
-        const tournament = await getTournamentByUuid(uuid);
+        const response = await getTournamentByUuid(uuid);
+        const tournament = response.data;
         if (!tournament || !tournament.id) {
-            const html = `${generateHeader('Not Found', null, null, null, false)}<p>Tournament not found for UUID: ${uuid}</p>${generateFooter()}`;
+            const html = `${generateHeader('Not Found', null, null, null, false, false)}<p>Tournament not found for UUID: ${uuid}</p>${generateFooter()}`;
             res.status(404).send(html);
-            return;
+            return null;
         }
-        const tournamentId = tournament.id;
-        const { count, matches } = await getRecentMatches(tournamentId);
-        const content = generateRecentView(matches, count);
-        const html = `${generateHeader('Tournament Status', tournamentId, 'execution', 'recent', false)}<div id="content" hx-get="/event/${uuid}/recent-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateEventManager(tournamentId, uuid)}${generateFooter()}`;
-        res.send(html);
+        return tournament;
     } catch (error) {
-        console.error('Error in /event/:uuid:', error.message);
-        res.status(500).send('Server Error');
+        console.error(`Error fetching tournament for UUID ${uuid}:`, error.message);
+        res.status(500).send(`${generateHeader('Server Error', null, null, null, false, false)}Server Error${generateFooter()}`);
+        return null;
     }
+}
+
+router.get('/event/:uuid/:view?', async (req, res) => {
+    const uuid = req.params.uuid;
+    const view = req.params.view || 'recent'; // Default to 'recent' if no view provided
+    const tournament = await getTournamentAndHandleErrors(uuid, res);
+    if (!tournament) return;
+    const tournamentId = tournament.id;
+    if (!allowedViews[view]) {
+        const isLoggedIn = !!req.session.user;
+        const html = `
+          ${generateHeader('Not Allowed', tournamentId, 'execution', null, isLoggedIn, false)}
+          <p>View not accessible via public URL.</p>
+          ${generateEventManager(tournamentId, uuid, isLoggedIn)}
+        }`;
+        return res.status(403).send(html);
+    }
+    const { generator, fetch, title } = allowedViews[view];
+    const data = await fetch(tournamentId);
+    const isLoggedIn = !!req.session.user;
+    const content = view === 'recent' ? generator(data.matches, data.count) : generator(data); // Handle 'recent' special case
+    const html = `
+      <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        ${generateEventManager(tournamentId, uuid, isLoggedIn)}
+      </div>
+      ${generateHeader(title, tournamentId, 'execution', view, isLoggedIn, false)}
+      <div id="content" hx-get="/event/${uuid}/${view}-update" hx-trigger="every 30s" hx-swap="innerHTML">
+        ${content}
+      </div>
+      ${generateFooter()}
+    `;
+    res.send(html);
 });
 
-router.get('/event/:uuid/:view', async (req, res) => {
-    const uuid = req.params.uuid;
-    const view = req.params.view;
-    try {
-        const tournament = await getTournamentByUuid(uuid);
-        if (!tournament || !tournament.id) {
-            const html = `${generateHeader('Not Found', null, null, null, false)}<p>Tournament not found for UUID: ${uuid}</p>${generateFooter()}`;
-            res.status(404).send(html);
-            return;
-        }
-        const tournamentId = tournament.id;
-
-        const allowedViews = {
-            'recent': { generator: generateRecentView, fetch: getRecentMatches, title: 'Recent Matches' },
-            'view2': { generator: generateGroupFixtures, fetch: getGroupFixtures, title: 'Group Fixtures' },
-        };
-
-        if (!allowedViews[view]) {
-            const html = `${generateHeader('Not Allowed', tournamentId, 'execution', null, false)}<p>View not accessible via public URL.</p>${generateEventManager(tournamentId, uuid)}${generateFooter()}`;
-            res.status(403).send(html);
-            return;
-        }
-
-        const { generator, fetch, title } = allowedViews[view];
-        const data = await fetch(tournamentId);
-        const content = view === 'recent' ? generator(data.matches, data.count) : generator(data);
-        const html = `${generateHeader(title, tournamentId, 'execution', view, false)}<div id="content" hx-get="/event/${uuid}/${view}-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateEventManager(tournamentId, uuid)}${generateFooter()}`;
-        res.send(html);
-    } catch (error) {
-        console.error(`Error in /event/:uuid/${view}:`, error.message);
-        res.status(500).send('Server Error');
-    }
-});
-
-Object.keys({
-    'recent': getRecentMatches,
-    'view2': getGroupFixtures,
-}).forEach(view => {
+Object.keys(allowedViews).forEach(view => {
     router.get(`/event/:uuid/${view}-update`, async (req, res) => {
         const uuid = req.params.uuid;
-        try {
-            const tournament = await getTournamentByUuid(uuid);
-            if (!tournament || !tournament.id) {
-                res.status(404).send('<p>Tournament not found.</p>');
-                return;
-            }
-            const tournamentId = tournament.id;
-            const fetch = view === 'recent' ? getRecentMatches : getGroupFixtures;
-            const generator = view === 'recent' ? generateRecentView : generateGroupFixtures;
-            const data = await fetch(tournamentId);
-            const content = view === 'recent' ? generator(data.matches, data.count) : generator(data);
-            res.send(content);
-        } catch (error) {
-            console.error(`Error in /event/:uuid/${view}-update:`, error.message);
-            res.status(500).send('Server Error');
-        }
+        const tournament = await getTournamentAndHandleErrors(uuid, res);
+        if (!tournament) return;
+
+        const tournamentId = tournament.id;
+        const { fetch, generator } = allowedViews[view];
+        const data = await fetch(tournamentId);
+        const content = view === 'recent' ? generator(data.matches, data.count) : generator(data);
+        res.send(content);
     });
 });
 

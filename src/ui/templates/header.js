@@ -1,4 +1,4 @@
-module.exports = function generateHeader(title, tournamentId = null, area = null, currentView = null, isLoggedIn = false) {
+module.exports = function generateHeader(title, tournamentId = null, area = null, currentView = null, isLoggedIn = false, navigation = true) {
     const basePath = tournamentId ? (area === 'planning' ? `/planning/${tournamentId}` : `/execution/${tournamentId}`) : '';
     const viewTitles = {
         'recent': 'Most Recent Changes',
@@ -10,13 +10,17 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
         'view7': 'Finals Results'
     };
 
-    return `
+    let html = `
         <!DOCTYPE html>
         <html>
         <head>
             <title>${title}</title>
             <link rel="stylesheet" href="/styles/main.css">
             <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    `;
+
+    if (navigation) {
+        html += `
             <script>
                 function toggleDropdown(event) {
                     event.preventDefault();
@@ -35,49 +39,65 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
                     });
                 });
             </script>
+        `;
+    }
+
+    html += `
         </head>
         <body>
             <article>
-                <nav class="navbar">
-                    <div class="breadcrumbs">
-                        <a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Home</a>
-                        ${tournamentId ? `
+    `;
+
+    if (navigation) {
+        html += `
+            <nav class="navbar">
+                <div class="breadcrumbs">
+                    <a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Home</a>
+                    ${tournamentId ? `
+                        <span class="separator">>></span>
+                        <div class="dropdown">
+                            <a href="#" onclick="toggleDropdown(event)"${area ? ' class="active"' : ''}>${area === 'planning' ? 'Planning' : 'Execution'}</a>
+                            <div class="dropdown-content">
+                                <a href="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}" hx-get="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}" hx-target="body" hx-swap="outerHTML">${area === 'planning' ? 'Execution' : 'Planning'}</a>
+                            </div>
+                        </div>
+                        ${area === 'execution' && currentView ? `
                             <span class="separator">>></span>
                             <div class="dropdown">
-                                <a href="#" onclick="toggleDropdown(event)"${area ? ' class="active"' : ''}>${area === 'planning' ? 'Planning' : 'Execution'}</a>
+                                <a href="#" onclick="toggleDropdown(event)" class="active">${viewTitles[currentView]}</a>
                                 <div class="dropdown-content">
-                                    <a href="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}" hx-get="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}" hx-target="body" hx-swap="outerHTML">${area === 'planning' ? 'Execution' : 'Planning'}</a>
+                                    ${Object.entries(viewTitles).map(([key, value]) => `
+                                        ${key !== currentView ? `<a href="${basePath}/${key}" hx-get="${basePath}/${key}" hx-target="body" hx-swap="outerHTML">${value}</a>` : ''}
+                                    `).join('')}
                                 </div>
                             </div>
-                            ${area === 'execution' && currentView ? `
-                                <span class="separator">>></span>
-                                <div class="dropdown">
-                                    <a href="#" onclick="toggleDropdown(event)" class="active">${viewTitles[currentView]}</a>
-                                    <div class="dropdown-content">
-                                        ${Object.entries(viewTitles).map(([key, value]) => `
-                                            ${key !== currentView ? `<a href="${basePath}/${key}" hx-get="${basePath}/${key}" hx-target="body" hx-swap="outerHTML">${value}</a>` : ''}
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
                         ` : ''}
-                    </div>
-                    <div class="login-dropdown">
-                        ${isLoggedIn ? `
-                            <a href="/logout" hx-get="/logout" hx-target="body" hx-swap="outerHTML">Log Out</a>
-                        ` : `
-                            <a href="#" onclick="toggleDropdown(event)">Log In</a>
-                            <div class="login-dropdown-content">
-                                <form class="login-form" hx-post="/login" hx-target="body" hx-swap="outerHTML" hx-headers='{"Content-Type": "application/x-www-form-urlencoded"}'>
-                                    <input type="email" name="email" placeholder="Email" required>
-                                    <input type="password" name="password" placeholder="Password" required>
-                                    <button type="submit">Log In</button>
-                                </form>
-                                <a href="/request-access" hx-get="/request-access" hx-target="body" hx-swap="outerHTML">Request Access</a>
-                            </div>
-                        `}
-                    </div>
-                </nav>
-                <hr/>
-    `;
+                    ` : ''}
+                </div>
+                <div class="login-dropdown">
+                    ${isLoggedIn ? `
+                        <a href="/logout" hx-get="/logout" hx-target="body" hx-swap="outerHTML">Log Out</a>
+                    ` : `
+                        <a href="#" onclick="toggleDropdown(event)">Log In</a>
+                        <div class="login-dropdown-content">
+                            <form class="login-form" hx-post="/login" hx-target="body" hx-swap="outerHTML" hx-headers='{"Content-Type": "application/x-www-form-urlencoded"}'>
+                                <input type="email" name="email" placeholder="Email" required>
+                                <input type="password" name="password" placeholder="Password" required>
+                                <button type="submit">Log In</button>
+                            </form>
+                            <a href="/request-access" hx-get="/request-access" hx-target="body" hx-swap="outerHTML">Request Access</a>
+                        </div>
+                    `}
+                </div>
+            </nav>
+            <hr/>
+        `;
+    } else {
+        html += `
+            <h1 style="padding: 20px; text-align: center;">${title}</h1>
+            <hr/>
+        `;
+    }
+
+    return html;
 };
