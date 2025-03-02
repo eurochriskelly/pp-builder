@@ -9,8 +9,16 @@ const planningRoutes = require('./routes/planning');
 const executionRoutes = require('./routes/execution');
 const eventRoutes = require('./routes/events');
 
+var FRONTEND_PORT = '5421';
+var REST_PORT = '4000';
+var REST_HOST = 'localhost';
+var BYPASS_AUTH = false;
 
 function startServer(port, restPort, restHost, bypassAuth) {
+    FRONTEND_PORT = port;
+    REST_HOST = restHost;
+    REST_PORT = restPort;    
+    BYPASS_AUTH = bypassAuth;
     const API_BASE_URL = `http://${restHost}:${restPort}/api`;
     console.log('API_BASE_URL set to:', API_BASE_URL);
     setApiBaseUrl(API_BASE_URL);
@@ -63,4 +71,10 @@ function startServer(port, restPort, restHost, bypassAuth) {
     }
 }
 
-module.exports = { startServer };
+module.exports = {
+    FRONTEND_PORT,
+    REST_PORT,
+    REST_HOST,
+    BYPASS_AUTH,
+    startServer,
+};

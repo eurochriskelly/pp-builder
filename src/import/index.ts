@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { getScheduleProps } from './utils';
 import { validateFixtures } from './validate';
-const server = require('../../../src/ui/server');
-const API_BASE_URL = server.API_BASE_URL;
+const { REST_PORT, REST_HOST } = require('../../../src/ui/server/app');
+const API_BASE_URL = `http://${REST_HOST}/${REST_PORT}/api`;
 
 export const csvRows = (csv: string): string[][] => {
     const lines = csv.split('\n').filter(x => x.trim());
