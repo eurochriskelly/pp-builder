@@ -1,3 +1,4 @@
+require('dotenv').config(); // Add this at the top
 const express = require('express');
 const session = require('express-session');
 const fileUpload = require('express-fileupload');
@@ -8,14 +9,15 @@ const planningRoutes = require('./routes/planning');
 const executionRoutes = require('./routes/execution');
 const eventRoutes = require('./routes/events');
 
+
 function startServer(port, restPort, restHost, bypassAuth) {
     const API_BASE_URL = `http://${restHost}:${restPort}/api`;
     console.log('API_BASE_URL set to:', API_BASE_URL);
     setApiBaseUrl(API_BASE_URL);
 
     const app = express();
-
-    app.use('/styles', express.static(__dirname + '/../styles'));
+    app.use('/styles', express.static(__dirname + '/../public/styles'));
+    app.use('/scripts', express.static(__dirname + '/../public/scripts'));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(fileUpload());
