@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitch Schedule Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #svgContainer {
+            border: 1px solid #ccc;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pitch Schedule</h1>
+    <div id="svgContainer"></div>
+
+    <script>
+        // Sample JSON data
+        const data = {
+            "tournamentId": 123,
+            "minTeamRestMinutes": 20,
+            "pitches": [
+                { "id": 17001, "name": "Pitch 1", "location": { "lat": 222, "lon": 222 }, "availability": [{ "from": "2025-01-02T09:00", "until": "2025-01-02T19:00:10" }] },
+                { "id": 17002, "name": "Pitch 2", "location": { "lat": 222, "lon": 222 }, "availability": [{ "from": "2025-01-02T09:00", "until": "2025-01-02T19:00:10" }] },
+                { "id": 17003, "name": "Pitch 3", "location": { "lat": 222, "lon": 222 }, "availability": [
+                    { "from": "2025-01-02T09:00", "until": "2025-01-02T11:00" },
+                    { "from": "2025-01-02T15:00", "until": "2025-01-02T19:00:10" }
+                ] }
+            ],
+            "fixtures": [
+                { "matchId": 123, "startTime": "2025-01-02T09:30:00", "category": "Mens", "team1": "ABC", "team2": "DEF", "pitch": 17001, "duration": 30, "referee": "R1" },
+                { "matchId": 124, "startTime": "2025-01-02T10:00:00", "category": "Womens", "team1": "GHI", "team2": "JKL", "pitch": 17002, "duration": 45, "referee": "R2" },
+                { "matchId": 125, "startTime": "2025-01-02T11:00:00", "category": "Mens", "team1": "MNO", "team2": "PQR", "pitch": 17003, "duration": 60, "referee": "R3" },
+                { "matchId": 126, "startTime": "2025-01-02T10:15:00", "category": "Mens", "team1": "STU", "team2": "VWX", "pitch": 17001, "duration": 30, "referee": "R1" },
+                { "matchId": 127, "startTime": "2025-01-02T11:00:00", "category": "Womens", "team1": "YZA", "team2": "BCD", "pitch": 17002, "duration": 45, "referee": "R2" },
+                { "matchId": 128, "startTime": "2025-01-02T12:30:00", "category": "Mens", "team1": "EFG", "team2": "HIJ", "pitch": 17003, "duration": 60, "referee": "R3" },
+                { "matchId": 129, "startTime": "2025-01-02T13:00:00", "category": "Womens", "team1": "KLM", "team2": "NOP", "pitch": 17001, "duration": 45, "referee": "R1" },
+                { "matchId": 130, "startTime": "2025-01-02T14:00:00", "category": "Mens", "team1": "QRS", "team2": "TUV", "pitch": 17002, "duration": 60, "referee": "R2" },
+                { "matchId": 131, "startTime": "2025-01-02T15:30:00", "category": "Womens", "team1": "WXY", "team2": "ZAB", "pitch": 17003, "duration": 45, "referee": "R3" },
+                { "matchId": 132, "startTime": "2025-01-02T16:00:00", "category": "Mens", "team1": "CDE", "team2": "FGH", "pitch": 17001, "duration": 30, "referee": "R1" }
+            ]
+        };
+
+        // SVG dimensions and settings
+        const svgWidth = 800;
+        const svgHeight = 1440; // 12 hours (08:00-20:00) * 120 minutes/hour * 2 pixels/minute
+        const timeStart = new Date("2025-01-02T08:00:00");
+        const timeEnd = new Date("2025-01-02T20:00:00");
+        const timeRangeMinutes = (timeEnd - timeStart) / (1000 * 60); // 720 minutes
+        const pixelsPerMinute = svgHeight / timeRangeMinutes; // 2 pixels per minute
+
+        // Color mappings
+        const categoryColors = { "Mens": "#4CAF50", "Womens": "#F06292" };
+        const refereeColors = { "R1": "#FF5722", "R2": "#2196F3", "R3": "#9C27B0" };
+
+        // Create SVG element
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("width", svgWidth);
+        svg.setAttribute("height", svgHeight);
+        document.getElementById("svgContainer").appendChild(svg);
+
+        // Calculate column width
+        const numPitches = data.pitches.length;
+        const columnWidth = svgWidth / numPitches;
+
+        // Helper function to convert time to minutes since start
+        function getMinutesSinceStart(dateStr) {
+            const date = new Date(dateStr);
+            return (date - timeStart) / (1000 * 60);
+        }
+
+        // Add time labels (every half hour)
+        for (let hour = 8; hour <= 20; hour++) {
+            for (let minute = 0; minute < 60; minute += 30) {
+                const totalMinutes = (hour - 8) * 60 + minute;
+                const y = totalMinutes * pixelsPerMinute;
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", "40");
+                text.setAttribute("y", y + 5);
+                text.setAttribute("text-anchor", "end");
+                text.textContent = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+                svg.appendChild(text);
+            }
+        }
+
+        // Add pitch column lines and labels
+        data.pitches.forEach((pitch, index) => {
+            if (index > 0) {
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", index * columnWidth);
+                line.setAttribute("y1", "0");
+                line.setAttribute("x2", index * columnWidth);
+                line.setAttribute("y2", svgHeight);
+                line.setAttribute("stroke", "black");
+                line.setAttribute("stroke-width", "1");
+                svg.appendChild(line);
+            }
+
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", (index + 0.5) * columnWidth);
+            text.setAttribute("y", svgHeight - 5);
+            text.setAttribute("text-anchor", "middle");
+            text.textContent = pitch.name;
+            svg.appendChild(text);
+        });
+
+        // Define crosshatch pattern
+        const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+        const pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+        pattern.setAttribute("id", "crosshatch");
+        pattern.setAttribute("width", "8");
+        pattern.setAttribute("height", "8");
+        pattern.setAttribute("patternUnits", "userSpaceOnUse");
+        pattern.setAttribute("patternTransform", "rotate(45)");
+        const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line1.setAttribute("x1", "0");
+        line1.setAttribute("y1", "0");
+        line1.setAttribute("x2", "0");
+        line1.setAttribute("y2", "8");
+        line1.setAttribute("stroke", "gray");
+        line1.setAttribute("stroke-width", "1");
+        pattern.appendChild(line1);
+        defs.appendChild(pattern);
+        svg.appendChild(defs);
+
+        // Function to create fixture group
+        function createFixtureGroup(fixture) {
+            const pitchIndex = data.pitches.findIndex(p => p.id === fixture.pitch);
+            if (pitchIndex === -1) return null;
+
+            const x = pitchIndex * columnWidth + 50;
+            const y = getMinutesSinceStart(fixture.startTime) * pixelsPerMinute;
+            const height = fixture.duration * pixelsPerMinute;
+            const matchWidth = columnWidth - 80;
+            const refWidth = 20;
+
+            const fixtureGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+            // Match group
+            const matchGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            const matchRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            matchRect.setAttribute("x", "0");
+            matchRect.setAttribute("y", "0");
+            matchRect.setAttribute("width", matchWidth);
+            matchRect.setAttribute("height", height);
+            matchRect.setAttribute("fill", categoryColors[fixture.category] || "gray");
+            const matchTitle = document.createElementNS("http://www.w3.org/2000/svg", "title");
+            matchTitle.textContent = `Match ${fixture.matchId}: ${fixture.team1} vs ${fixture.team2}, ${fixture.category}`;
+            matchRect.appendChild(matchTitle);
+            matchGroup.appendChild(matchRect);
+
+            const matchIdText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            const matchTextX = matchWidth * 0.5;
+            const matchTextY = height * 0.5;
+            matchIdText.setAttribute("x", matchTextX);
+            matchIdText.setAttribute("y", matchTextY);
+            matchIdText.setAttribute("transform", `rotate(-90, ${matchTextX}, ${matchTextY})`);
+            matchIdText.setAttribute("fill", "white");
+            matchIdText.setAttribute("font-size", "16");
+            matchIdText.setAttribute("text-anchor", "middle");
+            matchIdText.textContent = fixture.matchId;
+            matchGroup.appendChild(matchIdText);
+
+            // Referee group
+            const refGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            const refRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            refRect.setAttribute("x", matchWidth + 5);
+            refRect.setAttribute("y", "0");
+            refRect.setAttribute("width", refWidth);
+            refRect.setAttribute("height", height);
+            refRect.setAttribute("fill", refereeColors[fixture.referee] || "black");
+            const refTitle = document.createElementNS("http://www.w3.org/2000/svg", "title");
+            refTitle.textContent = `Referee: ${fixture.referee}`;
+            refRect.appendChild(refTitle);
+            refGroup.appendChild(refRect);
+
+            const refText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            const refTextX = matchWidth + 5 + refWidth * 0.5;
+            const refTextY = height * 0.5;
+            refText.setAttribute("x", refTextX);
+            refText.setAttribute("y", refTextY);
+            refText.setAttribute("transform", `rotate(-90, ${refTextX}, ${refTextY})`);
+            refText.setAttribute("fill", "white");
+            refText.setAttribute("font-size", "13");
+            refText.setAttribute("text-anchor", "middle");
+            refText.textContent = fixture.referee;
+            refGroup.appendChild(refText);
+
+            fixtureGroup.appendChild(matchGroup);
+            fixtureGroup.appendChild(refGroup);
+            fixtureGroup.setAttribute("transform", `translate(${x}, ${y})`);
+
+            return fixtureGroup;
+        }
+
+        // Add fixtures
+        data.fixtures.forEach(fixture => {
+            const fixtureGroup = createFixtureGroup(fixture);
+            if (fixtureGroup) svg.appendChild(fixtureGroup);
+        });
+
+        // Add crosshatching for unavailable times (after fixtures)
+        data.pitches.forEach((pitch, index) => {
+            const pitchX = index * columnWidth + 50;
+            const pitchWidth = columnWidth - 80;
+            let lastEnd = 0;
+
+            pitch.availability.forEach((avail, i) => {
+                const availStart = getMinutesSinceStart(avail.from);
+                const availEnd = getMinutesSinceStart(avail.until);
+
+                if (availStart > lastEnd) {
+                    const hatchRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    hatchRect.setAttribute("x", pitchX);
+                    hatchRect.setAttribute("y", lastEnd * pixelsPerMinute);
+                    hatchRect.setAttribute("width", pitchWidth + 25);
+                    hatchRect.setAttribute("height", (availStart - lastEnd) * pixelsPerMinute);
+                    hatchRect.setAttribute("fill", "url(#crosshatch)");
+                    svg.appendChild(hatchRect);
+                }
+                lastEnd = availEnd;
+            });
+
+            if (lastEnd < timeRangeMinutes) {
+                const hatchRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                hatchRect.setAttribute("x", pitchX);
+                hatchRect.setAttribute("y", lastEnd * pixelsPerMinute);
+                hatchRect.setAttribute("width", pitchWidth + 25);
+                hatchRect.setAttribute("height", (timeRangeMinutes - lastEnd) * pixelsPerMinute);
+                hatchRect.setAttribute("fill", "url(#crosshatch)");
+                svg.appendChild(hatchRect);
+            }
+        });
+    </script>
+</body>
+</html>
