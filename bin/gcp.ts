@@ -8,10 +8,8 @@ import readline from 'readline';
 
 const fs = require('fs');
 const { resolve } = require('path');
-const { importFixturesCsv, importClubsCsv } = require('../src/import');
 const { populate } = require('../src/populate');
 const { organize } = require('../src/populate/organize');
-const { startServer } = require('../../src/ui/server/app'); // Import server logic
 const program = new Command();
 
 const rl = readline.createInterface({
@@ -52,9 +50,13 @@ const main = async () => {
             const port = parseInt(options.port, 10) || 5421;
             const restPort = parseInt(options.restPort, 10) || 4000;
             const restHost = options.restHost || '192.168.1.147';
+            process.env['GCP_DB_HOST'] = restHost
+            process.env['GCP_DB_PORT'] = restPort
+            process.env['GCP_DB_PORT3'] = restPort
             const bypassAuth = !!options.bypassAuth;
             console.log(`Starting web server on port ${port} with REST API at ${restHost}:${restPort}${bypassAuth ? ' with authentication bypassed' : ''}`);
             // Run server directly
+            const { startServer } = require('../../src/ui/server/app'); // Import server logic
             startServer(port, restPort, restHost, bypassAuth);
         });
 

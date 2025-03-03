@@ -3,22 +3,15 @@ const express = require('express');
 const session = require('express-session');
 const fileUpload = require('express-fileupload');
 const { setApiBaseUrl } = require('../api');
+const { setup } = require('./index.js');
 const authRoutes = require('./routes/auth');
 const tournamentRoutes = require('./routes/tournaments');
 const planningRoutes = require('./routes/planning');
 const executionRoutes = require('./routes/execution');
 const eventRoutes = require('./routes/events');
 
-var FRONTEND_PORT = '5421';
-var REST_PORT = '4000';
-var REST_HOST = 'localhost';
-var BYPASS_AUTH = false;
-
 function startServer(port, restPort, restHost, bypassAuth) {
-    FRONTEND_PORT = port;
-    REST_HOST = restHost;
-    REST_PORT = restPort;    
-    BYPASS_AUTH = bypassAuth;
+    setup(restHost, port, restPort) 
     const API_BASE_URL = `http://${restHost}:${restPort}/api`;
     console.log('API_BASE_URL set to:', API_BASE_URL);
     setApiBaseUrl(API_BASE_URL);
@@ -71,10 +64,4 @@ function startServer(port, restPort, restHost, bypassAuth) {
     }
 }
 
-module.exports = {
-    FRONTEND_PORT,
-    REST_PORT,
-    REST_HOST,
-    BYPASS_AUTH,
-    startServer,
-};
+module.exports = { startServer };

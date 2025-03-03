@@ -26,11 +26,29 @@ router.get('/planning/:id', async (req, res) => {
         console.log(`Matches received: ${matches.length} items`);
         const isLoggedIn = !!req.session.user;
         const content = generateMatchesPlanning({ tournamentId, matches });
-        const html = `${generateHeader('Planning - Tournament ' + tournamentId, tournamentId, 'planning', null, isLoggedIn)}<div id="content">${content}</div>${generateFooter()}`;
+        const html = `
+          ${generateHeader('Planning - Tournament ' + tournamentId, tournamentId, 'planning', null, isLoggedIn)}
+          <div id="content">${content}</div>
+          ${generateFooter()}`;
         res.send(html);
     } catch (error) {
         console.error('Error in /planning/:id:', error.message);
         res.status(500).send('Server Error');
+    }
+});
+
+router.get('/planning/:id/reset', async (req, res) => {
+    const tournamentId = parseInt(req.params.id, 10);
+    try {
+        console.log(`Resetting tournament ${tournamentId}...`);
+        await apiRequest('post', `/tournaments/${tournamentId}/reset`); // Changed to POST per OpenAPI spec
+        const matches = await getAllMatches(tournamentId);
+        console.log(`Post-reset matches: ${matches.length} items`);
+        const content = generateMatchesPlanning({ tournamentId, matches });
+        res.send(content);
+    } catch (error) {
+        console.error('Error resetting tournament:', error.message);
+        res.status(500).send('Reset Error');
     }
 });
 
@@ -95,7 +113,6 @@ router.post('/planning/:id/import-fixtures', async (req, res) => {
     try {
         const file = req.files.file;
         const csvContent = file.data.toString('utf8');
-    console.log('csv rows?', csvRows)
         const rows = csvRows(csvContent);
         const csvData = rows.map(row => ({
             matchId: row[0],
@@ -108,8 +125,21 @@ router.post('/planning/:id/import-fixtures', async (req, res) => {
             team2: row[7],
             umpireTeam: row[8],
             duration: row[9],
+            pool1: row[10],
+            pool1Id: row[11],
+            position1: row[12],
+            pool2: row[13],
+            pool2Id: row[14],
+            position2: row[15],
+            poolUmp: row[16],
+            poolUmpId: row[17],
+            positionUmp: row[18],
         }));
-        const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId, csvData)}${generateFooter()}`;
+        const html = `
+          ${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}
+          ${generateImportFixtures(tournamentId, csvData)}
+          ${generateFooter()}
+        `;
         res.send(html);
     } catch (error) {
         console.error('Error processing file:', error.message);
@@ -131,7 +161,7 @@ router.post('/planning/:id/confirm-import', async (req, res) => {
     let csvData;
     try {
         csvData = JSON.parse(decodeURIComponent(csvDataString));
-        console.log('Parsed csvData for import:', csvData);
+    console.log(csvData[2])
         const tournamentResponse = await apiRequest('get', `/tournaments/${tournamentId}`);
         const { Date: startDate, Title: title, Location: location } = tournamentResponse.data;
         const importData = {
