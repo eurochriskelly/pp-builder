@@ -1,31 +1,33 @@
 module.exports = function generateCreateTournament() {
-    return `
-        <div id="create-tournament-form" style="padding: 20px; max-width: 600px; margin: 0 auto;">
-            <h2>Create a New Tournament</h2>
-            <form hx-post="/create-tournament" hx-target="body" hx-swap="outerHTML" hx-headers='{"Content-Type": "application/x-www-form-urlencoded"}'>
-                <div style="margin-bottom: 15px;">
-                    <label for="title">Title:</label><br>
-                    <input type="text" id="title" name="title" required style="width: 100%; padding: 8px;">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label for="date">Date:</label><br>
-                    <input type="date" id="date" name="date" required style="width: 100%; padding: 8px;">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label for="location">Location:</label><br>
-                    <input type="text" id="location" name="location" required style="width: 100%; padding: 8px;">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label for="lat">Latitude (optional):</label><br>
-                    <input type="number" id="lat" name="lat" step="any" style="width: 100%; padding: 8px;">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label for="lon">Longitude (optional):</label><br>
-                    <input type="number" id="lon" name="lon" step="any" style="width: 100%; padding: 8px;">
-                </div>
-                <button type="submit" style="background-color: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Create</button>
-                <a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML" style="margin-left: 10px;">Cancel</a>
-            </form>
+  return `
+    <div id="create-tournament-form" class="p-5 max-w-xl mx-auto">
+      <h2 class="text-2xl font-bold mb-4">Create a New Tournament</h2>
+      <form hx-post="/create-tournament" hx-target="body" hx-swap="outerHTML" hx-headers='{"Content-Type": "application/x-www-form-urlencoded"}' class="flex flex-col gap-4">
+        <div>
+          <label for="title" class="block mb-1">Title:</label>
+          <input type="text" id="title" name="title" required class="w-full p-2 border rounded">
         </div>
-    `;
+        <div>
+          <label for="date" class="block mb-1">Date:</label>
+          <input type="date" id="date" name="date" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label for="location" class="block mb-1">Location:</label>
+          <input type="text" id="location" name="location" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label for="lat" class="block mb-1">Latitude (optional):</label>
+          <input type="number" id="lat" name="lat" step="any" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label for="lon" class="block mb-1">Longitude (optional):</label>
+          <input type="number" id="lon" name="lon" step="any" class="w-full p-2 border rounded">
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Create</button>
+          <a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML" class="text-blue-600 underline">Cancel</a>
+        </div>
+      </form>
+    </div>
+  `;
 };
