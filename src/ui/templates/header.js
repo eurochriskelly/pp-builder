@@ -15,7 +15,7 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
         <html>
         <head>
             <title>${title}</title>
-            <link rel="stylesheet" href="/styles/main.css">
+            <link rel="stylesheet" href="/styles/main-compiled.css">
             <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     `;
 

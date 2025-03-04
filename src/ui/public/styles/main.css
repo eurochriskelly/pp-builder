@@ -1,341 +1,180 @@
+@import "tailwindcss";
+
 /* Reset and base styles */
 * {
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
+    /* Removed padding: 0 to let Tailwind utilities apply */
 }
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f6f8;
-    color: #333;
-    line-height: 1.6;
-    padding-top: 50px; /* Adjusted for slimmer breadcrumb navbar */
+    @apply bg-gray-100 text-gray-800 leading-6 pt-12; /* Slimmer navbar adjustment */
 }
 
 /* Article container */
 article {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
+    @apply max-w-7xl mx-auto p-5;
 }
 
-/* Headings (for planning placeholder or other content) */
+/* Headings */
 h2 {
-    font-size: 1.8em;
-    color: #34495e;
-    margin-bottom: 15px;
+    @apply text-3xl text-gray-700 mb-4;
 }
 
+/* Navbar */
 nav.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #2c3e50;
-    padding: 10px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @apply fixed top-0 left-0 w-full bg-gray-800 p-2 shadow-md z-[1000] flex justify-between items-center;
 }
 
 nav.navbar .breadcrumbs {
-    display: flex;
-    align-items: center;
-    font-size: 1em;
+    @apply flex items-center text-sm;
 }
 
 nav.navbar .breadcrumbs a {
-    color: #ecf0f1;
-    text-decoration: none;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-nav.navbar .breadcrumbs a:hover {
-    background-color: #34495e;
+    @apply text-gray-100 uppercase px-2 py-1 rounded transition-colors hover:bg-gray-700;
 }
 
 nav.navbar .breadcrumbs a.active {
-    background-color: #3498db;
-    color: #fff;
+    @apply bg-blue-600 text-white;
 }
 
 nav.navbar .breadcrumbs span.separator {
-    color: #ecf0f1;
-    margin: 0 5px;
+    @apply text-gray-100 mx-1;
 }
 
-/* Dropdown (unchanged except for selector adjustment) */
+/* Dropdown */
 nav.navbar .dropdown {
-    position: relative;
-    display: inline-block;
+    @apply relative inline-block;
 }
 
 nav.navbar .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #34495e;
-    min-width: 160px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1001;
-    border-radius: 5px;
-    top: 100%;
-    left: 0;
+    @apply hidden absolute bg-gray-700 min-w-40 shadow-lg z-[1001] rounded-md top-full left-0;
 }
 
 nav.navbar .dropdown-content a {
-    display: block;
-    padding: 8px 16px;
-    color: #ecf0f1;
-    text-transform: uppercase;
-}
-
-nav.navbar .dropdown-content a:hover {
-    background-color: #3e5c76;
+    @apply block px-4 py-2 text-gray-100 uppercase hover:bg-gray-600;
 }
 
 nav.navbar .dropdown.active .dropdown-content {
-    display: block;
+    @apply block;
 }
 
-/* Login dropdown (adjusted selector) */
+/* Login dropdown */
 nav.navbar .login-dropdown {
-    position: relative;
-    display: inline-block;
+    @apply relative inline-block;
 }
 
 nav.navbar .login-dropdown a {
-  color:white;
+    @apply text-white;
 }
 
 nav.navbar .login-dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #34495e;
-    min-width: 300px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1001;
-    border-radius: 5px;
-    top: 100%;
-    right: 0;
-    padding: 15px;
+    @apply hidden absolute bg-gray-700 min-w-[300px] shadow-lg z-[1001] rounded-md top-full right-0 p-4;
 }
 
 nav.navbar .login-dropdown.active .login-dropdown-content {
-    display: block;
-}
-
-/* Tournament selection table */
-#tournament-selection table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-#tournament-selection th,
-#tournament-selection td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-#tournament-selection th {
-    background-color: #34495e;
-    color: #ecf0f1;
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-#tournament-selection tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-#tournament-selection tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* Buttons */
-button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-button:hover {
-    transform: translateY(-2px);
-}
-
-#tournament-selection button[hx-get^="/planning"] {
-    background-color: #e67e22;
-    color: #fff;
-}
-
-#tournament-selection button[hx-get^="/planning"]:hover {
-    background-color: #d35400;
-}
-
-#tournament-selection button[hx-get^="/execution"] {
-    background-color: #27ae60;
-    color: #fff;
-}
-
-#tournament-selection button[hx-get^="/execution"]:hover {
-    background-color: #219653;
-}
-
-/* General tables (execution/planning views) */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-th, td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-}
-
-th {
-    background-color: #ecf0f1;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-td {
-    color: #555;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: #f1f1f1;
-}
-
-.id-column {
-    background-color: #d5f5e3;
-    font-weight: bold;
-}
-
-/* Grouped tables */
-table tr th[colspan] {
-    background-color: #bdc3c7;
-    text-align: center;
-    font-size: 1.2em;
-    padding: 10px;
-}
-
-/* HR */
-hr {
-    border: 0;
-    height: 1px;
-    background: #ddd;
-    margin: 20px 0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    nav.breadcrumbs {
-        padding: 8px 15px;
-    }
-
-    nav.breadcrumbs a {
-        font-size: 0.9em;
-        padding: 5px 10px;
-    }
-
-    body {
-        padding-top: 80px; /* More space for potential wrapping */
-    }
-
-    .dropdown-content {
-        min-width: 120px;
-    }
-
-    table, th, td {
-        font-size: 0.9em;
-        padding: 10px;
-    }
-}
-
-
-/* Add these styles below the existing .dropdown-content rules */
-
-/* Login dropdown */
-nav.breadcrumbs .login-dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-nav.breadcrumbs .login-dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #34495e;
-    min-width: 300px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1001;
-    border-radius: 5px;
-    top: 100%;
-    right: 0; /* Align to the right of the Log In button */
-    padding: 15px;
-}
-
-nav.breadcrumbs .login-dropdown.active .login-dropdown-content {
-    display: block;
+    @apply block;
 }
 
 /* Login form */
 .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    @apply flex flex-col gap-2;
 }
 
 .login-form input[type="email"],
 .login-form input[type="password"] {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1em;
+    @apply p-2 border border-gray-300 rounded text-base;
 }
 
 .login-form button {
-    background-color: #3498db;
-    color: #fff;
-    padding: 8px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.login-form button:hover {
-    background-color: #2980b9;
+    @apply bg-blue-600 text-white p-2 rounded cursor-pointer hover:bg-blue-700 transition-colors;
 }
 
 .login-form a {
-    color: #ecf0f1;
-    text-decoration: underline;
-    font-size: 0.9em;
-    text-align: center;
+    @apply text-gray-100 underline text-sm text-center hover:text-blue-600;
 }
 
-.login-form a:hover {
-    color: #3498db;
+/* Tournament selection table */
+#tournament-selection table {
+    @apply w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden;
+}
+
+#tournament-selection th,
+#tournament-selection td {
+    @apply p-4 text-left border-b border-gray-200;
+}
+
+#tournament-selection th {
+    @apply bg-gray-700 text-gray-100 uppercase font-bold;
+}
+
+#tournament-selection tr:nth-child(even) {
+    @apply bg-gray-50;
+}
+
+#tournament-selection tr:hover {
+    @apply bg-gray-100;
+}
+
+/* General tables (execution/planning views) */
+table {
+    @apply w-full border-collapse bg-white shadow-md rounded-lg mb-5;
+}
+
+th, td {
+    @apply p-3 border border-gray-200;
+}
+
+th {
+    @apply bg-gray-100 uppercase font-bold text-gray-800;
+}
+
+td {
+    @apply text-gray-600;
+}
+
+tr:nth-child(even) {
+    @apply bg-gray-50;
+}
+
+tr:hover {
+    @apply bg-gray-100;
+}
+
+.id-column {
+    @apply bg-green-100 font-bold;
+}
+
+/* Grouped tables */
+table tr th[colspan] {
+    @apply bg-gray-300 text-center text-xl p-2;
+}
+
+/* HR */
+hr {
+    @apply border-0 h-px bg-gray-300 my-5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    nav.navbar {
+        @apply p-2;
+    }
+
+    nav.navbar .breadcrumbs a {
+        @apply text-sm px-2 py-1;
+    }
+
+    body {
+        @apply pt-20; /* More space for wrapping */
+    }
+
+    nav.navbar .dropdown-content {
+        @apply min-w-32;
+    }
+
+    table, th, td {
+        @apply text-sm p-2;
+    }
 }
