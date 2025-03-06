@@ -3,6 +3,7 @@ const { getAllMatches } = require('../../queries/tournaments');
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const generateMatchesPlanning = require('../../templates/views/planning/matches/');
+const generateTournamentInfo = require('../../templates/views/planning/tournamentInfo');
 const generateImportFixtures = require('../../templates/views/importFixtures');
 const { apiRequest } = require('../../api');
 const { play } = require('../../../../dist/src/simulation');
@@ -18,7 +19,7 @@ const csvRows = (csv) => {
     return rows;
 };
 
-router.get('/planning/:id', async (req, res) => {
+router.get('/planning/:id/matches', async (req, res) => {
     const tournamentId = parseInt(req.params.id, 10);
     try {
         console.log(`Fetching all matches for tournament ${tournamentId}...`);
@@ -240,6 +241,81 @@ router.post('/planning/:id/validate-fixtures', async (req, res) => {
         console.error('Error validating fixtures:', error.message);
         const html = `${generateHeader('Import Fixtures - Tournament ' + tournamentId, tournamentId, 'planning', null, true)}${generateImportFixtures(tournamentId)}<p style="color: red;">Error validating fixtures: ${error.message}</p>${generateFooter()}`;
         res.send(html);
+    }
+});
+
+router.get('/planning/create-tournament', (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    if (!isLoggedIn) {
+        const html = `
+          ${generateHeader('Access Denied', null, null, null, false)}
+          <p>Please log in to create a tournament.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>
+          ${generateFooter()}
+        `;
+        res.send(html);
+        return;
+    }
+    const html = `
+      ${generateHeader('Create Tournament', null, 'planning', null, true)}
+      ${generateTournamentInfo()}
+      ${generateFooter()}
+    `;
+    res.send(html);
+});
+
+router.post('/planning/create-tournament', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    if (!isLoggedIn) {
+        res.status(403).send('Unauthorized');
+        return;
+    }
+    const { title, date, location, lat, lon } = req.body;
+    try {
+        await apiRequest('post', '/tournaments', { title, date, location, lat, lon }); // Create via API
+        res.redirect('/');
+    } catch (error) {
+        console.error('Error creating tournament:', error.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get('/planning/:id/edit-tournament', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    const tournamentId = parseInt(req.params.id, 10);
+    if (!isLoggedIn) {
+        const html = `
+          ${generateHeader('Access Denied', null, null, null, false)}
+          <p>Please log in to edit a tournament.</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>
+          ${generateFooter()}
+        `;
+        res.send(html);
+        return;
+    }
+    try {
+        const response = await apiRequest('get', `/tournaments/${tournamentId}`);
+        const tournament = response.data;
+        if (!tournament) return res.status(404).send('Tournament not found');
+        res.send(generateHeader('Edit Tournament - ' + tournamentId, tournamentId, 'planning', null, true) + generateTournamentInfo(tournament) + generateFooter());
+    } catch (error) {
+        console.error('Error fetching tournament:', error.message);
+        res.status(404).send('Tournament not found');
+    }
+});
+
+router.post('/planning/:id/update-tournament', async (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    const tournamentId = parseInt(req.params.id, 10);
+    if (!isLoggedIn) {
+        res.status(403).send('Unauthorized');
+        return;
+    }
+    const { title, date, location, lat, lon } = req.body;
+    try {
+        await apiRequest('put', `/tournaments/${tournamentId}`, { title, date, location, lat, lon }); // Update via API
+        res.redirect('/');
+    } catch (error) {
+        console.error('Error updating tournament:', error.message);
+        res.status(500).send('Server Error');
     }
 });
 
