@@ -73,5 +73,50 @@ router.get('/execution/:id/view4', async (req, res) => {
     }
 });
 
+router.get('/execution/:id/view5', async (req, res) => {
+    const tournamentId = parseInt(req.params.id, 10);
+    try {
+        console.log(`Fetching carded players for tournament ${tournamentId}...`);
+        const data = await getCardedPlayers(tournamentId);
+        console.log(`Carded players: ${data.length} items`);
+        const content = generateCardedPlayers(data);
+        const html = `${generateHeader('Carded Players', tournamentId, 'execution', 'view5')}<div id="content" hx-get="/execution/${tournamentId}/view5-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error in /execution/:id/view5:', error.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get('/execution/:id/view6', async (req, res) => {
+    const tournamentId = parseInt(req.params.id, 10);
+    try {
+        console.log(`Fetching matches by pitch for tournament ${tournamentId}...`);
+        const data = await getMatchesByPitch(tournamentId);
+        console.log(`Matches by pitch: ${data.length} items`);
+        const content = generateMatchesByPitch(data);
+        const html = `${generateHeader('Matches by Pitch', tournamentId, 'execution', 'view6')}<div id="content" hx-get="/execution/${tournamentId}/view6-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error in /execution/:id/view6:', error.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get('/execution/:id/view7', async (req, res) => {
+    const tournamentId = parseInt(req.params.id, 10);
+    try {
+        console.log(`Fetching finals results for tournament ${tournamentId}...`);
+        const data = await getFinalsResults(tournamentId);
+        console.log(`Finals results: ${data.length} items`);
+        const content = generateFinalsResults(data);
+        const html = `${generateHeader('Finals Results', tournamentId, 'execution', 'view7')}<div id="content" hx-get="/execution/${tournamentId}/view7-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error in /execution/:id/view7:', error.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
 
