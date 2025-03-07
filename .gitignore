@@ -3,3 +3,5 @@ node_modules
 *.swp
 dist/
 output.sql
+main-compiled.css
+.aider*
