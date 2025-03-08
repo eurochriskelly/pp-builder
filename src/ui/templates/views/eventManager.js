@@ -3,10 +3,19 @@ const { allowedViews } = require('../../config/allowedViews');
 function generateEventManager(tournamentId, uuid, isLoggedIn = false) {
     let html = '<div id="event-manager" style="margin: 20px 0;">';
     html += '<nav style="display: flex; gap: 10px; flex-wrap: wrap;">';
-    Object.keys(allowedViews).forEach((view) => {
-        const { title } = allowedViews[view] || 'unknown';
-        html += `<a href="/event/${uuid}/${view}" hx-get="/event/${uuid}/${view}" hx-target="body" hx-swap="outerHTML" style="padding: 8px 16px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">${title}</a>`;
+    
+    // Generate links from allowedViews
+    Object.entries(allowedViews).forEach(([key, view]) => {
+        html += `
+            <a href="/event/${uuid}/${key}" 
+               hx-get="/event/${uuid}/${key}" 
+               hx-target="body" 
+               hx-swap="outerHTML" 
+               style="padding: 8px 16px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">
+                ${view.title}
+            </a>`;
     });
+    
     html += '</nav>';
     html += '</div>';
 
