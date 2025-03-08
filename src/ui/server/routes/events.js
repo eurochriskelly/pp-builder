@@ -34,6 +34,14 @@ router.get('/event/:uuid/:view?', async (req, res) => {
         const isLoggedIn = !!req.session.user;
         const html = `
           ${generateHeader('Not Allowed', tournamentId, 'execution', null, isLoggedIn, false)}
+          <link rel="stylesheet" media="(min-width: 1000px)" href="/styles/desktop.css">
+          <link rel="stylesheet" media="(max-width: 999px)" href="/styles/mobile.css">
+          <style>
+            @media (max-width: 999px) {
+              #event-manager table { display: block; width: 100%; }
+              #event-manager table tr { display: block; margin-bottom: 10px; }
+            }
+          </style>
           <p>View not accessible via public URL.</p>
           ${generateEventManager(tournamentId, uuid, isLoggedIn)}
         }`;
