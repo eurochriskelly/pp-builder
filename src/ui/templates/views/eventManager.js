@@ -2,7 +2,7 @@ const { allowedViews } = require('../../config/allowedViews');
 
 function generateEventManager(tournamentId, uuid, isLoggedIn = false) {
     let html = '<div id="event-manager" style="margin: 20px 0;">';
-    html += '<nav style="display: flex; gap: 10px; flex-wrap: wrap;">';
+    html += '<nav style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">';
     
     // Generate links from allowedViews
     Object.entries(allowedViews).forEach(([key, view]) => {
@@ -11,7 +11,7 @@ function generateEventManager(tournamentId, uuid, isLoggedIn = false) {
                hx-get="/event/${uuid}/${key}" 
                hx-target="body" 
                hx-swap="outerHTML" 
-               style="padding: 8px 16px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">
+               style="padding: 12px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 10px; line-height: 40px; text-transform: uppercase;">
                 ${view.title}
             </a>`;
     });
@@ -22,6 +22,17 @@ function generateEventManager(tournamentId, uuid, isLoggedIn = false) {
     if (isLoggedIn) {
         html += `<script src="/scripts/tournamentSelectionScripts.js"></script>`;
     }
+    
+    html += `
+    <script>
+        // Replace competition headers
+        document.querySelectorAll('th').forEach(th => {
+            if (th.textContent.toLowerCase().includes('competition')) {
+                th.textContent = 'Comp';
+            }
+        });
+    </script>
+    `;
 
     return html;
 }
