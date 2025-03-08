@@ -1,11 +1,22 @@
 const express = require('express');
-const { getRecentMatches, getGroupFixtures, getGroupStandings, getKnockoutFixtures } = require('../../queries/matches');
+const { 
+    getCardedPlayers, 
+    getRecentMatches, 
+    getGroupFixtures, 
+    getGroupStandings, 
+    getKnockoutFixtures,
+    getMatchesByPitch,
+    getFinalsResults 
+} = require('../../queries/matches');
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const generateRecentView = require('../../templates/views/execution/recent');
 const generateGroupFixtures = require('../../templates/views/execution/groupFixtures');
 const generateGroupStandings = require('../../templates/views/execution/groupStandings');
 const generateKnockoutFixtures = require('../../templates/views/execution/knockoutFixtures');
+const generateCardedPlayers = require('../../templates/views/execution/cardedPlayers');
+const generateMatchesByPitch = require('../../templates/views/execution/matchesByPitch');
+const generateFinalsResults = require('../../templates/views/execution/finalsResults');
 
 const router = express.Router();
 
