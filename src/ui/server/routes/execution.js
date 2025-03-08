@@ -15,7 +15,7 @@ const generateGroupFixtures = require('../../templates/views/execution/groupFixt
 const generateGroupStandings = require('../../templates/views/execution/groupStandings');
 const generateKnockoutFixtures = require('../../templates/views/execution/knockoutFixtures');
 const generateCardedPlayers = require('../../templates/views/execution/cardedPlayers');
-const generateMatchesByPitch = require('../../templates/views/execution/matchesByPitch');
+const generateMatchesByPitch = require('../../templates/views/execution/matchesByPitch/index');
 const generateFinalsResults = require('../../templates/views/execution/finalsResults');
 
 const router = express.Router();

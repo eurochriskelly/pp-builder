@@ -3,7 +3,7 @@ const generateGroupFixtures = require('../templates/views/execution/groupFixture
 const generateGroupStandings = require('../templates/views/execution/groupStandings');
 const generateKnockoutFixtures = require('../templates/views/execution/knockoutFixtures');
 const generateCardedPlayers = require('../templates/views/execution/cardedPlayers');
-const generateMatchesByPitch = require('../templates/views/execution/matchesByPitch');
+const generateMatchesByPitch = require('../templates/views/execution/matchesByPitch/index');
 const generateFinalsResults = require('../templates/views/execution/finalsResults');
 
 const { 
