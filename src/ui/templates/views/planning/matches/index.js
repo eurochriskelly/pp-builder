@@ -15,9 +15,11 @@ module.exports = function generateMatchesPlanning(data) {
   html += '<button hx-get="/planning/' + data.tournamentId + '/import-fixtures" hx-target="body" hx-swap="outerHTML" class="bg-orange-500 text-white px-4 py-2 rounded ml-auto">Import Fixtures</button>';
   html += '</div>';
 
+  // Get matches in API's nextup order
+  // Primary sort by scheduledTime, then use nextup order as secondary sort
   const upcomingMatches = data.matches
     .filter(match => match.started === 'false')
-    .sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime) || a.id - b.id);
+
   const finishedMatches = data.matches
     .filter(match => match.started === 'true')
     .sort((a, b) => b.scheduledTime.localeCompare(a.scheduledTime) || b.id - b.id);

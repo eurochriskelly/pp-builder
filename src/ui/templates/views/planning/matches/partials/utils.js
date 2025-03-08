@@ -40,7 +40,8 @@ function generateMatchRow(row, index, tournamentId, isUpcoming, isNext = false) 
   const umpireCellClass = row.umpireTeam === 'TBD' && row.stage !== 'group' ? 'bg-orange-100' : '';
 
   let html = `<tr class="${rowClasses} ${isUpcoming ? 'upcoming-hidden-row' : 'finished-hidden-row'}" ${isUpcoming ? 'onmouseover="this.querySelector(\'.play-btn\').classList.remove(\'hidden\');" onmouseout="this.querySelector(\'.play-btn\').classList.add(\'hidden\');"' : ''}>`;
-  html += `<td class="relative bg-gray-500 text-white">${isUpcoming ? `<button class="play-btn hidden absolute left-1 top-1/2 -translate-y-1/2 bg-green-600 text-white rounded-full w-8 h-8 text-lg cursor-pointer" onclick="playNextNMatches(${index + 1}, '${tournamentId}')">▶</button>` : ''}${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
+  // Highlight next match cell with red background
+  html += `<td class="relative ${isNext ? 'bg-red-500 animate-pulse' : 'bg-gray-500'} text-white font-bold">${isUpcoming ? `<button class="play-btn hidden absolute left-1 top-1/2 -translate-y-1/2 bg-green-600 text-white rounded-full w-8 h-8 text-lg cursor-pointer" onclick="playNextNMatches(${index + 1}, '${tournamentId}')">▶</button>` : ''}${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
   html += `<td class="${row.stage === 'group' ? 'bg-orange-100' : 'bg-green-100'}">${row.grp || 'N/A'}</td>`;
   html += `<td><span class="text-white px-2.5 py-0.5 rounded-full text-sm font-bold uppercase inline-block max-w-full whitespace-nowrap overflow-hidden text-ellipsis" style="background-color: ${categoryColor}">${row.category || 'N/A'}</span></td>`;
   html += `<td>${processStage(row.stage)}</td>`;

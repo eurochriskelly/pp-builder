@@ -44,11 +44,18 @@ const csvRows = (csv) => {
 router.get('/planning/:id/matches', async (req, res) => {
     const tournamentId = parseInt(req.params.id, 10);
     try {
-        console.log(`Fetching all matches for tournament ${tournamentId}...`);
         const matches = await getAllMatches(tournamentId);
-        console.log(`Matches received: ${matches.length} items`);
+        
+        // Get the official nextup order from API
+        const nextupResponse = await apiRequest('get', `/tournaments/${tournamentId}/fixtures/nextup`);
+        const nextupOrder = nextupResponse.data.map(m => m.id);
+
         const isLoggedIn = !!req.session.user;
-        const content = generateMatchesPlanning({ tournamentId, matches });
+        const content = generateMatchesPlanning({ 
+            tournamentId, 
+            matches,
+            nextupOrder // Pass the API's ordering to the view
+        });
         const html = `
           ${generateHeader('Planning - Tournament ' + tournamentId, tournamentId, 'planning', null, isLoggedIn)}
           <div id="content">${content}</div>
