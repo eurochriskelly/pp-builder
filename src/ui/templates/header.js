@@ -1,6 +1,17 @@
-module.exports = function generateHeader(title, tournamentId = null, area = null, currentView = null, isLoggedIn = false, navigation = true) {
+const chevron = '❯' 
+
+module.exports = function generateHeader(
+  title,
+  tournamentId = null, 
+  area = null,
+  currentView = 'matches',
+  isLoggedIn = false,
+  navigation = true
+) {
+    console.log('currentView', currentView);
     const basePath = tournamentId ? (area === 'planning' ? `/planning/${tournamentId}` : `/execution/${tournamentId}`) : '';
     const viewTitles = {
+      'execution': {
         'recent': 'Most Recent Changes',
         'view2': 'Group Fixtures',
         'view3': 'Group Standings',
@@ -8,6 +19,11 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
         'view5': 'Carded Players',
         'view6': 'Matches by Pitch',
         'view7': 'Finals Results'
+      },
+      'planning': {
+        'matches': 'Simulate tournament',
+        'edit-tournament': 'Edit tournament',
+      }
     };
 
     let html = `
@@ -19,28 +35,7 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
             <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     `;
 
-    if (navigation) {
-        html += `
-            <script>
-                function toggleDropdown(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    const dropdown = event.target.closest('.dropdown, .login-dropdown');
-                    const isActive = dropdown.classList.contains('active');
-                    document.querySelectorAll('.dropdown, .login-dropdown').forEach(d => d.classList.remove('active'));
-                    if (!isActive) dropdown.classList.add('active');
-                }
-                document.addEventListener('click', function(event) {
-                    const dropdowns = document.querySelectorAll('.dropdown, .login-dropdown');
-                    dropdowns.forEach(dropdown => {
-                        if (!dropdown.contains(event.target)) {
-                            dropdown.classList.remove('active');
-                        }
-                    });
-                });
-            </script>
-        `;
-    }
+    if (navigation) html += `<script src="/scripts/navigation.js"></script>`;
 
     html += `
         </head>
@@ -54,24 +49,39 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
                 <div class="breadcrumbs">
                     <a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Home</a>
                     ${tournamentId ? `
-                        <span class="separator">>></span>
                         <div class="dropdown">
                             <a href="#" onclick="toggleDropdown(event)"${area ? ' class="active"' : ''}>${area === 'planning' ? 'Planning' : 'Execution'}</a>
                             <div class="dropdown-content">
-                                <a href="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}" hx-get="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}" hx-target="body" hx-swap="outerHTML">${area === 'planning' ? 'Execution' : 'Planning'}</a>
+                                 <a href="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}"
+                                    hx-get="${area === 'planning' ? '/execution/' + tournamentId + '/recent' : '/planning/' + tournamentId}"
+                                    hx-target="body" hx-swap="outerHTML">${area === 'planning' ? 'Execution' : 'Planning'}</a>
+                                 
                             </div>
                         </div>
-                        ${area === 'execution' && currentView ? `
-                            <span class="separator">>></span>
+i<!-- Views breadcrumbs -->
+                        ${area === 'execution' && currentView 
+                          ? `
+                            <span class="separator">${chevron}</span>
                             <div class="dropdown">
-                                <a href="#" onclick="toggleDropdown(event)" class="active">${viewTitles[currentView]}</a>
+                                <a href="#" onclick="toggleDropdown(event)" class="active">${viewTitles.execution[currentView]}</a>
                                 <div class="dropdown-content">
-                                    ${Object.entries(viewTitles).map(([key, value]) => `
+                                    ${Object.entries(viewTitles.execution).map(([key, value]) => `
                                         ${key !== currentView ? `<a href="${basePath}/${key}" hx-get="${basePath}/${key}" hx-target="body" hx-swap="outerHTML">${value}</a>` : ''}
                                     `).join('')}
                                 </div>
                             </div>
-                        ` : ''}
+                          ` : '' }
+                        ${area === 'planning' && currentView ? `
+                            <span class="separator">${chevron}</span>
+                            <div class="dropdown">
+                                <a href="#" onclick="toggleDropdown(event)" class="active">${viewTitles.planning[currentView]}</a>
+                                <div class="dropdown-content">
+                                    ${Object.entries(viewTitles.planning).map(([key, value]) => `
+                                        ${key !== currentView ? `<a href="${basePath}/${key}" hx-get="${basePath}/${key}" hx-target="body" hx-swap="outerHTML">${value}</a>` : ''}
+                                    `).join('')}
+                                </div>
+                            </div>
+                           ` : ''}
                     ` : ''}
                 </div>
                 <div class="login-dropdown">

@@ -14,8 +14,30 @@ const router = express.Router();
 
 const csvRows = (csv) => {
     const lines = csv.split('\n').filter(x => x.trim());
-    const delim = lines[0].includes(',') ? ',' : ';';
-    const rows = lines.slice(1).map(row => row.split(delim));
+    // Try comma first, then semicolon if that fails
+    let delim = ',';
+    if (!lines[0].includes(',')) {
+        delim = ';';
+    }
+    // Handle quoted fields that may contain the delimiter
+    const rows = lines.slice(1).map(row => {
+        const result = [];
+        let inQuotes = false;
+        let currentField = '';
+        for (let i = 0; i < row.length; i++) {
+            const char = row[i];
+            if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === delim && !inQuotes) {
+                result.push(currentField.trim());
+                currentField = '';
+            } else {
+                currentField += char;
+            }
+        }
+        result.push(currentField.trim()); // Add last field
+        return result;
+    });
     return rows;
 };
 
