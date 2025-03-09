@@ -60,6 +60,7 @@ async function getGroupFixtures(tournamentId) {
         goals2: fixture.goals2,
         points2: fixture.points2,
         umpireTeam: fixture.umpireTeam || 'N/A',
+        outcome: fixture.outcome,
         started: fixture.started || 'false',
     }));
 }

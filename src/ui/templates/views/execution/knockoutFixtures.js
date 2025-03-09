@@ -23,8 +23,22 @@ module.exports = function generateKnockoutFixtures(data) {
         html += `<td>${row.scheduledTime || 'N/A'}</td>`;
         const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
         const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
-        const team1Score = formatScore(row.goals1, row.points1);
-        const team2Score = formatScore(row.goals2, row.points2);
+        let team1Score = formatScore(row.goals1, row.points1);
+        let team2Score = formatScore(row.goals2, row.points2);
+        if (row.outcome) {
+            if (row.outcome === 'shared') {
+                team1Score = 'shared';
+                team2Score = 'shared';
+            } else if (row.outcome === 'conceded') {
+                if (row.goals1 === 0 && row.points1 === 0 && row.goals2 === 0 && row.points2 === 1) {
+                    team1Score = 'concede';
+                    team2Score = 'walked';
+                } else if (row.goals2 === 0 && row.points2 === 0 && row.goals1 === 0 && row.points1 === 1) {
+                    team1Score = 'walked';
+                    team2Score = 'concede';
+                }
+            }
+        }
         const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
         const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
         html += `<td style="${team1Style}">${team1Name || 'N/A'}</td>`;
