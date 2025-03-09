@@ -127,6 +127,7 @@ async function getFinalsResults(tournamentId) {
         goals2: result.goals2,
         points2: result.points2,
         winner: result.winner || 'N/A',
+        outcome: result.outcome || 'played',
     }));
 }
 

@@ -44,6 +44,7 @@ async function getGroupStandings(tournamentId) {
 
 async function getFinalsResults(tournamentId) {
     const data = await apiRequest('get', `/tournaments/${tournamentId}/finals-results`);
+  console.log('xxx', data, 'yyy')
     return data.map(result => ({
         category: result.category || 'N/A',
         division: result.division || 'N/A',

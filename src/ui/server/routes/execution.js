@@ -73,7 +73,6 @@ router.get('/execution/:id/view4', async (req, res) => {
     try {
         console.log(`Fetching knockout fixtures for tournament ${tournamentId}...`);
         const data = await getKnockoutFixtures(tournamentId);
-        console.log(`Knockout fixtures: ${data.length} items`);
         const content = generateKnockoutFixtures(data);
         const isLoggedIn = !!req.session.user;
         const html = `${generateHeader('Knockout Fixtures', tournamentId, 'execution', 'view4', isLoggedIn, isLoggedIn)}<div id="content" hx-get="/execution/${tournamentId}/view4-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;

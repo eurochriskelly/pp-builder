@@ -7,12 +7,15 @@
     /* Removed padding: 0 to let Tailwind utilities apply */
 }
 .score-winner {
+  text-transform: uppercase;
     color: darkgreen;
 }
 .score-loser {
+  text-transform: uppercase;
     color: darkred;
 }
 .score-draw {
+  text-transform: uppercase;
     color: darkorange;
 }
 

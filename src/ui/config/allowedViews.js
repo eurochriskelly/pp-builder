@@ -23,7 +23,7 @@ const allowedViews = {
         fetch: getFinalsResults
     },
     'view2': {
-        title: 'Group Fixtures',
+        title: 'Group Games',
         generator: generateGroupFixtures,
         fetch: getGroupFixtures
     },
@@ -33,7 +33,7 @@ const allowedViews = {
         fetch: getGroupStandings
     },
     'view4': {
-        title: 'Knockout Fixtures',
+        title: 'Knockout Games',
         generator: generateKnockoutFixtures,
         fetch: getKnockoutFixtures
     }
