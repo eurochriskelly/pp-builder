@@ -17,6 +17,11 @@ const {
 } = require('../queries/matches');
 
 const allowedViews = {
+    'view7': {
+        title: 'Finals Results',
+        generator: generateFinalsResults,
+        fetch: getFinalsResults
+    },
     'recent': {
         title: 'Recent Matches',
         hidden: true,
@@ -37,11 +42,6 @@ const allowedViews = {
         title: 'Knockout Fixtures',
         generator: generateKnockoutFixtures,
         fetch: getKnockoutFixtures
-    },
-    'view7': {
-        title: 'Finals Results',
-        generator: generateFinalsResults,
-        fetch: getFinalsResults
     }
 };
 
