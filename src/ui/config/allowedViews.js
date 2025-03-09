@@ -22,12 +22,6 @@ const allowedViews = {
         generator: generateFinalsResults,
         fetch: getFinalsResults
     },
-    'recent': {
-        title: 'Recent Matches',
-        hidden: true,
-        generator: generateRecentView,
-        fetch: getRecentMatches
-    },
     'view2': {
         title: 'Group Fixtures',
         generator: generateGroupFixtures,
