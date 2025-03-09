@@ -3,7 +3,7 @@ const { processTeamName, formatScore } = require('../../../utils');
 module.exports = function generateGroupFixtures(data) {
     let html = '<div id="group-fixtures">';
     
-    const headers = ['👥', '🕒', 'Team 1', 'Score', 'Team 2', 'Score', 'Umpire'];
+    const headers = ['Team 1', 'Score', 'Team 2', 'Score', 'Umpire'];
     let currentCategory = null;
 
     data.forEach(row => {
@@ -13,14 +13,12 @@ module.exports = function generateGroupFixtures(data) {
             html += `
                 <table>
                 <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center;">${currentCategory}</th></tr>
-                <tr>${headers.map(h => h === 'ID' ? `<th class="id-column">${h}</th>` : `<th>${h}</th>`).join('')}</tr>
+                <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
             `;
         }
 
         const rowStyle = row.started === 'true' ? 'font-weight:bold;' : '';
         html += `<tr style="${rowStyle}">`;
-        html += `<td>${row.g || 'N/A'}</td>`;
-        html += `<td>${row.scheduledTime || 'N/A'}</td>`;
 
         const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
         const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
