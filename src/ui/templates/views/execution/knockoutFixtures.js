@@ -40,10 +40,26 @@ module.exports = function generateKnockoutFixtures(data) {
         const specialScores = ['shared', 'walked', 'concede'];
         const score1ExtraStyle = specialScores.includes(team1Score) ? 'color: darkorange;' : '';
         const score2ExtraStyle = specialScores.includes(team2Score) ? 'color: darkorange;' : '';
-        html += `<td style="${team1Style}">${team1Name || 'N/A'}</td>`;
-        html += `<td style="${score1Style} ${score1ExtraStyle} text-transform: uppercase;">${team1Score.toUpperCase()}</td>`;
-        html += `<td style="${score2Style}">${team2Name || 'N/A'}</td>`;
-        html += `<td style="${score2Style} ${score2ExtraStyle} text-transform: uppercase;">${team2Score.toUpperCase()}</td>`;
+        const extractScore = score => {
+            const match = score.match(/\((\d+)\)/);
+            return match ? parseInt(match[1], 10) : 0;
+        };
+        const score1Value = extractScore(team1Score);
+        const score2Value = extractScore(team2Score);
+        let team1ScoreClass = '', team2ScoreClass = '';
+        if (score1Value > score2Value) {
+            team1ScoreClass = 'score-winner';
+            team2ScoreClass = 'score-loser';
+        } else if (score1Value < score2Value) {
+            team1ScoreClass = 'score-loser';
+            team2ScoreClass = 'score-winner';
+        } else {
+            team1ScoreClass = team2ScoreClass = 'score-draw';
+        }
+        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
+        html += `<td class="${team1ScoreClass}" style="text-transform: uppercase;">${team1Score.toUpperCase()}</td>`;
+        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass}" style="text-transform: uppercase;">${team2Score.toUpperCase()}</td>`;
         const { teamName: umpireTeamName, teamStyle: umpireTeamStyle } = processTeamName(row.umpireTeam);
         html += `<td style="${umpireTeamStyle}">${umpireTeamName || 'N/A'}</td>`;
         html += '</tr>';
