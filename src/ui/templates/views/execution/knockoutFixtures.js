@@ -37,10 +37,13 @@ module.exports = function generateKnockoutFixtures(data) {
         }
         const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
         const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
+        const specialScores = ['shared', 'walked', 'concede'];
+        const score1ExtraStyle = specialScores.includes(team1Score) ? 'color: darkorange;' : '';
+        const score2ExtraStyle = specialScores.includes(team2Score) ? 'color: darkorange;' : '';
         html += `<td style="${team1Style}">${team1Name || 'N/A'}</td>`;
-        html += `<td style="${score1Style}">${team1Score}</td>`;
-        html += `<td style="${team2Style}">${team2Name || 'N/A'}</td>`;
-        html += `<td style="${score2Style}">${team2Score}</td>`;
+        html += `<td style="${score1Style} ${score1ExtraStyle} text-transform: uppercase;">${team1Score.toUpperCase()}</td>`;
+        html += `<td style="${score2Style}">${team2Name || 'N/A'}</td>`;
+        html += `<td style="${score2Style} ${score2ExtraStyle} text-transform: uppercase;">${team2Score.toUpperCase()}</td>`;
         const { teamName: umpireTeamName, teamStyle: umpireTeamStyle } = processTeamName(row.umpireTeam);
         html += `<td style="${umpireTeamStyle}">${umpireTeamName || 'N/A'}</td>`;
         html += '</tr>';
