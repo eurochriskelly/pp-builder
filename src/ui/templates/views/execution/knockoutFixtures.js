@@ -1,4 +1,5 @@
 const { processTeamName, formatScore } = require('../../../utils');
+const { formatCategory } = require('../../../utils/categoryFormatter');
 
 module.exports = function generateKnockoutFixtures(data) {
     let html = '<div id="knockout-fixtures">';
@@ -11,7 +12,7 @@ module.exports = function generateKnockoutFixtures(data) {
             currentCategory = row.category;
             html += `
                 <table>
-                <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center;">${currentCategory}</th></tr>
+                <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center;">${formatCategory(currentCategory)}</th></tr>
                 <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
             `;
         }
