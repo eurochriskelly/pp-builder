@@ -25,18 +25,16 @@ module.exports = function generateKnockoutFixtures(data) {
         const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
         let team1Score = formatScore(row.goals1, row.points1);
         let team2Score = formatScore(row.goals2, row.points2);
-        if (row.outcome) {
-            if (row.outcome === 'shared') {
+        if (row.outcome === 'not played') {
+            if (row.goals1 === 0 && row.points1 === 0 && row.goals2 === 0 && row.points2 === 1) {
+                team1Score = 'concede';
+                team2Score = 'walked';
+            } else if (row.goals2 === 0 && row.points2 === 0 && row.goals1 === 0 && row.points1 === 1) {
+                team1Score = 'walked';
+                team2Score = 'concede';
+            } else if (row.goals1 === 0 && row.points1 === 0 && row.goals2 === 0 && row.points2 === 0) {
                 team1Score = 'shared';
                 team2Score = 'shared';
-            } else if (row.outcome === 'conceded') {
-                if (row.goals1 === 0 && row.points1 === 0 && row.goals2 === 0 && row.points2 === 1) {
-                    team1Score = 'concede';
-                    team2Score = 'walked';
-                } else if (row.goals2 === 0 && row.points2 === 0 && row.goals1 === 0 && row.points1 === 1) {
-                    team1Score = 'walked';
-                    team2Score = 'concede';
-                }
             }
         }
         const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
