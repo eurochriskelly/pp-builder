@@ -12,7 +12,7 @@ module.exports = function generateKnockoutFixtures(data) {
             html += `
                 <table>
                 <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center;">${currentCategory}</th></tr>
-                <tr>${headers.map(h => h === 'ID' ? `<th class="id-column">${h}</th>` : `<th>${h}</th>`).join('')}</tr>
+                <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
             `;
         }
         const rowStyle = row.started === 'true' ? 'font-weight:bold;' : '';
