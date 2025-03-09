@@ -28,10 +28,26 @@ module.exports = function generateFinalsResults(data) {
             winnerName = processedWinner.teamName;
             winnerStyle = processedWinner.teamStyle;
         }
-        html += `<td style="${team1Style}">${team1Name || 'N/A'}</td>`;
-        html += `<td>${team1Score || 'N/A'}</td>`;
-        html += `<td style="${team2Style}">${team2Name || 'N/A'}</td>`;
-        html += `<td>${team2Score || 'N/A'}</td>`;
+        const extractScore = score => {
+            const match = score.match(/\((\d+)\)/);
+            return match ? parseInt(match[1], 10) : 0;
+        };
+        const score1Value = extractScore(team1Score);
+        const score2Value = extractScore(team2Score);
+        let team1ScoreClass = '', team2ScoreClass = '';
+        if (score1Value > score2Value) {
+            team1ScoreClass = 'score-winner';
+            team2ScoreClass = 'score-loser';
+        } else if (score1Value < score2Value) {
+            team1ScoreClass = 'score-loser';
+            team2ScoreClass = 'score-winner';
+        } else {
+            team1ScoreClass = team2ScoreClass = 'score-draw';
+        }
+        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
+        html += `<td class="${team1ScoreClass}">${team1Score || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass}">${team2Score || 'N/A'}</td>`;
         html += `<td style="${winnerStyle}">${winnerName}</td>`;
         html += '</tr>';
     });

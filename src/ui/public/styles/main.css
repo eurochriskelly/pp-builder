@@ -6,6 +6,15 @@
     box-sizing: border-box;
     /* Removed padding: 0 to let Tailwind utilities apply */
 }
+.score-winner {
+    color: darkgreen;
+}
+.score-loser {
+    color: darkred;
+}
+.score-draw {
+    color: darkorange;
+}
 
 body {
     font-family: 'Arial', sans-serif;

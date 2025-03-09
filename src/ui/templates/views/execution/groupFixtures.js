@@ -27,10 +27,26 @@ module.exports = function generateGroupFixtures(data) {
         const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
         const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
 
-        html += `<td style="${team1Style}">${team1Name || 'N/A'}</td>`;
-        html += `<td style="${score1Style}">${team1Score}</td>`;
-        html += `<td style="${team2Style}">${team2Name || 'N/A'}</td>`;
-        html += `<td style="${score2Style}">${team2Score}</td>`;
+        const extractScore = score => {
+            const match = score.match(/\((\d+)\)/);
+            return match ? parseInt(match[1], 10) : 0;
+        };
+        const score1Value = extractScore(team1Score);
+        const score2Value = extractScore(team2Score);
+        let team1ScoreClass = '', team2ScoreClass = '';
+        if (score1Value > score2Value) {
+            team1ScoreClass = 'score-winner';
+            team2ScoreClass = 'score-loser';
+        } else if (score1Value < score2Value) {
+            team1ScoreClass = 'score-loser';
+            team2ScoreClass = 'score-winner';
+        } else {
+            team1ScoreClass = team2ScoreClass = 'score-draw';
+        }
+        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
+        html += `<td class="${team1ScoreClass}">${team1Score}</td>`;
+        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass}">${team2Score}</td>`;
         const { teamName: umpireTeamName, teamStyle: umpireTeamStyle } = processTeamName(row.umpireTeam);
         html += `<td style="${umpireTeamStyle}">${umpireTeamName || 'N/A'}</td>`;
         html += '</tr>';
