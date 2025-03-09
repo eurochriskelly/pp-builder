@@ -3,7 +3,7 @@ const { processTeamName, formatScore } = require('../../../utils');
 module.exports = function generateFinalsResults(data) {
     let html = '<div id="finals-results">';
     let currentCategory = null;
-    const headers = ['Division', 'Team 1', 'Score', 'Team 2', 'Score', 'Winner'];
+    const headers = ['Division', 'Team 1', 'Score', 'Team 2', 'Score'];
     
     html += `<table><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
     data.forEach(row => {
@@ -44,11 +44,10 @@ module.exports = function generateFinalsResults(data) {
         } else {
             team1ScoreClass = team2ScoreClass = 'score-draw';
         }
-        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
-        html += `<td class="${team1ScoreClass}">${team1Score || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass}">${team2Score || 'N/A'}</td>`;
-        html += `<td style="${winnerStyle}">${winnerName}</td>`;
+        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name !== 'N/A' ? '<strong>' + team1Name + '</strong>' : team1Name}</td>`;
+        html += `<td class="${team1ScoreClass}">${team1Score !== 'N/A' ? '<strong>' + team1Score + '</strong>' : team1Score}</td>`;
+        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name !== 'N/A' ? '<strong>' + team2Name + '</strong>' : team2Name}</td>`;
+        html += `<td class="${team2ScoreClass}">${team2Score !== 'N/A' ? '<strong>' + team2Score + '</strong>' : team2Score}</td>`;
         html += '</tr>';
     });
     html += '</table>';
