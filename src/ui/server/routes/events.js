@@ -26,7 +26,7 @@ async function getTournamentAndHandleErrors(uuid, res) {
 
 router.get('/event/:uuid/:view?', async (req, res) => {
     const uuid = req.params.uuid;
-    const view = req.params.view || 'recent'; // Default to 'recent' if no view provided
+    const view = req.params.view || 'view7'; // Default to 'finals results' if no view provided
     const tournament = await getTournamentAndHandleErrors(uuid, res);
     if (!tournament) return;
     const tournamentId = tournament.id;
