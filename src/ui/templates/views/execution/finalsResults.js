@@ -19,6 +19,20 @@ module.exports = function generateFinalsResults(data) {
         const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
         const team1Score = formatScore(row.goals1, row.points1);
         const team2Score = formatScore(row.goals2, row.points2);
+        let team1ScoreFinal = team1Score;
+        let team2ScoreFinal = team2Score;
+        if (row.outcome === 'not played') {
+            if (row.goals1 === 0 && row.points1 === 0 && row.goals2 === 0 && row.points2 === 1) {
+                team1ScoreFinal = 'concede';
+                team2ScoreFinal = 'walked';
+            } else if (row.goals2 === 0 && row.points2 === 0 && row.goals1 === 0 && row.points1 === 1) {
+                team1ScoreFinal = 'walked';
+                team2ScoreFinal = 'concede';
+            } else if (row.goals1 === 0 && row.points1 === 0 && row.goals2 === 0 && row.points2 === 0) {
+                team1ScoreFinal = 'shared';
+                team2ScoreFinal = 'shared';
+            }
+        }
         let winnerName = row.winner || 'N/A';
         let winnerStyle = '';
         if (winnerName === 'Draw') {
@@ -32,8 +46,8 @@ module.exports = function generateFinalsResults(data) {
             const match = score.match(/\((\d+)\)/);
             return match ? parseInt(match[1], 10) : 0;
         };
-        const score1Value = extractScore(team1Score);
-        const score2Value = extractScore(team2Score);
+        const score1Value = extractScore(team1ScoreFinal);
+        const score2Value = extractScore(team2ScoreFinal);
         let team1ScoreClass = '', team2ScoreClass = '';
         if (score1Value > score2Value) {
             team1ScoreClass = 'score-winner';
@@ -45,9 +59,9 @@ module.exports = function generateFinalsResults(data) {
             team1ScoreClass = team2ScoreClass = 'score-draw';
         }
         html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name !== 'N/A' ? '<strong>' + team1Name + '</strong>' : team1Name}</td>`;
-        html += `<td class="${team1ScoreClass}">${team1Score !== 'N/A' ? '<strong>' + team1Score + '</strong>' : team1Score}</td>`;
+        html += `<td class="${team1ScoreClass}">${team1ScoreFinal !== 'N/A' ? '<strong>' + team1ScoreFinal + '</strong>' : team1ScoreFinal}</td>`;
         html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name !== 'N/A' ? '<strong>' + team2Name + '</strong>' : team2Name}</td>`;
-        html += `<td class="${team2ScoreClass}">${team2Score !== 'N/A' ? '<strong>' + team2Score + '</strong>' : team2Score}</td>`;
+        html += `<td class="${team2ScoreClass}">${team2ScoreFinal !== 'N/A' ? '<strong>' + team2ScoreFinal + '</strong>' : team2ScoreFinal}</td>`;
         html += '</tr>';
     });
     html += '</table>';
