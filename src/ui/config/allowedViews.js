@@ -19,6 +19,7 @@ const {
 const allowedViews = {
     'recent': {
         title: 'Recent Matches',
+        hidden: true,
         generator: generateRecentView,
         fetch: getRecentMatches
     },
@@ -36,11 +37,6 @@ const allowedViews = {
         title: 'Knockout Fixtures',
         generator: generateKnockoutFixtures,
         fetch: getKnockoutFixtures
-    },
-    'view6': {
-        title: 'Matches by Pitch',
-        generator: generateMatchesByPitch,
-        fetch: getMatchesByPitch
     },
     'view7': {
         title: 'Finals Results',
