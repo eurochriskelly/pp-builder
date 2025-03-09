@@ -3,7 +3,7 @@ const { processTeamName, formatScore } = require('../../../utils');
 module.exports = function generateKnockoutFixtures(data) {
     let html = '<div id="knockout-fixtures">';
     let currentCategory = null;
-    const headers = ['Stage', '🕒', 'Team 1', 'Score', 'Team 2', 'Score', 'Umpire Team'];
+    const headers = ['Stage', '🕒', 'Team 1', 'Score', 'Team 2', 'Score'];
     
     data.forEach(row => {
         if (row.category !== currentCategory) {
@@ -60,8 +60,6 @@ module.exports = function generateKnockoutFixtures(data) {
         html += `<td class="${team1ScoreClass}" style="text-transform: uppercase;">${team1Score.toUpperCase()}</td>`;
         html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
         html += `<td class="${team2ScoreClass}" style="text-transform: uppercase;">${team2Score.toUpperCase()}</td>`;
-        const { teamName: umpireTeamName, teamStyle: umpireTeamStyle } = processTeamName(row.umpireTeam);
-        html += `<td style="${umpireTeamStyle}">${umpireTeamName || 'N/A'}</td>`;
         html += '</tr>';
     });
     if (currentCategory !== null) html += '</table>';
