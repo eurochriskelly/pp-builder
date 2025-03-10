@@ -11,7 +11,7 @@ module.exports = function generateGroupStandings(data) {
             html += '<table>';
             html += `
                 <tr><th colspan="8" style="background-color: #e6e6e6; text-align: center;">Group ${groupData.groupName}</th></tr>
-                <tr>${['Team', '# Matches', 'Wins', 'Draws', 'Losses', 'Points From', 'Points Diff', 'Total Points'].map(h => `<th>${h}</th>`).join('')}</tr>
+                <tr>${['Team', 'Played', 'Wins', 'Draws', 'Losses', 'Scores For', 'Score diff', 'Points'].map(h => `<th>${h}</th>`).join('')}</tr>
             `;
             for (const row of groupData.rows) {
                 html += '<tr>';

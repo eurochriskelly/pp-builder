@@ -3,7 +3,7 @@ const { processTeamName, formatScore } = require('../../../utils');
 module.exports = function generateFinalsResults(data) {
     let html = '<div id="finals-results">';
     let currentCategory = null;
-    const headers = ['Division', 'Team 1', 'Score', 'Team 2', 'Score'];
+    const headers = ['Level', 'Team 1', 'Score', 'Team 2', 'Score'];
     
     html += `<table><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
     data.forEach(row => {
