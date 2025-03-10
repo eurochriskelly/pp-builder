@@ -4,7 +4,7 @@ const { formatCategory } = require('../../../utils/categoryFormatter');
 module.exports = function generateKnockoutFixtures(data) {
     let html = '<div id="knockout-fixtures">';
     let currentCategory = null;
-    const headers = ['Stage', '🕒', 'Team 1', 'Score', 'Team 2', 'Score'];
+    const headers = ['Stage', 'Team 1', 'Score', 'Team 2', 'Score'];
     
     data.forEach(row => {
         if (row.category !== currentCategory) {
@@ -19,7 +19,6 @@ module.exports = function generateKnockoutFixtures(data) {
         const rowStyle = row.started === 'true' ? 'font-weight:bold;' : '';
         html += `<tr style="${rowStyle}">`;
         html += `<td>${row.stage ? formatCategory(row.stage) : 'N/A'}</td>`;
-        html += `<td>${row.scheduledTime || 'N/A'}</td>`;
         const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
         const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
         let team1Score = formatScore(row.goals1, row.points1);
