@@ -5,7 +5,7 @@ module.exports = function generateFinalsResults(data) {
     let currentCategory = null;
     const headers = ['Level', 'Team 1', 'Score', 'Team 2', 'Score'];
     
-    html += `<table><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+    html += `<table><tr>${headers.map(h => `<th style="text-align: left;">${h}</th>`).join('')}</tr>`;
     data.forEach(row => {
         if (row.category !== currentCategory) {
             currentCategory = row.category;
