@@ -1,7 +1,11 @@
 const { allowedViews } = require('../../config/allowedViews');
 
-function generateEventManager(tournamentId, uuid, isLoggedIn = false) {
+function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false) {
     let html = '<div id="event-manager" style="margin: 20px 0;">';
+    html += `<div style="text-align: center; margin-bottom: 20px;">
+                <h2>${tournament.Title || tournament.title || 'Event'}</h2>
+                <p>${tournament.Date ? tournament.Date.substring(0,10) : tournament.date || ''} | ${tournament.Location || tournament.location || ''}</p>
+             </div>`;
     html += '<nav style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">';
     
     // Generate links from allowedViews

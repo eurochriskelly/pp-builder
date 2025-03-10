@@ -43,7 +43,7 @@ router.get('/event/:uuid/:view?', async (req, res) => {
             }
           </style>
           <p>View not accessible via public URL.</p>
-          ${generateEventManager(tournamentId, uuid, isLoggedIn)}
+          ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)}
         }`;
         return res.status(403).send(html);
     }
@@ -53,7 +53,7 @@ router.get('/event/:uuid/:view?', async (req, res) => {
     const content = view === 'recent' ? generator(data.matches, data.count) : generator(data); // Handle 'recent' special case
     const html = `
       <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-        ${generateEventManager(tournamentId, uuid, isLoggedIn)}
+        ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)}
       </div>
       ${generateHeader(title, tournamentId, 'execution', view, isLoggedIn, false)}
       <div id="content" hx-get="/event/${uuid}/${view}-update" hx-trigger="every 30s" hx-swap="innerHTML">
