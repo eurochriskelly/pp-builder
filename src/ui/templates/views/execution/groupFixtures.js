@@ -13,7 +13,7 @@ module.exports = function generateGroupFixtures(data) {
             html += `
                 <table>
                 <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center;">${currentCategory}</th></tr>
-                <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+                <tr>${headers.map(h => `<th style="text-align: left;">${h}</th>`).join('')}</tr>
             `;
         }
 
