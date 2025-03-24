@@ -25,6 +25,8 @@ function formatCategory(category) {
             part2 = 'FINAL';
         } else if (part2 === '3rd4th') {
             part2 = '3/4th';
+        } else if (part2 === '4th5th') {
+            part2 = '4/5th';
         } else {
             part2 = part2.toUpperCase();
         }
