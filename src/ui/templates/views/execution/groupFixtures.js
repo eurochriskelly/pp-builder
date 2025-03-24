@@ -12,13 +12,12 @@ module.exports = function generateGroupFixtures(data) {
             currentCategory = row.category;
             html += `
                 <table>
-                <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center;">${currentCategory}</th></tr>
-                <tr>${headers.map(h => `<th style="text-align: left;">${h}</th>`).join('')}</tr>
+                <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center;font-size:2em">${currentCategory}</th></tr>
+                <tr>${headers.map(h => `<th style="color:#999;font-weight:normal;text-align: left;">${h}</th>`).join('')}</tr>
             `;
         }
 
-        const rowStyle = row.started === 'true' ? 'font-weight:bold;' : '';
-        html += `<tr style="${rowStyle}">`;
+        html += '<tr>';
 
         const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
         const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
@@ -34,6 +33,8 @@ module.exports = function generateGroupFixtures(data) {
         const score1Value = extractScore(team1Score);
         const score2Value = extractScore(team2Score);
         let team1ScoreClass = '', team2ScoreClass = '';
+        const team1Bold = score1Value > score2Value ? 'font-weight:bold;' : '';
+        const team2Bold = score2Value > score1Value ? 'font-weight:bold;' : '';
         if (score1Value > score2Value) {
             team1ScoreClass = 'score-winner';
             team2ScoreClass = 'score-loser';
@@ -43,10 +44,10 @@ module.exports = function generateGroupFixtures(data) {
         } else {
             team1ScoreClass = team2ScoreClass = 'score-draw';
         }
-        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
-        html += `<td class="${team1ScoreClass}">${team1Score}</td>`;
-        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass}">${team2Score}</td>`;
+        html += `<td class="${team1ScoreClass}" style="${team1Style}${team1Bold}">${team1Name || 'N/A'}</td>`;
+        html += `<td class="${team1ScoreClass}" style="${team1Bold}">${team1Score}</td>`;
+        html += `<td class="${team2ScoreClass}" style="${team2Style}${team2Bold}">${team2Name || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass}" style="${team2Bold}">${team2Score}</td>`;
         html += '</tr>';
     });
 
