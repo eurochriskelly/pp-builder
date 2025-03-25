@@ -192,14 +192,17 @@ body > article.execution .team-winner {
 
 body > article.execution .category-header {
     @apply bg-gray-300 text-center text-4xl font-bold p-2;
+  font-size: 2rem !important;
 }
 
 body > article.execution .group-header {
     @apply bg-gray-200 text-center text-xl p-2;
+  font-size: 1.6rem !important;
 }
 
 body > article.execution .table-header {
     @apply text-gray-500 text-left font-normal;
+    background-color: #eee;
 }
 
 body > article.execution .id-column {
@@ -217,14 +220,22 @@ body > article.execution .knockout-table .col-score {
     width: 15% !important;
 }
 
+body > article.execution .standings-table tr th {
+  background-color: #eee;
+}
+body > article.execution .standings-table tr>th.table-header {
+  height: 9rem;
+  whitespace: no-wrap;
+}
 body > article.execution .standings-table .col-team {
-    width: 38% !important;
+  width: 70% !important;
+  @apply uppercase;
 }
-body > article.execution .standings-table .col-stat {
-    width: 8% !important;
+body > article.execution .standings-table td .col-stat {
+    width: 60px !important;
 }
-body > article.execution .standings-table .col-stat-wide {
-    width: 10% !important;
+body > article.execution .standings-table td .col-stat-wide {
+    width: 60px !important;
 }
 
 body > article.execution .fixtures-table .col-team {
@@ -302,4 +313,11 @@ hr {
     padding: 20px 10px !important;
     box-sizing: border-box;
   }
+}
+
+.vertical-head {
+  transform: rotate(90deg); /* or -90deg */
+  transform-origin: center middle; 
+  width: 9rem;
+  white-space: nowrap;
 }
