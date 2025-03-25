@@ -161,9 +161,45 @@ tr:hover {
     @apply bg-green-100 font-bold;
 }
 
-/* Grouped tables */
-table tr th[colspan] {
+/* Execution view specific styles */
+body > article.execution {
+    @apply p-4;
+}
+
+body > article.execution table {
+    @apply w-full border-collapse bg-white shadow-md rounded-lg mb-5;
+}
+
+body > article.execution table tr th[colspan] {
     @apply bg-gray-300 text-center text-xl p-2;
+}
+
+body > article.execution .score-winner {
+    @apply uppercase text-green-800 font-bold;
+}
+
+body > article.execution .score-loser {
+    @apply uppercase text-red-800;
+}
+
+body > article.execution .score-draw {
+    @apply uppercase text-orange-600;
+}
+
+body > article.execution .category-header {
+    @apply bg-gray-300 text-center text-2xl font-bold p-2;
+}
+
+body > article.execution .group-header {
+    @apply bg-gray-200 text-center text-xl p-2;
+}
+
+body > article.execution .table-header {
+    @apply text-gray-500 text-left font-normal;
+}
+
+body > article.execution .id-column {
+    @apply bg-green-100 font-bold;
 }
 
 /* HR */
