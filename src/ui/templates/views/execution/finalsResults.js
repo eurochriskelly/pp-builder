@@ -58,11 +58,11 @@ module.exports = function generateFinalsResults(data) {
         } else {
             team1ScoreClass = team2ScoreClass = 'score-draw';
         }
-        const team1Bold = score1Value > score2Value ? 'font-weight:bold;' : '';
-        const team2Bold = score2Value > score1Value ? 'font-weight:bold;' : '';
-        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
+        const team1WinnerClass = score1Value > score2Value ? 'team-winner' : '';
+        const team2WinnerClass = score2Value > score1Value ? 'team-winner' : '';
+        html += `<td class="${team1ScoreClass} ${team1WinnerClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
         html += `<td class="${team1ScoreClass}">${team1ScoreFinal || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass} ${team2WinnerClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
         html += `<td class="${team2ScoreClass}">${team2ScoreFinal || 'N/A'}</td>`;
         html += '</tr>';
     });

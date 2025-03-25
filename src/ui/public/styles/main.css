@@ -183,7 +183,11 @@ body > article.execution .score-loser {
 }
 
 body > article.execution .score-draw {
-    @apply uppercase text-orange-600;
+    @apply uppercase text-orange-600 font-bold;
+}
+
+body > article.execution .team-winner {
+    @apply font-bold;
 }
 
 body > article.execution .category-header {
