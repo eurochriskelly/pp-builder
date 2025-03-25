@@ -14,7 +14,7 @@ module.exports = function generateGroupStandings(data) {
                 if (b.PointsDifference !== a.PointsDifference) return b.PointsDifference - a.PointsDifference;
                 return b.PointsFrom - a.PointsFrom;
             });
-            html += '<table class="standings-table">';
+            html += '<table class="standings-table" style="table-layout: fixed;">';
             html += `
                 <colgroup>
                     <col class="col-team">

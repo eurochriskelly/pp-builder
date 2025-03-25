@@ -5,7 +5,15 @@ module.exports = function generateFinalsResults(data) {
     let currentCategory = null;
     const headers = ['Level', 'Team 1', 'Score', 'Team 2', 'Score'];
     
-    html += `<table><tr>${headers.map(h => `<th class="table-header">${h}</th>`).join('')}</tr>`;
+    html += `<table class="finals-table">
+             <colgroup>
+                 <col class="col-level">
+                 <col class="col-team">
+                 <col class="col-score">
+                 <col class="col-team">
+                 <col class="col-score">
+             </colgroup>
+             <tr>${headers.map(h => `<th class="table-header">${h}</th>`).join('')}</tr>`;
     data.forEach(row => {
         if (row.category !== currentCategory) {
             currentCategory = row.category;

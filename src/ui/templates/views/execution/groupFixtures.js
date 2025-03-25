@@ -11,7 +11,13 @@ module.exports = function generateGroupFixtures(data) {
             if (currentCategory !== null) html += '</table>';
             currentCategory = row.category;
             html += `
-                <table>
+                <table class="fixtures-table">
+                <colgroup>
+                    <col class="col-team">
+                    <col class="col-score">
+                    <col class="col-team">
+                    <col class="col-score">
+                </colgroup>
                 <tr><th colspan="${headers.length}" class="category-header">${currentCategory}</th></tr>
                 <tr>${headers.map(h => `<th class="table-header">${h}</th>`).join('')}</tr>
             `;
