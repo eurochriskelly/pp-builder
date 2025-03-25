@@ -5,12 +5,12 @@ module.exports = function generateFinalsResults(data) {
     let currentCategory = null;
     const headers = ['Level', 'Team 1', 'Score', 'Team 2', 'Score'];
     
-    html += `<table><tr>${headers.map(h => `<th style="color:#999;text-align: left;font-weight:normal">${h}</th>`).join('')}</tr>`;
+    html += `<table><tr>${headers.map(h => `<th class="table-header">${h}</th>`).join('')}</tr>`;
     data.forEach(row => {
         if (row.category !== currentCategory) {
             currentCategory = row.category;
             html += `
-                <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; font-weight:bold; font-size:2em; text-align: center;">${currentCategory}</th></tr>
+                <tr><th colspan="${headers.length}" class="category-header">${currentCategory}</th></tr>
             `;
         }
         html += '<tr>';
@@ -60,10 +60,10 @@ module.exports = function generateFinalsResults(data) {
         }
         const team1Bold = score1Value > score2Value ? 'font-weight:bold;' : '';
         const team2Bold = score2Value > score1Value ? 'font-weight:bold;' : '';
-        html += `<td class="${team1ScoreClass}" style="${team1Style}${team1Bold}">${team1Name || 'N/A'}</td>`;
-        html += `<td class="${team1ScoreClass}" style="${team1Bold}">${team1ScoreFinal || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass}" style="${team2Style}${team2Bold}">${team2Name || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass}" style="${team2Bold}">${team2ScoreFinal || 'N/A'}</td>`;
+        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
+        html += `<td class="${team1ScoreClass}">${team1ScoreFinal || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass}">${team2ScoreFinal || 'N/A'}</td>`;
         html += '</tr>';
     });
     html += '</table>';
