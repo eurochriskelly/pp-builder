@@ -12,8 +12,8 @@ module.exports = function generateGroupFixtures(data) {
             currentCategory = row.category;
             html += `
                 <table>
-                <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center;font-size:2em">${currentCategory}</th></tr>
-                <tr>${headers.map(h => `<th style="color:#999;font-weight:normal;text-align: left;">${h}</th>`).join('')}</tr>
+                <tr><th colspan="${headers.length}" class="category-header">${currentCategory}</th></tr>
+                <tr>${headers.map(h => `<th class="table-header">${h}</th>`).join('')}</tr>
             `;
         }
 
@@ -23,8 +23,8 @@ module.exports = function generateGroupFixtures(data) {
         const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
         const team1Score = formatScore(row.goals1, row.points1);
         const team2Score = formatScore(row.goals2, row.points2);
-        const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
-        const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
+        const score1Style = team1Score === 'N/A' ? 'text-gray-400' : '';
+        const score2Style = team2Score === 'N/A' ? 'text-gray-400' : '';
 
         const extractScore = score => {
             const match = score.match(/\((\d+)\)/);
@@ -44,10 +44,10 @@ module.exports = function generateGroupFixtures(data) {
         } else {
             team1ScoreClass = team2ScoreClass = 'score-draw';
         }
-        html += `<td class="${team1ScoreClass}" style="${team1Style}${team1Bold}">${team1Name || 'N/A'}</td>`;
-        html += `<td class="${team1ScoreClass}" style="${team1Bold}">${team1Score}</td>`;
-        html += `<td class="${team2ScoreClass}" style="${team2Style}${team2Bold}">${team2Name || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass}" style="${team2Bold}">${team2Score}</td>`;
+        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
+        html += `<td class="${team1ScoreClass} ${score1Style}">${team1Score}</td>`;
+        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass} ${score2Style}">${team2Score}</td>`;
         html += '</tr>';
     });
 
