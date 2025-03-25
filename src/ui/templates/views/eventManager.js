@@ -4,7 +4,7 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
     let html = '<div id="event-manager" style="margin: 20px 0;">';
     html += `<div style="text-align: center; margin-bottom: 20px;">
                 <h2>${tournament.Title || tournament.title || 'Event'}</h2>
-                <p>${tournament.Date ? tournament.Date.substring(0,10) : tournament.date || ''} | ${tournament.Location || tournament.location || ''}</p>
+                <p class="text-3xl m-4 mb-8">${tournament.Date ? tournament.Date.substring(0,10) : tournament.date || ''} | ${tournament.Location || tournament.location || ''}</p>
              </div>`;
     html += '<nav style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 800px; margin: 0 auto;">';
     html += '<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%;">';
