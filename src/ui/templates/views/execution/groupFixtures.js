@@ -44,9 +44,11 @@ module.exports = function generateGroupFixtures(data) {
         } else {
             team1ScoreClass = team2ScoreClass = 'score-draw';
         }
-        html += `<td class="${team1ScoreClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
+        const team1WinnerClass = score1Value > score2Value ? 'team-winner' : '';
+        const team2WinnerClass = score2Value > score1Value ? 'team-winner' : '';
+        html += `<td class="${team1ScoreClass} ${team1WinnerClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
         html += `<td class="${team1ScoreClass} ${score1Style}">${team1Score}</td>`;
-        html += `<td class="${team2ScoreClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass} ${team2WinnerClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
         html += `<td class="${team2ScoreClass} ${score2Style}">${team2Score}</td>`;
         html += '</tr>';
     });
