@@ -18,7 +18,7 @@ const {
 
 const allowedViews = {
     'view7': {
-        title: 'Finals Results',
+        title: 'Finals',
         generator: generateFinalsResults,
         fetch: getFinalsResults
     },
@@ -28,7 +28,7 @@ const allowedViews = {
         fetch: getGroupFixtures
     },
     'view3': {
-        title: 'Group Standings',
+        title: 'Group Tables',
         generator: generateGroupStandings,
         fetch: getGroupStandings
     },

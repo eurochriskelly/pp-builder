@@ -14,11 +14,11 @@ module.exports = function generateHeader(
       'execution': {
         'recent': 'Most Recent Changes',
         'view2': 'Group Fixtures',
-        'view3': 'Group Standings',
+        'view3': 'Group Tables',
         'view4': 'Knockout Fixtures',
         'view5': 'Carded Players',
         'view6': 'Matches by Pitch',
-        'view7': 'Finals Results'
+        'view7': 'Finals'
       },
       'planning': {
         'matches': 'Simulate tournament',
@@ -40,7 +40,7 @@ module.exports = function generateHeader(
     html += `
         </head>
         <body>
-            <article>
+            <article class="execution">
     `;
 
     if (navigation) {
