@@ -206,6 +206,44 @@ body > article.execution .id-column {
     @apply bg-green-100 font-bold;
 }
 
+/* Table column widths - carefully preserved from original */
+body > article.execution .knockout-table .col-stage {
+    width: 14% !important;
+}
+body > article.execution .knockout-table .col-team {
+    width: 28% !important;
+}
+body > article.execution .knockout-table .col-score {
+    width: 15% !important;
+}
+
+body > article.execution .standings-table .col-team {
+    width: 38% !important;
+}
+body > article.execution .standings-table .col-stat {
+    width: 8% !important;
+}
+body > article.execution .standings-table .col-stat-wide {
+    width: 10% !important;
+}
+
+body > article.execution .fixtures-table .col-team {
+    width: 35% !important;
+}
+body > article.execution .fixtures-table .col-score {
+    width: 15% !important;
+}
+
+body > article.execution .finals-table .col-level {
+    width: 20% !important;
+}
+body > article.execution .finals-table .col-team {
+    width: 30% !important;
+}
+body > article.execution .finals-table .col-score {
+    width: 10% !important;
+}
+
 /* HR */
 hr {
     @apply border-0 h-px bg-gray-300 my-5;
