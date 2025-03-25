@@ -62,12 +62,12 @@ module.exports = function generateKnockoutFixtures(data) {
         } else {
             team1ScoreClass = team2ScoreClass = 'score-draw';
         }
-        const team1Bold = score1Value > score2Value ? 'font-weight:bold;' : '';
-        const team2Bold = score2Value > score1Value ? 'font-weight:bold;' : '';
-        html += `<td class="${team1ScoreClass}" style="${team1Style}${team1Bold}">${team1Name || 'N/A'}</td>`;
-        html += `<td class="${team1ScoreClass}" style="text-transform: uppercase; text-align: right;${team1Bold}">${team1Score.toUpperCase()}</td>`;
-        html += `<td class="${team2ScoreClass}" style="${team2Style}${team2Bold}">${team2Name || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass}" style="text-transform: uppercase; text-align: right;${team2Bold}">${team2Score.toUpperCase()}</td>`;
+        const team1WinnerClass = score1Value > score2Value ? 'team-winner' : '';
+        const team2WinnerClass = score2Value > score1Value ? 'team-winner' : '';
+        html += `<td class="${team1ScoreClass} ${team1WinnerClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
+        html += `<td class="${team1ScoreClass}" style="text-align: right;">${team1Score.toUpperCase()}</td>`;
+        html += `<td class="${team2ScoreClass} ${team2WinnerClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
+        html += `<td class="${team2ScoreClass}" style="text-align: right;">${team2Score.toUpperCase()}</td>`;
         html += '</tr>';
     });
     if (currentCategory !== null) html += '</table>';
