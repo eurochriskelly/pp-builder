@@ -11,16 +11,16 @@ module.exports = function generateKnockoutFixtures(data) {
             if (currentCategory !== null) html += '</table>';
             currentCategory = row.category;
             html += `
-                <table style="width: 100%; table-layout: fixed;">
+                <table class="knockout-table">
                 <colgroup>
-                    <col style="width: 14%">
-                    <col style="width: 28%">
-                    <col style="width: 15%">
-                    <col style="width: 28%">
-                    <col style="width: 15%">
+                    <col class="col-stage">
+                    <col class="col-team">
+                    <col class="col-score">
+                    <col class="col-team">
+                    <col class="col-score">
                 </colgroup>
-                <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center; font-size: 2em; padding: 10px 0;">${formatCategory(currentCategory)}</th></tr>
-                <tr>${headers.map(h => `<th style="text-align: ${h === 'Score' ? 'right' : 'left'}; font-weight: normal;color:#999">${h}</th>`).join('')}</tr>
+                <tr><th colspan="${headers.length}" class="category-header">${formatCategory(currentCategory)}</th></tr>
+                <tr>${headers.map(h => `<th class="table-header ${h === 'Score' ? 'text-right' : 'text-left'}">${h}</th>`).join('')}</tr>
             `;
         }
         html += '<tr>';
@@ -41,11 +41,11 @@ module.exports = function generateKnockoutFixtures(data) {
                 team2Score = 'shared';
             }
         }
-        const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
-        const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
+        const score1Style = team1Score === 'N/A' ? 'text-gray-400' : '';
+        const score2Style = team2Score === 'N/A' ? 'text-gray-400' : '';
         const specialScores = ['shared', 'walked', 'concede'];
-        const score1ExtraStyle = specialScores.includes(team1Score) ? 'color: darkorange;' : '';
-        const score2ExtraStyle = specialScores.includes(team2Score) ? 'color: darkorange;' : '';
+        const score1ExtraClass = specialScores.includes(team1Score) ? 'text-orange-600' : '';
+        const score2ExtraClass = specialScores.includes(team2Score) ? 'text-orange-600' : '';
         const extractScore = score => {
             const match = score.match(/\((\d+)\)/);
             return match ? parseInt(match[1], 10) : 0;

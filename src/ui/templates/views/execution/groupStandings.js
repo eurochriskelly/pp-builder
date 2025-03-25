@@ -3,8 +3,8 @@ module.exports = function generateGroupStandings(data) {
     for (const cat of Object.keys(data)) {
         html += `
           <tr>
-            <th colspan="8" style="background-color: #d3d3d3; text-align: center;"> 
-              <h2 style="text-align:center;font-weight:bold;font-size:2rem;">${cat.toUpperCase()}</h2>
+            <th colspan="8" class="category-header">
+              <h2>${cat.toUpperCase()}</h2>
             </th>
           </tr>
         `;
@@ -14,21 +14,21 @@ module.exports = function generateGroupStandings(data) {
                 if (b.PointsDifference !== a.PointsDifference) return b.PointsDifference - a.PointsDifference;
                 return b.PointsFrom - a.PointsFrom;
             });
-            html += '<table style="width: 100%; table-layout: fixed;">';
+            html += '<table class="standings-table">';
             html += `
                 <colgroup>
-                    <col style="width: 38%">
-                    <col style="width: 8%">
-                    <col style="width: 8%">
-                    <col style="width: 8%">
-                    <col style="width: 8%">
-                    <col style="width: 10%">
-                    <col style="width: 10%">
-                    <col style="width: 10%">
+                    <col class="col-team">
+                    <col class="col-stat">
+                    <col class="col-stat">
+                    <col class="col-stat">
+                    <col class="col-stat">
+                    <col class="col-stat-wide">
+                    <col class="col-stat-wide">
+                    <col class="col-stat-wide">
                 </colgroup>
-                <tr><th colspan="8" style="background-color: #e6e6e6; font-weight: normal; text-align: center; font-size: 1.7rem;">Group ${groupData.groupName}</th></tr>
+                <tr><th colspan="8" class="group-header">Group ${groupData.groupName}</th></tr>
                 <tr>${['Team', 'Played', 'Wins', 'Draws', 'Losses', 'Scores For', 'Score diff', 'Points'].map((h, i) => 
-                    `<th style="text-align: ${i === 0 ? 'left' : 'right'};color:#999;font-weight:normal">${h}</th>`
+                    `<th class="table-header ${i === 0 ? 'text-left' : 'text-right'}">${h}</th>`
                 ).join('')}</tr>
             `;
             for (const row of groupData.rows) {

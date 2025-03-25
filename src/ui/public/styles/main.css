@@ -206,6 +206,28 @@ body > article.execution .id-column {
     @apply bg-green-100 font-bold;
 }
 
+/* Knockout table columns */
+body > article.execution .knockout-table .col-stage {
+    width: 14%;
+}
+body > article.execution .knockout-table .col-team {
+    width: 28%;
+}
+body > article.execution .knockout-table .col-score {
+    width: 15%;
+}
+
+/* Standings table columns */
+body > article.execution .standings-table .col-team {
+    width: 38%;
+}
+body > article.execution .standings-table .col-stat {
+    width: 8%;
+}
+body > article.execution .standings-table .col-stat-wide {
+    width: 10%;
+}
+
 /* HR */
 hr {
     @apply border-0 h-px bg-gray-300 my-5;
