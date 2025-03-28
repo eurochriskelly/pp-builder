@@ -1,11 +1,10 @@
-const { 
-  generateTableCell, 
+const {
+  generateTableCell,
   generateIdCell,
   generateTeamCell,
   generateScoreCell,
-  // generateTableHeaderRow, // No longer needed directly
-  generateTable // Import the new utility
-} = require('../../../partials/utils');
+  generateTable
+} = require('../../../partials/tableUtils');
 
 // This function now serves as the rowGenerator for generateTable
 function generateRecentRow(row) {

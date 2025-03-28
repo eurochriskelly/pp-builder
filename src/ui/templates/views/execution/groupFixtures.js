@@ -1,13 +1,12 @@
 const { processTeamName, formatScore } = require('../../../utils');
-const { 
-  generateTableCell, 
+const {
+  generateTableCell,
   generateTeamCell,
   generateScoreCell,
-  // generateTableHeaderRow, // No longer needed directly
   generateSpanningHeaderRow,
-  getScoreComparisonClasses,
-  generateTable // Import the new utility
-} = require('../../partials/utils');
+  generateTable
+} = require('../../partials/tableUtils');
+const { getScoreComparisonClasses } = require('../../partials/scoreUtils');
 
 // Row generator function for group fixtures
 function generateGroupFixtureRow(row) {

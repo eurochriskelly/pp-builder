@@ -4,12 +4,13 @@ const { formatCategory } = require('../../../utils/categoryFormatter');
 const {
   generateTableCell,
   generateTableHeaderRow,
-  // generateTableHeaderCell, // No longer needed directly
   generateSpanningHeaderRow,
+  generateTable
+} = require('../../partials/tableUtils');
+const {
   getScoreComparisonClasses,
-  getFinalScoreDisplay,
-  generateTable // Import the new utility
-} = require('../../partials/utils');
+  getFinalScoreDisplay
+} = require('../../partials/scoreUtils');
 
 // Row generator function for knockout fixtures
 function generateKnockoutFixtureRow(row) {

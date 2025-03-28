@@ -1,10 +1,8 @@
 const {
     generateTableCell,
-    // generateTableHeaderCell, // No longer needed directly
     generateSpanningHeaderRow,
-    generateStandingsHeaders,
-    generateTable // Import the new utility
-} = require('../../partials/utils');
+    generateTable
+} = require('../../partials/tableUtils');
 const { processTeamName } = require('../../../utils'); // For consistent team styling
 
 // Row generator function for group standings

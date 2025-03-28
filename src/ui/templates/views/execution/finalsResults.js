@@ -1,13 +1,14 @@
 const { processTeamName, formatScore } = require('../../../utils');
 const { 
-  generateTableCell,
-  generateTableHeaderRow,
-  // generateTableHeaderCell, // No longer needed directly
-  generateSpanningHeaderRow,
   getScoreComparisonClasses,
   getFinalScoreDisplay,
-  generateTable // Import the new utility
-} = require('../../partials/utils');
+} = require('../../partials/scoreUtils.js');
+const { 
+  generateTableCell,
+  generateTableHeaderRow,
+  generateSpanningHeaderRow,
+  generateTable,
+} = require('../../partials/tableUtils.js');
 
 // Row generator function for finals results
 function generateFinalsResultRow(row) {

@@ -46,56 +46,60 @@
     background-color: #2980b9;
 }
 
-/* Mobile table adjustments (Example - you might have existing rules) */
-/* If tables need to collapse on mobile, add specific rules */
-/*
-#recent-table table, 
-#matches-by-pitch table, 
-#group-fixtures table, 
-#finals-results table, 
-#knockout-fixtures table, 
-#carded-players table, 
-#group-standings table {
-    display: block;
-    width: 100%;
+/* Mobile table adjustments */
+@media (max-width: 768px) {
+    #recent-table table, 
+    #matches-by-pitch table, 
+    #group-fixtures table, 
+    #finals-results table, 
+    #knockout-fixtures table, 
+    #carded-players table, 
+    #group-standings table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    /* Stacked table rows */
+    table.responsive-stack tr {
+        display: block;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    /* Table cells as blocks with labels */
+    table.responsive-stack td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem;
+        text-align: right;
+    }
+
+    table.responsive-stack td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        margin-right: 1rem;
+        text-align: left;
+    }
+
+    /* Special handling for score cells */
+    table.responsive-stack td.score-cell {
+        justify-content: flex-end;
+    }
+
+    /* Hide less important columns on mobile */
+    table.responsive-stack td.mobile-hide {
+        display: none;
+    }
 }
-#recent-table table tr, 
-#matches-by-pitch table tr, 
-#group-fixtures table tr, 
-#finals-results table tr, 
-#knockout-fixtures table tr, 
-#carded-players table tr, 
-#group-standings table tr {
-    display: block;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ccc;
-}
-#recent-table table td, 
-#matches-by-pitch table td, 
-#group-fixtures table td, 
-#finals-results table td, 
-#knockout-fixtures table td, 
-#carded-players table td, 
-#group-standings table td {
-    display: block;
-    text-align: right; // Adjust as needed
-    padding-left: 50%; // Example: space for label
-    position: relative;
-}
-#recent-table table td::before, 
-#matches-by-pitch table td::before, 
-#group-fixtures table td::before, 
-#finals-results table td::before, 
-#knockout-fixtures table td::before, 
-#carded-players table td::before, 
-#group-standings table td::before {
-    content: attr(data-label); // Requires adding data-label attributes in templates
-    position: absolute;
-    left: 10px;
-    width: 45%;
-    padding-right: 10px;
-    white-space: nowrap;
-    text-align: left;
-    font-weight: bold;
-}
-*/
+
+/* Responsive spacing utilities */
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 1rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+
+/* Mobile-specific text sizes */
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }

@@ -1,7 +1,13 @@
-const { processTeamName, formatScore } = require('../../../../../utils');
+const { 
+  formatScore,
+  getRandomColor,
+  hashString,
+  processTeamName 
+} = require('../../../../../utils');
+const { groupBy } = require('../../../../partials/groupUtils.js');
 
 function isNextMatch(match, upcomingMatches) {
-  return match.id === upcomingMatches[0].id;
+  return upcomingMatches.length > 0 && match.id === upcomingMatches[0].id;
 }
 
 function processStage(stage) {
@@ -14,27 +20,13 @@ function processStage(stage) {
   return stage;
 }
 
-function hashString(str) {
-  let hash = 17;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash * 23 + str.charCodeAt(i)) & 0xFFFFFFFF;
-  }
-  return hash;
-}
-
-function getRandomColor(name, isTeam = false) {
-  const hash = hashString(name || 'unknown');
-  const hue = hash % 360;
-  return isTeam ? `hsl(${hue}, 50%, 30%)` : `hsl(${hue}, 40%, 75%)`;
-}
-
 function generateMatchRow(row, index, tournamentId, isUpcoming, isNext = false) {
   const rowClasses = `relative transition-colors ${isNext ? 'bg-blue-100' : index % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200'} ${index >= 10 ? 'hidden' : ''}`;
   const categoryColor = getRandomColor(row.category);
   const pitchColor = getRandomColor(row.pitch);
-  const team1Color = row.team1 === 'TBD' && row.stage !== 'group' ? '#ff4500' : getRandomColor(row.team1, true);
-  const team2Color = row.team2 === 'TBD' && row.stage !== 'group' ? '#ff4500' : getRandomColor(row.team2, true);
-  const umpireColor = row.umpireTeam === 'TBD' && row.stage !== 'group' ? '#ff4500' : getRandomColor(row.umpireTeam, true);
+  const team1Color = row.team1 === 'TBD' && row.stage !== 'group' ? 'team-tbd' : getRandomColor(row.team1, true);
+  const team2Color = row.team2 === 'TBD' && row.stage !== 'group' ? 'team-tbd' : getRandomColor(row.team2, true);
+  const umpireColor = row.umpireTeam === 'TBD' && row.stage !== 'group' ? 'team-tbd' : getRandomColor(row.umpireTeam, true);
   const team1CellClass = row.team1 === 'TBD' && row.stage !== 'group' ? 'bg-orange-100' : '';
   const team2CellClass = row.team2 === 'TBD' && row.stage !== 'group' ? 'bg-orange-100' : '';
   const umpireCellClass = row.umpireTeam === 'TBD' && row.stage !== 'group' ? 'bg-orange-100' : '';
@@ -43,23 +35,23 @@ function generateMatchRow(row, index, tournamentId, isUpcoming, isNext = false) 
   // Highlight next match cell with red background
   html += `<td class="relative ${isNext ? 'bg-red-500 animate-pulse' : 'bg-gray-500'} text-white font-bold">${isUpcoming ? `<button class="play-btn hidden absolute left-1 top-1/2 -translate-y-1/2 bg-green-600 text-white rounded-full w-8 h-8 text-lg cursor-pointer" onclick="playNextNMatches(${index + 1}, '${tournamentId}')">▶</button>` : ''}${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
   html += `<td class="${row.stage === 'group' ? 'bg-orange-100' : 'bg-green-100'}">${row.grp || 'N/A'}</td>`;
-  html += `<td><span class="text-white px-2.5 py-0.5 rounded-full text-sm font-bold uppercase inline-block max-w-full whitespace-nowrap overflow-hidden text-ellipsis" style="background-color: ${categoryColor}">${row.category || 'N/A'}</span></td>`;
+  html += `<td><span class="text-white px-2.5 py-0.5 rounded-full text-sm font-bold uppercase inline-block max-w-full whitespace-nowrap overflow-hidden text-ellipsis ${categoryColor}">${row.category || 'N/A'}</span></td>`;
   html += `<td>${processStage(row.stage)}</td>`;
-  html += `<td><span class="text-white px-2.5 py-0.5 rounded-full text-sm font-bold uppercase inline-block max-w-full whitespace-nowrap overflow-hidden text-ellipsis" style="background-color: ${pitchColor}">${row.pitch || 'N/A'}</span></td>`;
+  html += `<td><span class="text-white px-2.5 py-0.5 rounded-full text-sm font-bold uppercase inline-block max-w-full whitespace-nowrap overflow-hidden text-ellipsis ${pitchColor}">${row.pitch || 'N/A'}</span></td>`;
   html += `<td>${row.scheduledTime || 'N/A'}</td>`;
   const { teamName: team1Name } = processTeamName(row.team1);
   const { teamName: team2Name } = processTeamName(row.team2);
   // team1 and team2 are always pills, umpireTeam is not
-  html += `<td class="${team1CellClass}"><span class="bg-white bg-opacity-50 px-2.5 py-0.5 rounded-lg font-bold uppercase whitespace-nowrap" style="color: ${team1Color}">${truncateTeamName(team1Name.toUpperCase()) || 'N/A'}</span></td>`;
+  html += `<td class="${team1CellClass}"><span class="bg-white bg-opacity-50 px-2.5 py-0.5 rounded-lg font-bold uppercase whitespace-nowrap ${team1Color}">${truncateTeamName(team1Name.toUpperCase()) || 'N/A'}</span></td>`;
   if (isUpcoming) {
-    html += `<td class="${team2CellClass}"><span class="bg-white bg-opacity-50 px-2.5 py-0.5 rounded-lg font-bold uppercase whitespace-nowrap" style="color: ${team2Color}">${truncateTeamName(team2Name.toUpperCase()) || 'N/A'}</span></td>`;
+    html += `<td class="${team2CellClass}"><span class="bg-white bg-opacity-50 px-2.5 py-0.5 rounded-lg font-bold uppercase whitespace-nowrap ${team2Color}">${truncateTeamName(team2Name.toUpperCase()) || 'N/A'}</span></td>`;
     const { teamName: umpireTeamName } = processTeamName(row.umpireTeam);
-    html += `<td class="${umpireCellClass}"><span class="uppercase whitespace-nowrap" style="color: ${umpireColor}">${truncateTeamName(umpireTeamName.toUpperCase()) || 'N/A'}</span></td>`;
+    html += `<td class="${umpireCellClass}"><span class="uppercase whitespace-nowrap ${umpireColor}">${truncateTeamName(umpireTeamName.toUpperCase()) || 'N/A'}</span></td>`;
   } else {
     const team1Score = formatScore(row.goals1, row.points1);
     const team2Score = formatScore(row.goals2, row.points2);
     html += `<td class="${team1Score === 'N/A' ? 'text-gray-500' : ''}">${team1Score}</td>`;
-    html += `<td class="${team2CellClass}"><span class="bg-white bg-opacity-50 px-2.5 py-0.5 rounded-lg font-bold uppercase whitespace-nowrap" style="color: ${team2Color}">${truncateTeamName(team2Name.toUpperCase()) || 'N/A'}</span></td>`;
+    html += `<td class="${team2CellClass}"><span class="bg-white bg-opacity-50 px-2.5 py-0.5 rounded-lg font-bold uppercase whitespace-nowrap ${team2Color}">${truncateTeamName(team2Name.toUpperCase()) || 'N/A'}</span></td>`;
     html += `<td class="${team2Score === 'N/A' ? 'text-gray-500' : ''}">${team2Score}</td>`;
   }
   html += '</tr>';
@@ -95,8 +87,6 @@ function truncateTeamName(name) {
 module.exports = {
   isNextMatch,
   processStage,
-  hashString,
-  getRandomColor,
   generateMatchRow,
   generateTable
 };
