@@ -1,13 +1,15 @@
 const { allowedViews } = require('../../config/allowedViews');
 
 function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false) {
-    let html = '<div id="event-manager" style="margin: 20px 0;">';
-    html += `<div style="text-align: center; margin-bottom: 20px;">
-                <h2>${tournament.Title || tournament.title || 'Event'}</h2>
-                <p class="text-3xl m-4 mb-8">${tournament.Date ? tournament.Date.substring(0,10) : tournament.date || ''} | ${tournament.Location || tournament.location || ''}</p>
+    // Use CSS classes instead of inline styles
+    let html = '<div id="event-manager" class="event-manager-container">'; 
+    // Restore mx-auto for centering (assuming Tailwind is active)
+    html += `<div class="event-manager-header">
+                <h2 class="mx-auto">${tournament.Title || tournament.title || 'Event'}</h2>
+                <p class="text-3xl m-4 mb-8 mx-auto">${tournament.Date ? tournament.Date.substring(0,10) : tournament.date || ''} | ${tournament.Location || tournament.location || ''}</p>
              </div>`;
-    html += '<nav style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 800px; margin: 0 auto;">';
-    html += '<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%;">';
+    html += '<nav class="event-manager-nav">';
+    html += '<div class="event-manager-nav-inner">';
     
     // Generate links from allowedViews
     Object.entries(allowedViews).forEach(([key, view]) => {
@@ -16,9 +18,9 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
                hx-get="/event/${uuid}/${key}" 
                hx-target="body" 
                hx-swap="outerHTML" 
-               style="padding: 12px 20px; background-color: #3498db; color: white; font-size: 2rem;whites-pace:nowrap;text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 10px; line-height: 40px; text-transform: uppercase; min-width: 180px; text-align: center; flex: 1 0 calc(50% - 20px); max-width: calc(50% - 20px);">
+               class="event-manager-link"> 
                 ${view.title}
-            </a>`;
+            </a>`; // Apply class 'event-manager-link'
     });
     
     html += '</div></nav>';
@@ -30,10 +32,11 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
     
     html += `
     <script>
-        // Replace competition headers
-        document.querySelectorAll('th').forEach(th => {
-            if (th.textContent.toLowerCase().includes('competition')) {
-                th.textContent = 'Comp';
+        // Shorten 'Competition' headers using the assigned class
+        document.querySelectorAll('th.comp-column').forEach(th => {
+             // Check if it hasn't already been shortened by the template
+            if (th.textContent.toLowerCase().includes('competition')) { 
+                 th.textContent = 'Comp';
             }
         });
     </script>

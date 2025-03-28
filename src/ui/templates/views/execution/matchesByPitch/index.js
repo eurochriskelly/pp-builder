@@ -1,42 +1,78 @@
-const { processTeamName, formatScore } = require('../../../../utils');
+const { 
+  generateTableCell, 
+  generateIdCell,
+  generateTeamCell,
+  generateScoreCell,
+  // generateTableHeaderRow, // No longer needed directly
+  generateSpanningHeaderRow,
+  generateTable // Import the new utility
+} = require('../../../partials/utils');
+
+
+// This function now serves as the rowGenerator for generateTable
+function generateMatchRow(row) {
+    const rowClass = row.started === 'true' ? 'match-started font-bold' : ''; // Add class for started matches
+    let html = `<tr class="${rowClass}">`; // Use class instead of style
+    html += generateIdCell(row.id);
+    html += generateTableCell(row.pitch);
+    html += generateTableCell(row.stage);
+    html += generateTableCell(row.scheduledTime); // '🕒'
+    html += generateTableCell(row.category);
+    html += generateTeamCell(row.team1);
+    html += generateScoreCell(row.goals1, row.points1);
+    html += generateTeamCell(row.team2);
+    html += generateScoreCell(row.goals2, row.points2);
+    html += generateTeamCell(row.umpireTeam);
+    html += '</tr>';
+    return html;
+}
 
 module.exports = function generateMatchesByPitch(data) {
     let html = '<div id="matches-by-pitch">';
-    let currentPitch = null;
-    const headers = ['ID', 'Pitch', 'Stage', '🕒', 'Category', 'Team 1', 'Score', 'Team 2', 'Score', 'Umpire Team'];
     
-    data.forEach(row => {
-        if (row.pitch !== currentPitch) {
-            if (currentPitch !== null) html += '</table>';
-            currentPitch = row.pitch;
-            html += `
-                <table>
-                <tr><th colspan="${headers.length}" style="background-color: #d3d3d3; text-align: center;">Pitch ${currentPitch}</th></tr>
-                <tr>${headers.map(h => h === 'ID' ? `<th class="id-column">${h}</th>` : `<th>${h}</th>`).join('')}</tr>
-            `;
+    const headersConfig = [
+        { key: 'id', label: 'ID', className: 'id-column' },
+        { key: 'pitch', label: 'Pitch' },
+        { key: 'stage', label: 'Stage' },
+        { key: 'scheduledTime', label: '🕒' },
+        { key: 'category', label: 'Category' },
+        { key: 'team1', label: 'Team 1' },
+        { key: 'score1', label: 'Score 1' },
+        { key: 'team2', label: 'Team 2' },
+        { key: 'score2', label: 'Score 2' },
+        { key: 'umpireTeam', label: 'Umpire Team' }
+    ];
+
+    // Group data by pitch
+    const groupedData = data.reduce((acc, row) => {
+        const pitch = row.pitch || 'Unknown Pitch';
+        if (!acc[pitch]) {
+            acc[pitch] = [];
         }
-        const rowStyle = row.started === 'true' ? 'font-weight:bold;' : '';
-        html += `<tr style="${rowStyle}">`;
-        html += `<td class="id-column">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
-        html += `<td>${row.pitch || 'N/A'}</td>`;
-        html += `<td>${row.stage || 'N/A'}</td>`;
-        html += `<td>${row.scheduledTime || 'N/A'}</td>`;
-        html += `<td>${row.category || 'N/A'}</td>`;
-        const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
-        const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
-        const team1Score = formatScore(row.goals1, row.points1);
-        const team2Score = formatScore(row.goals2, row.points2);
-        const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
-        const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
-        html += `<td style="${team1Style}">${team1Name || 'N/A'}</td>`;
-        html += `<td style="${score1Style}">${team1Score}</td>`;
-        html += `<td style="${team2Style}">${team2Name || 'N/A'}</td>`;
-        html += `<td style="${score2Style}">${team2Score}</td>`;
-        const { teamName: umpireTeamName, teamStyle: umpireTeamStyle } = processTeamName(row.umpireTeam);
-        html += `<td style="${umpireTeamStyle}">${umpireTeamName || 'N/A'}</td>`;
-        html += '</tr>';
-    });
-    if (currentPitch !== null) html += '</table>';
+        acc[pitch].push(row);
+        return acc;
+    }, {});
+
+    // Generate a table for each pitch
+    for (const pitch in groupedData) {
+        const pitchData = groupedData[pitch];
+        // Use class for pitch header background and alignment (text-center is default now)
+        html += generateSpanningHeaderRow(`Pitch ${pitch}`, headersConfig.length, 'bg-pitch-header'); 
+        
+        // Generate the table for this pitch's matches
+        html += generateTable({
+            data: pitchData,
+            headersConfig: headersConfig,
+            rowGenerator: generateMatchRow,
+            tableClassName: '', // Add classes if needed
+            emptyDataMessage: `No matches scheduled for Pitch ${pitch}.` // Should not happen if pitch exists in groupedData
+        });
+    }
+
+    if (Object.keys(groupedData).length === 0) {
+         html += '<p>No matches found.</p>'; // Message if there's no data at all
+    }
+
     html += '</div>';
     return html;
 };

@@ -1,0 +1,101 @@
+/* Add any additional mobile-specific styles here */
+
+/* == Added Utility Classes == */
+.text-grey { color: grey; }
+.font-bold { font-weight: bold; }
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.table-layout-fixed { table-layout: fixed; } /* May not be ideal on mobile, adjust if needed */
+
+/* == Card Colors == */
+.card-yellow { color: gold; font-weight: bold; }
+.card-red { color: red; font-weight: bold; }
+.card-black { color: black; background-color: #ccc; font-weight: bold; }
+
+/* == Table Specific == */
+.bg-pitch-header { background-color: #d3d3d3; }
+.empty-data-message { text-align: center; padding: 10px; color: #555; }
+.match-started { /* font-weight: bold; is already applied via class */ } /* Add other styles if needed */
+
+/* == Event Manager == */
+.event-manager-container { margin: 15px 0; }
+.event-manager-header { text-align: center; margin-bottom: 15px; }
+.event-manager-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 100%; padding: 0 10px; margin: 0 auto; }
+.event-manager-nav-inner { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; }
+/* Removed #event-manager specificity prefix */
+.event-manager-link {
+    padding: 10px 15px;
+    background-color: #3498db;
+    color: white;
+    font-size: 1.5rem; /* Smaller font size for mobile */
+    white-space: nowrap;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    min-width: 120px; /* Adjust min-width */
+    text-align: center;
+    flex: 1 0 calc(50% - 16px); /* Adjust basis/gap */
+    max-width: calc(50% - 16px); /* Adjust max-width/gap */
+    transition: background-color 0.3s ease;
+}
+.event-manager-link:hover { /* Hover might not be relevant on touch devices, but harmless */
+    background-color: #2980b9;
+}
+
+/* Mobile table adjustments (Example - you might have existing rules) */
+/* If tables need to collapse on mobile, add specific rules */
+/*
+#recent-table table, 
+#matches-by-pitch table, 
+#group-fixtures table, 
+#finals-results table, 
+#knockout-fixtures table, 
+#carded-players table, 
+#group-standings table {
+    display: block;
+    width: 100%;
+}
+#recent-table table tr, 
+#matches-by-pitch table tr, 
+#group-fixtures table tr, 
+#finals-results table tr, 
+#knockout-fixtures table tr, 
+#carded-players table tr, 
+#group-standings table tr {
+    display: block;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+#recent-table table td, 
+#matches-by-pitch table td, 
+#group-fixtures table td, 
+#finals-results table td, 
+#knockout-fixtures table td, 
+#carded-players table td, 
+#group-standings table td {
+    display: block;
+    text-align: right; // Adjust as needed
+    padding-left: 50%; // Example: space for label
+    position: relative;
+}
+#recent-table table td::before, 
+#matches-by-pitch table td::before, 
+#group-fixtures table td::before, 
+#finals-results table td::before, 
+#knockout-fixtures table td::before, 
+#carded-players table td::before, 
+#group-standings table td::before {
+    content: attr(data-label); // Requires adding data-label attributes in templates
+    position: absolute;
+    left: 10px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+}
+*/

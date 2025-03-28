@@ -1,0 +1,47 @@
+/* Add any additional desktop-specific styles here */
+
+/* == Added Utility Classes == */
+.text-grey { color: grey; }
+.font-bold { font-weight: bold; }
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.table-layout-fixed { table-layout: fixed; }
+
+/* == Card Colors == */
+.card-yellow { color: gold; font-weight: bold; }
+.card-red { color: red; font-weight: bold; }
+.card-black { color: black; background-color: #ccc; font-weight: bold; }
+
+/* == Table Specific == */
+.bg-pitch-header { background-color: #d3d3d3; }
+.empty-data-message { text-align: center; padding: 10px; color: #555; }
+.match-started { /* font-weight: bold; is already applied via class */ } /* Add other styles if needed, e.g., background */
+
+/* == Event Manager == */
+.event-manager-container { margin: 20px 0; }
+.event-manager-header { text-align: center; margin-bottom: 20px; }
+.event-manager-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 800px; margin: 0 auto; }
+.event-manager-nav-inner { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
+/* Removed #event-manager specificity prefix */
+.event-manager-link { 
+    padding: 12px 20px;
+    background-color: #3498db;
+    color: white;
+    font-size: 2rem; /* Consider adjusting if too large */
+    white-space: nowrap;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: 10px;
+    line-height: 1.2; /* Adjust line-height relative to font-size */
+    text-transform: uppercase;
+    min-width: 180px;
+    text-align: center;
+    flex: 1 0 calc(50% - 20px); /* Adjust basis/grow/shrink as needed */
+    max-width: calc(50% - 20px); /* Adjust max-width as needed */
+    transition: background-color 0.3s ease; /* Add hover effect */
+}
+.event-manager-link:hover {
+    background-color: #2980b9;
+}
