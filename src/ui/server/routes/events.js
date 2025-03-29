@@ -135,6 +135,8 @@ async function generateViewContent(view, tournamentId, competitionName = null) {
         console.error(`Error generating content for view ${view}, tournament ${tournamentId}:`, error.message);
         // Return an error message or throw to be handled by the route
         return `<p class="error">Error loading data for ${allowedViews[view].title}. Please try again later.</p>`; 
+    } // <-- Added missing closing brace for the function
+}
 // Modify the main view route to also use the helper (optional but consistent)
 // Note: This requires adjusting the main route logic slightly if you adopt it.
 // Example modification (Illustrative - apply carefully):
