@@ -83,12 +83,15 @@ router.get('/event/:uuid/:view?', async (req, res) => {
         // Valid view requested, proceed to generate its content
         currentView = requestedView;
         title = allowedViews[currentView].title; // Get title for the specific view
+        const competitionName = req.query.competition; // Extract competition name from query
         try {
-            content = await generateViewContent(currentView, tournamentId);
-            // Add HTMX polling attributes only when a specific view is loaded
-            contentAttributes = `id="content" hx-get="/event/${uuid}/${currentView}-update" hx-trigger="every 30s" hx-swap="innerHTML"`;
+            // Pass competitionName when generating initial content for a direct view load
+            content = await generateViewContent(currentView, tournamentId, competitionName); 
+            // Add HTMX polling attributes, including competitionName in the hx-get URL
+            const pollingUrl = `/event/${uuid}/${currentView}-update${competitionName ? `?competition=${encodeURIComponent(competitionName)}` : ''}`;
+            contentAttributes = `id="content" hx-get="${pollingUrl}" hx-trigger="every 30s" hx-swap="innerHTML"`;
         } catch (error) {
-            console.error(`Error generating main view ${currentView} for tournament ${tournamentId}:`, error.message);
+            console.error(`Error generating main view ${currentView} for tournament ${tournamentId} (competition: ${competitionName}):`, error.message);
             content = `<p class="error p-4">An error occurred while loading the content for ${title}.</p>`;
             // Use a generic error header title
             title = 'Server Error'; 
