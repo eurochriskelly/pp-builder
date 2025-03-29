@@ -1,9 +1,5 @@
-const { 
-  formatScore,
-  getRandomColor,
-  hashString,
-  processTeamName 
-} = require('../../../../../utils');
+const { formatScore, processTeamName } = require('../../../../../utils');
+const { getRandomColor, hashString } = require('../../../../partials/styleUtils');
 const { groupBy } = require('../../../../partials/groupUtils.js');
 
 function isNextMatch(match, upcomingMatches) {

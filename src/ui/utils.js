@@ -18,7 +18,7 @@ function processTeamName(teamName) {
 }
 
 function formatScore(goals, points) {
-    if (goals === null || points === null) {
+    if (goals == null || points == null) { // Use == null to check for both null and undefined
         return 'N/A';
     }
     const paddedPoints = points.toString().padStart(2, '0');
