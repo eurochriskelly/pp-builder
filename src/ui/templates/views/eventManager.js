@@ -15,28 +15,32 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
     // Generate links for Competitions
     console.log('Tournament data:', tournament); // Debug logging
 
-    const competitionKeys = tournament.categories ? Object.keys(tournament.categories) : [];
-    if (competitionKeys.length > 0) {
-        competitionKeys.forEach(compKey => {
-            const encodedCompKey = encodeURIComponent(compKey);
+    // Check if tournament.categories is a non-empty array
+    const competitions = Array.isArray(tournament.categories) ? tournament.categories : [];
+    if (competitions.length > 0) {
+        competitions.forEach(compName => { // Iterate directly over the array elements (names)
+            const encodedCompName = encodeURIComponent(compName); // Encode the actual name
             html += `
-                <a href="/event/${uuid}/${encodedCompKey}"
-                   hx-get="/event/${uuid}/${encodedCompKey}/summary"
+                <a href="/event/${uuid}/${encodedCompName}"
+                   hx-get="/event/${uuid}/${encodedCompName}/summary"
                    hx-target="#competition-content"
                    hx-swap="innerHTML"
                    class="event-manager-link competition-link">
-                    ${compKey}
+                    ${compName}
                 </a>`;
         });
     } else {
+        // Updated error handling for clarity
         html += '<div class="text-gray-500 p-4 bg-yellow-50 rounded">';
         html += '<p>No competitions found in tournament data.</p>';
         if (tournament.categories === undefined) {
-            html += '<p class="text-sm">(Categories data is undefined)</p>';
+            html += '<p class="text-sm">(Reason: tournament.categories is undefined)</p>';
         } else if (tournament.categories === null) {
-            html += '<p class="text-sm">(Categories data is null)</p>';
-        } else if (typeof tournament.categories !== 'object') {
-            html += `<p class="text-sm">(Categories is type: ${typeof tournament.categories})</p>`;
+            html += '<p class="text-sm">(Reason: tournament.categories is null)</p>';
+        } else if (!Array.isArray(tournament.categories)) {
+             html += `<p class="text-sm">(Reason: Expected tournament.categories to be an array, but got type: ${typeof tournament.categories})</p>`;
+        } else { // It is an array, but empty
+             html += '<p class="text-sm">(Reason: tournament.categories is an empty array)</p>';
         }
         html += '</div>';
     }
