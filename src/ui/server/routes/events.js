@@ -28,46 +28,66 @@ async function getTournamentAndHandleErrors(uuid, res) {
 
 router.get('/event/:uuid/:view?', async (req, res) => {
     const uuid = req.params.uuid;
-    const view = req.params.view || 'view7'; // Default to 'finals results' if no view provided
+    const requestedView = req.params.view; // Get the requested view, might be undefined
     const tournament = await getTournamentAndHandleErrors(uuid, res);
     if (!tournament) return;
     const tournamentId = tournament.id;
-    if (!allowedViews[view]) {
-        const isLoggedIn = !!req.session.user;
-        const html = `
-          ${generateHeader('Not Allowed', tournamentId, 'execution', null, isLoggedIn, false)}
-          <link rel="stylesheet" media="(min-width: 1000px)" href="/styles/desktop.css">
-          <link rel="stylesheet" media="(max-width: 999px)" href="/styles/mobile.css">
-          
-          <p>View not accessible via public URL.</p>
-          ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)}
-        }`;
-        return res.status(403).send(html);
-    }
-
     const isLoggedIn = !!req.session.user;
-    const { title } = allowedViews[view]; // Only need title here now
 
+    let title = tournament.title || 'Event Overview'; // Default title
+    let currentView = null; // No specific view selected initially
+    let content = '<p class="p-4 text-gray-600">Select a competition above to view details.</p>'; // Placeholder for main content
+    let contentAttributes = 'id="content"'; // Default attributes for the content div
+
+    if (requestedView) {
+        // A specific view was requested in the URL
+        if (!allowedViews[requestedView]) {
+            // Handle invalid/disallowed view
+            const html = `
+              ${generateHeader('Not Allowed', tournamentId, 'execution', null, isLoggedIn, false)}
+              <link rel="stylesheet" media="(min-width: 1000px)" href="/styles/desktop.css">
+              <link rel="stylesheet" media="(max-width: 999px)" href="/styles/mobile.css">
+              
+              <p>View not accessible via public URL.</p>
+              ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)}
+            }`;
+            return res.status(403).send(html);
+        }
+
+        // Valid view requested, proceed to generate its content
+        currentView = requestedView;
+        title = allowedViews[currentView].title; // Get title for the specific view
+        try {
+            content = await generateViewContent(currentView, tournamentId);
+            // Add HTMX polling attributes only when a specific view is loaded
+            contentAttributes = `id="content" hx-get="/event/${uuid}/${currentView}-update" hx-trigger="every 30s" hx-swap="innerHTML"`;
+        } catch (error) {
+            console.error(`Error generating main view ${currentView} for tournament ${tournamentId}:`, error.message);
+            content = `<p class="error p-4">An error occurred while loading the content for ${title}.</p>`;
+            // Use a generic error header title
+            title = 'Server Error'; 
+        }
+    }
+    // Else: No specific view requested, use the default title and placeholder content defined above
+
+    // Construct the final HTML
     try {
-        // Use the helper function to get the main content
-        const content = await generateViewContent(view, tournamentId); 
-
         const html = `
           <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
             ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)}
           </div>
-          ${generateHeader(title, tournamentId, 'execution', view, isLoggedIn, false)}
-          <div id="content" hx-get="/event/${uuid}/${view}-update" hx-trigger="every 30s" hx-swap="innerHTML">
+          ${generateHeader(title, tournamentId, 'execution', currentView, isLoggedIn, false)}
+          <div ${contentAttributes}>
             ${content} 
           </div>
           ${generateFooter()}
         `;
         res.send(html);
     } catch (error) {
-         // Handle potential errors during content generation
-         console.error(`Error generating main view ${view} for tournament ${tournamentId}:`, error.message);
+         // Handle potential errors during final HTML generation (e.g., header/footer/eventManager)
+         console.error(`Error generating full page structure for tournament ${tournamentId}:`, error.message);
          // Send a generic error page
-         res.status(500).send(`${generateHeader('Server Error', null, null, null, isLoggedIn, false)}<p>An error occurred while loading the page content.</p>${generateFooter()}`);
+         res.status(500).send(`${generateHeader('Server Error', null, null, null, isLoggedIn, false)}<p>An error occurred while loading the page structure.</p>${generateFooter()}`);
     }
 });
 
