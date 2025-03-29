@@ -92,15 +92,17 @@ router.get('/event/:uuid/:view?', async (req, res) => {
 });
 
 
-// Helper function to fetch data and generate content for a specific view
-async function generateViewContent(view, tournamentId) {
+// Helper function to fetch data and generate content for a specific view, optionally filtered by competition
+async function generateViewContent(view, tournamentId, competitionName = null) {
     if (!allowedViews[view]) {
         throw new Error(`Invalid view specified: ${view}`); // Should be caught by caller
     }
     const { fetch, generator } = allowedViews[view];
     try {
-        const data = await fetch(tournamentId);
+        // Pass competitionName to the fetch function
+        const data = await fetch(tournamentId, competitionName); 
         // Handle the special case for 'recent' view generator signature
+        // Note: 'recent' view might also need competition filtering if applicable
         const content = view === 'recent' ? generator(data.matches, data.count) : generator(data);
         return content;
     } catch (error) {
@@ -117,12 +119,16 @@ Object.keys(allowedViews).forEach(view => {
         // Use the existing error handling for tournament fetching
         const tournament = await getTournamentAndHandleErrors(uuid, res); 
         if (!tournament) return; // Error response already sent by getTournamentAndHandleErrors
+        
+        // Extract competition name from query parameters for filtering
+        const competitionName = req.query.competition; 
 
         try {
-            const content = await generateViewContent(view, tournament.id);
+            // Pass competitionName to generateViewContent
+            const content = await generateViewContent(view, tournament.id, competitionName); 
             res.send(content);
         } catch (error) {
-            // Handle errors from generateViewContent itself (e.g., invalid view)
+            // Handle errors from generateViewContent itself (e.g., invalid view or fetch error)
             // Although getTournamentAndHandleErrors should catch most issues earlier
             console.error(`Error in update route for view ${view}:`, error.message);
             res.status(500).send(`<p class="error">Internal server error generating view update.</p>`);
