@@ -14,6 +14,7 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
 
     // Generate links for Competitions
     console.log('Tournament data:', tournament); // Debug logging
+
     const competitionKeys = tournament.categories ? Object.keys(tournament.categories) : [];
     if (competitionKeys.length > 0) {
         competitionKeys.forEach(compKey => {
