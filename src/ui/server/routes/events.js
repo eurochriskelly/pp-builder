@@ -3,6 +3,7 @@ const { getTournamentByUuid } = require('../../queries');
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const { generateEventManager } = require('../../templates/views/eventManager');
+const { generateCompetitionViewMenu } = require('../../templates/partials/competitionViewMenu'); // Import the new menu generator
 const { allowedViews } = require('../../config/allowedViews');
 
 const router = express.Router();
@@ -25,6 +26,42 @@ async function getTournamentAndHandleErrors(uuid, res) {
 }
 
 // Removed unused generateStandingsHeaders function from here
+
+// Route to handle selecting a competition and returning the secondary menu + default view
+router.get('/event/:uuid/select-competition', async (req, res) => {
+    const uuid = req.params.uuid;
+    const competitionName = req.query.competition;
+    const defaultView = 'view7'; // Default to Finals view
+
+    if (!competitionName) {
+        return res.status(400).send('<p class="error">Competition name is required.</p>');
+    }
+
+    const tournament = await getTournamentAndHandleErrors(uuid, res);
+    if (!tournament) return;
+
+    try {
+        // 1. Generate the secondary menu HTML
+        const secondMenuHtml = generateCompetitionViewMenu(uuid, competitionName, defaultView);
+
+        // 2. Generate the default view content (Finals)
+        const defaultViewContent = await generateViewContent(defaultView, tournament.id, competitionName);
+
+        // 3. Construct the response with OOB swap for the menu
+        const oobMenu = `<div id="competition-content" hx-swap-oob="innerHTML">${secondMenuHtml}</div>`;
+        const responseHtml = defaultViewContent + oobMenu; // Combine main content and OOB swap
+
+        res.send(responseHtml);
+
+    } catch (error) {
+        console.error(`Error selecting competition ${competitionName} for tournament ${uuid}:`, error.message);
+        // Send error message within the main content area, potentially clearing the menu
+        const errorHtml = `<p class="error">Error loading data for ${competitionName}.</p>`;
+        const oobClearMenu = `<div id="competition-content" hx-swap-oob="innerHTML"><p class="text-gray-600">Error loading menu.</p></div>`;
+        res.status(500).send(errorHtml + oobClearMenu);
+    }
+});
+
 
 // Setup update routes using the helper
 // Define these specific routes *before* the general '/event/:uuid/:view?' route
@@ -101,9 +138,21 @@ router.get('/event/:uuid/:view?', async (req, res) => {
 
     // Construct the final HTML
     try {
+        // Generate the second menu if a competition is active for this main page load
+        let secondMenuHtml = '';
+        if (requestedView && competitionName) {
+            secondMenuHtml = generateCompetitionViewMenu(uuid, competitionName, currentView);
+        } else {
+             // Keep the placeholder if no competition is selected yet
+            secondMenuHtml = '<p class="text-gray-600">Select a competition above to view details.</p>';
+        }
+
         const html = `
           <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-            ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)}
+            ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)} 
+          </div>
+          <div id="competition-content" class="competition-content-container p-4 border-t border-gray-200">
+             ${secondMenuHtml}
           </div>
           ${generateHeader(title, tournamentId, 'execution', currentView, isLoggedIn, false)}
           <div ${contentAttributes}>

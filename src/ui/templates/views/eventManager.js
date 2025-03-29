@@ -20,11 +20,10 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
     if (competitions.length > 0) {
         competitions.forEach(compName => { // Iterate directly over the array elements (names)
             const encodedCompName = encodeURIComponent(compName); // Encode the actual name
-            // Target the view2-update route (Group Fixtures) and pass competition as query param
-            // Also update href to point to the initial view page with the query param
+            // Target the new select-competition endpoint to get OOB menu + default view
             html += `
-                <a href="/event/${uuid}/view2?competition=${encodedCompName}" 
-                   hx-get="/event/${uuid}/view2-update?competition=${encodedCompName}" 
+                <a href="/event/${uuid}/view7?competition=${encodedCompName}" 
+                   hx-get="/event/${uuid}/select-competition?competition=${encodedCompName}" 
                    hx-target="#content" 
                    hx-swap="innerHTML"
                    class="event-manager-link competition-link">
