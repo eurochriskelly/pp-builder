@@ -138,21 +138,16 @@ router.get('/event/:uuid/:view?', async (req, res) => {
 
     // Construct the final HTML
     try {
-        // Generate the second menu if a competition is active for this main page load
-        let secondMenuHtml = '';
-        if (requestedView && competitionName) {
-            secondMenuHtml = generateCompetitionViewMenu(uuid, competitionName, currentView);
-        } else {
-             // Keep the placeholder if no competition is selected yet
-            secondMenuHtml = '<p class="text-gray-600">Select a competition above to view details.</p>';
-        }
+        // The second menu is now ONLY added via OOB swap when a competition is selected.
+        // The initial state of competition-content should just be the placeholder.
+        const placeholderHtml = '<p class="text-gray-600">Select a competition above to view details.</p>';
 
         const html = `
           <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
             ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)} 
           </div>
           <div id="competition-content" class="competition-content-container p-4 border-t border-gray-200">
-             ${secondMenuHtml}
+             ${placeholderHtml}
           </div>
           ${generateHeader(title, tournamentId, 'execution', currentView, isLoggedIn, false)}
           <div ${contentAttributes}>
