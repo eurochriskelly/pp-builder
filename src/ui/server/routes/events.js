@@ -145,9 +145,7 @@ router.get('/event/:uuid/:view?', async (req, res) => {
         const html = `
           <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
             ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)} 
-          </div>
-          <div id="competition-content" class="competition-content-container p-4 border-t border-gray-200">
-             ${placeholderHtml}
+            <!-- The #competition-content div is now solely generated within generateEventManager -->
           </div>
           ${generateHeader(title, tournamentId, 'execution', currentView, isLoggedIn, false)}
           <div ${contentAttributes}>
