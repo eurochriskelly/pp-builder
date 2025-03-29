@@ -13,7 +13,8 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
     html += '<span class="mr-4 font-semibold">Competitions:</span>';
 
     // Generate links for Competitions
-    const competitionKeys = Object.keys(tournament.categories || {});
+    console.log('Tournament data:', tournament); // Debug logging
+    const competitionKeys = tournament.categories ? Object.keys(tournament.categories) : [];
     if (competitionKeys.length > 0) {
         competitionKeys.forEach(compKey => {
             const encodedCompKey = encodeURIComponent(compKey);
@@ -27,7 +28,16 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
                 </a>`;
         });
     } else {
-        html += '<span class="text-gray-500">No competitions defined.</span>';
+        html += '<div class="text-gray-500 p-4 bg-yellow-50 rounded">';
+        html += '<p>No competitions found in tournament data.</p>';
+        if (tournament.categories === undefined) {
+            html += '<p class="text-sm">(Categories data is undefined)</p>';
+        } else if (tournament.categories === null) {
+            html += '<p class="text-sm">(Categories data is null)</p>';
+        } else if (typeof tournament.categories !== 'object') {
+            html += `<p class="text-sm">(Categories is type: ${typeof tournament.categories})</p>`;
+        }
+        html += '</div>';
     }
 
     html += '</div></nav>';
