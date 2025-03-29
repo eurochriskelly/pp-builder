@@ -26,6 +26,32 @@ async function getTournamentAndHandleErrors(uuid, res) {
 
 // Removed unused generateStandingsHeaders function from here
 
+// Setup update routes using the helper
+// Define these specific routes *before* the general '/event/:uuid/:view?' route
+Object.keys(allowedViews).forEach(view => {
+    router.get(`/event/:uuid/${view}-update`, async (req, res) => {
+        const uuid = req.params.uuid;
+        // Use the existing error handling for tournament fetching
+        const tournament = await getTournamentAndHandleErrors(uuid, res); 
+        if (!tournament) return; // Error response already sent by getTournamentAndHandleErrors
+        
+        // Extract competition name from query parameters for filtering
+        const competitionName = req.query.competition; 
+
+        try {
+            // Pass competitionName to generateViewContent
+            const content = await generateViewContent(view, tournament.id, competitionName); 
+            res.send(content);
+        } catch (error) {
+            // Handle errors from generateViewContent itself (e.g., invalid view or fetch error)
+            // Although getTournamentAndHandleErrors should catch most issues earlier
+            console.error(`Error in update route for view ${view}:`, error.message);
+            res.status(500).send(`<p class="error">Internal server error generating view update.</p>`);
+        }
+    });
+});
+
+
 router.get('/event/:uuid/:view?', async (req, res) => {
     const uuid = req.params.uuid;
     const requestedView = req.params.view; // Get the requested view, might be undefined
@@ -109,33 +135,6 @@ async function generateViewContent(view, tournamentId, competitionName = null) {
         console.error(`Error generating content for view ${view}, tournament ${tournamentId}:`, error.message);
         // Return an error message or throw to be handled by the route
         return `<p class="error">Error loading data for ${allowedViews[view].title}. Please try again later.</p>`; 
-    }
-}
-
-// Setup update routes using the helper
-Object.keys(allowedViews).forEach(view => {
-    router.get(`/event/:uuid/${view}-update`, async (req, res) => {
-        const uuid = req.params.uuid;
-        // Use the existing error handling for tournament fetching
-        const tournament = await getTournamentAndHandleErrors(uuid, res); 
-        if (!tournament) return; // Error response already sent by getTournamentAndHandleErrors
-        
-        // Extract competition name from query parameters for filtering
-        const competitionName = req.query.competition; 
-
-        try {
-            // Pass competitionName to generateViewContent
-            const content = await generateViewContent(view, tournament.id, competitionName); 
-            res.send(content);
-        } catch (error) {
-            // Handle errors from generateViewContent itself (e.g., invalid view or fetch error)
-            // Although getTournamentAndHandleErrors should catch most issues earlier
-            console.error(`Error in update route for view ${view}:`, error.message);
-            res.status(500).send(`<p class="error">Internal server error generating view update.</p>`);
-        }
-    });
-});
-
 // Modify the main view route to also use the helper (optional but consistent)
 // Note: This requires adjusting the main route logic slightly if you adopt it.
 // Example modification (Illustrative - apply carefully):
