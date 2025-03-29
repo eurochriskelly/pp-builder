@@ -8,39 +8,39 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
                 <h2 class="mx-auto">${tournament.Title || tournament.title || 'Event'}</h2>
                 <p class="text-3xl m-4 mb-8 mx-auto">${tournament.Date ? tournament.Date.substring(0,10) : tournament.date || ''} | ${tournament.Location || tournament.location || ''}</p>
              </div>`;
-    html += '<nav class="event-manager-nav">';
+    html += '<nav class="event-manager-nav competition-nav mb-4">';
     html += '<div class="event-manager-nav-inner">';
-    
-    // Generate links from allowedViews
-    Object.entries(allowedViews).forEach(([key, view]) => {
-        html += `
-            <a href="/event/${uuid}/${key}" 
-               hx-get="/event/${uuid}/${key}" 
-               hx-target="body" 
-               hx-swap="outerHTML" 
-               class="event-manager-link"> 
-                ${view.title}
-            </a>`; // Apply class 'event-manager-link'
-    });
-    
+    html += '<span class="mr-4 font-semibold">Competitions:</span>';
+
+    // Generate links for Competitions
+    const competitionKeys = Object.keys(tournament.categories || {});
+    if (competitionKeys.length > 0) {
+        competitionKeys.forEach(compKey => {
+            const encodedCompKey = encodeURIComponent(compKey);
+            html += `
+                <a href="/event/${uuid}/${encodedCompKey}"
+                   hx-get="/event/${uuid}/${encodedCompKey}/summary"
+                   hx-target="#competition-content"
+                   hx-swap="innerHTML"
+                   class="event-manager-link competition-link">
+                    ${compKey}
+                </a>`;
+        });
+    } else {
+        html += '<span class="text-gray-500">No competitions defined.</span>';
+    }
+
     html += '</div></nav>';
+
+    // Add container for competition-specific content
+    html += '<div id="competition-content" class="competition-content-container p-4 border-t border-gray-200">';
+    html += '<p class="text-gray-600">Select a competition above to view details.</p>';
+    html += '</div>';
     html += '</div>';
 
     if (isLoggedIn) {
         html += `<script src="/scripts/tournamentSelectionScripts.js"></script>`;
     }
-    
-    html += `
-    <script>
-        // Shorten 'Competition' headers using the assigned class
-        document.querySelectorAll('th.comp-column').forEach(th => {
-             // Check if it hasn't already been shortened by the template
-            if (th.textContent.toLowerCase().includes('competition')) { 
-                 th.textContent = 'Comp';
-            }
-        });
-    </script>
-    `;
 
     return html;
 }
