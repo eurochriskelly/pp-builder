@@ -76,8 +76,6 @@ module.exports = function generateKnockoutFixtures(data) {
     // Generate a table for each category
     for (const category in groupedData) {
         const categoryData = groupedData[category];
-        // Add the spanning header row for the category
-        html += generateSpanningHeaderRow(formatCategory(category), headersConfig.length, 'category-header'); 
         
         // Generate the table for this category's fixtures
         html += generateTable({

@@ -64,7 +64,6 @@ module.exports = function generateGroupFixtures(data) {
     for (const category in groupedData) {
         const categoryData = groupedData[category];
         // Add the spanning header row for the category
-        html += generateSpanningHeaderRow(category, headersConfig.length, 'category-header'); 
         
         // Generate the table for this category's fixtures
         html += generateTable({

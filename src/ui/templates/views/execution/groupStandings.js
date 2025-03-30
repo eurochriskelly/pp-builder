@@ -51,10 +51,6 @@ module.exports = function generateGroupStandings(data) {
     `;
 
     for (const cat of Object.keys(data)) {
-        // Add the spanning header row for the category
-        const categoryHeaderContent = `<h2>${cat.toUpperCase()}</h2>`;
-        // Use headersConfig.length for colspan
-        html += generateSpanningHeaderRow(categoryHeaderContent, headersConfig.length, 'category-header'); 
 
         for (const groupData of data[cat]) {
             // Sort rows (keep sorting logic here)

@@ -14,7 +14,6 @@ const {
 function generateFinalsResultRow(row) {
     const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
     const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
-    
     const { team1ScoreFinal, team2ScoreFinal } = getFinalScoreDisplay(
         row.goals1, row.points1, row.goals2, row.points2, row.outcome
     );
@@ -68,8 +67,6 @@ module.exports = function generateFinalsResults(data) {
     // Generate a table for each category
     for (const category in groupedData) {
         const categoryData = groupedData[category];
-        // Add the spanning header row for the category
-        html += generateSpanningHeaderRow(category, headersConfig.length, 'category-header'); 
         
         // Generate the table for this category's results
         html += generateTable({
