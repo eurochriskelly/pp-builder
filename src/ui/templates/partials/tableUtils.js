@@ -61,7 +61,10 @@ function generateScoreCell(goals, points, className = '', defaultStyle = '') { /
  */
 function generateTableHeaderCell(content, className = '', style = '') {
     const combinedClassName = className || '';
-    return `<th class="${combinedClassName}" style="${style}">${content}</th>`;
+    const verticalStyle = className.includes('vertical-text') 
+        ? 'writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; padding: 4px 2px;'
+        : '';
+    return `<th class="${combinedClassName}" style="${verticalStyle} ${style}">${content}</th>`;
 }
 
 /**
@@ -88,8 +91,9 @@ function generateTableHeaderRow(headers, headerConfig = {}) {
  * @param {string} [style=''] - Optional inline style(s) for the cell.
  * @returns {string} HTML string for a <tr> element.
  */
-function generateSpanningHeaderRow(content, colspan, className = '', style = '') { // Keep style for potential overrides
-    const combinedClassName = `${className} text-center`.trim(); // Default to text-center for spanning headers
+function generateSpanningHeaderRow(content, colspan, className = '', style = '') {
+    // Ensure spanning headers are always horizontal
+    const combinedClassName = `${className.replace('vertical-text', '')} text-center`.trim();
     const headerCell = generateTableHeaderCell(content, combinedClassName, style);
     // Set colspan attribute on the generated th
     const cellWithColspan = headerCell.replace('<th ', `<th colspan="${colspan}" `);
