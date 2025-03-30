@@ -58,19 +58,8 @@ module.exports = function generateHeader(
                                  
                             </div>
                         </div>
-i<!-- Views breadcrumbs -->
-                        ${area === 'execution' && currentView 
-                          ? `
-                            <span class="separator">${chevron}</span>
-                            <div class="dropdown">
-                                <a href="#" onclick="toggleDropdown(event)" class="active">${viewTitles.execution[currentView]}</a>
-                                <div class="dropdown-content">
-                                    ${Object.entries(viewTitles.execution).map(([key, value]) => `
-                                        ${key !== currentView ? `<a href="${basePath}/${key}" hx-get="${basePath}/${key}" hx-target="body" hx-swap="outerHTML">${value}</a>` : ''}
-                                    `).join('')}
-                                </div>
-                            </div>
-                          ` : '' }
+                        <!-- Views breadcrumbs -->
+                        <!-- Removed Execution view dropdown as views are now combined -->
                         ${area === 'planning' && currentView ? `
                             <span class="separator">${chevron}</span>
                             <div class="dropdown">

@@ -20,15 +20,25 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
     if (competitions.length > 0) {
         competitions.forEach(compName => { // Iterate directly over the array elements (names)
             const encodedCompName = encodeURIComponent(compName); // Encode the actual name
-            // Target the new select-competition endpoint to get OOB menu + default view
+            // Target the new competition-update endpoint directly
+            const updateUrl = `/event/${uuid}/competition-update?competition=${encodedCompName}`;
             html += `
-                <a href="/event/${uuid}/view7?competition=${encodedCompName}" 
-                   hx-get="/event/${uuid}/select-competition?competition=${encodedCompName}" 
-                   hx-target="#content" 
+                <a href="#"
+                   hx-get="${updateUrl}"
+                   hx-target="#content"
                    hx-swap="innerHTML"
+                   hx-trigger="click"
                    class="event-manager-link competition-link">
                     ${compName}
                 </a>`;
+            // Add polling attributes to the #content div *after* the first load via the link click
+            // We can achieve this by having the competition-update route return the content
+            // wrapped in a div that includes these attributes, or by adding a script.
+            // Simpler approach: Add polling to the #content div itself in the main events.js route?
+            // Let's modify the main route to add polling attributes to #content if a competition is loaded.
+            // For now, the link just loads the content. Polling needs separate handling.
+            // Alternative: Add hx-trigger="load delay:1s" to the link to trigger polling after load?
+            // Let's stick to the basic load first. Polling can be added later if needed.
         });
     } else {
         // Updated error handling for clarity
@@ -48,11 +58,11 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
 
     html += '</div></nav>';
 
-    // Add container for competition-specific content
-    html += '<div id="competition-content" class="competition-content-container p-4 border-t border-gray-200">';
-    html += '<p class="text-gray-600">Select a competition above to view details.</p>';
-    html += '</div>';
-    html += '</div>';
+    // The #competition-content div is no longer needed here as content is loaded into #content
+    // html += '<div id="competition-content" class="competition-content-container p-4 border-t border-gray-200">';
+    // html += '<p class="text-gray-600">Select a competition above to view details.</p>';
+    // html += '</div>';
+    html += '</div>'; // Close event-manager-container
 
     if (isLoggedIn) {
         html += `<script src="/scripts/tournamentSelectionScripts.js"></script>`;
