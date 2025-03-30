@@ -33,7 +33,7 @@ function generateGroupStandingRow(row, index) {
 }
 
 module.exports = function generateGroupStandings(data) {
-    let html = '<div id="group-standings" class="text-center">';
+    let html = '<div id="group-standings" class="text-center w-full">';
     
     // Generate headers config dynamically based on teams in group
     function getHeadersConfig(teams) {
@@ -111,7 +111,7 @@ module.exports = function generateGroupStandings(data) {
             html += generateSpanningHeaderRow(
                 `GROUP ${groupData.groupName.toUpperCase()}`,
                 headersConfig.length,
-                'group-header uppercase'
+                'group-header uppercase text-center'
             );
             
             // Generate the table for this group's standings

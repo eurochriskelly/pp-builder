@@ -32,7 +32,7 @@ function generateGroupFixtureRow(row) {
 }
 
 module.exports = function generateGroupFixtures(data) {
-    let html = '<div id="group-fixtures" class="text-center">';
+    let html = '<div id="group-fixtures" class="text-center w-full">';
     
     const headersConfig = [
         { key: 'team1', label: 'Team 1', className: 'table-header' },
@@ -64,6 +64,11 @@ module.exports = function generateGroupFixtures(data) {
     for (const category in groupedData) {
         const categoryData = groupedData[category];
         // Add the spanning header row for the category
+        html += generateSpanningHeaderRow(
+            category.toUpperCase(),
+            headersConfig.length,
+            'group-header uppercase text-center'
+        );
         
         // Generate the table for this category's fixtures
         html += generateTable({
