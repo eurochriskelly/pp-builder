@@ -13,9 +13,9 @@ module.exports = function generateHeader(
     const viewTitles = {
       'execution': {
         'recent': 'Most Recent Changes',
-        'view2': 'Group Fixtures',
-        'view3': 'Group Tables',
-        'view4': 'Knockout Fixtures',
+        'view2': 'Group Games',
+        'view3': 'Group Tables', 
+        'view4': 'Knockout Games',
         'view5': 'Carded Players',
         'view6': 'Matches by Pitch',
         'view7': 'Finals'

@@ -97,8 +97,13 @@ router.get('/event/:uuid/:view?', async (req, res) => {
     const tournamentId = tournament.id;
     const isLoggedIn = !!req.session.user;
 
-    let title = tournament.title || 'Event Overview'; // Default title
-    let currentView = null; // No specific view selected initially
+    let title = 'Event Overview'; // Always start with this
+    let currentView = null;
+    
+    // Only show specific view title if we have a competition selected
+    if (req.query.competition && requestedView) {
+        title = viewTitles.execution[requestedView] || tournament.title || 'Event';
+    }
     let content = '<p class="p-4 text-gray-600">Select a competition above to view details.</p>'; // Placeholder for main content
     let contentAttributes = 'id="content"'; // Default attributes for the content div
 
