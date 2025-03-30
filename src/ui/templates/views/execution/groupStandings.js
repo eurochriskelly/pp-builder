@@ -3,16 +3,17 @@ const {
     generateSpanningHeaderRow,
     generateTable
 } = require('../../partials/tableUtils');
-const { processTeamName } = require('../../../utils'); // For consistent team styling
+const { processTeamName, generateTeamLabel } = require('../../../utils'); // Import generateTeamLabel
 
 // Row generator function for group standings
 function generateGroupStandingRow(row, index) {
     const { teamName, teamStyle } = processTeamName(row.team);
     let html = '<tr>';
     
-    // Team name and number
+    // Team name and label
     html += generateTableCell(teamName, 'uppercase font-bold text-left', teamStyle);
-    html += generateTableCell(index + 1, 'text-center'); // Team number
+    const teamLabel = generateTeamLabel(row.team); // Generate label
+    html += generateTableCell(`<span>${teamLabel}</span>`, 'text-center'); // Wrap label in span for 'T' column
     
     // Empty cells for vs columns (will populate later)
     for (let i = 0; i < row.groupTeams.length; i++) {
@@ -42,11 +43,12 @@ module.exports = function generateGroupStandings(data) {
             { key: 'teamNum', label: 'T', className: 'table-header vertical-text' } // Use vertical-text
         ];
         
-        // Add columns for each team
-        teams.forEach((_, i) => {
+        // Add columns for each team using their generated label
+        teams.forEach((team, i) => { // Need the actual team object here
+            const label = generateTeamLabel(team.team); // Generate label from team name
             baseHeaders.push({
                 key: `vs${i+1}`, 
-                label: `${i+1}`,
+                label: `<span>${label}</span>`, // Wrap label in span
                 className: 'table-header vertical-text' // Use vertical-text
             });
         });
