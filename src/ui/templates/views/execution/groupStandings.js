@@ -40,7 +40,7 @@ module.exports = function generateGroupStandings(data) {
     function getHeadersConfig(teams) {
         const baseHeaders = [
             { key: 'team', label: 'Team', className: 'table-header text-left' },
-            { key: 'teamNum', label: 'T', className: 'table-header vertical-text' } // Use vertical-text
+            { key: 'teamNum', label: 'T', className: 'table-header text-center' } // Remove vertical-text, add text-center
         ];
         
         // Add columns for each team using their generated label
@@ -49,39 +49,34 @@ module.exports = function generateGroupStandings(data) {
             baseHeaders.push({
                 key: `vs${i+1}`, 
                 label: `<span>${label}</span>`, // Wrap label in span
-                className: 'table-header vertical-text' // Use vertical-text
+                className: 'table-header text-center' // Remove vertical-text, add text-center
             });
         });
 
         // Add standard stats columns
         baseHeaders.push(
-            { key: 'MatchesPlayed', label: 'P', className: 'table-header vertical-text' }, // Use vertical-text
-            { key: 'Wins', label: 'W', className: 'table-header vertical-text' }, // Use vertical-text
-            { key: 'Draws', label: 'D', className: 'table-header vertical-text' }, // Use vertical-text
-            { key: 'Losses', label: 'L', className: 'table-header vertical-text' }, // Use vertical-text
-            { key: 'PointsFrom', label: 'SF', className: 'table-header vertical-text' }, // Use vertical-text
-            { key: 'PointsDifference', label: 'SD', className: 'table-header vertical-text' }, // Use vertical-text
-            { key: 'TotalPoints', label: 'Pts', className: 'table-header vertical-text' } // Use vertical-text
+            { key: 'MatchesPlayed', label: 'P', className: 'table-header text-center' }, // Remove vertical-text, add text-center
+            { key: 'Wins', label: 'W', className: 'table-header text-center' }, // Remove vertical-text, add text-center
+            { key: 'Draws', label: 'D', className: 'table-header text-center' }, // Remove vertical-text, add text-center
+            { key: 'Losses', label: 'L', className: 'table-header text-center' }, // Remove vertical-text, add text-center
+            { key: 'PointsFrom', label: 'SF', className: 'table-header text-center' }, // Remove vertical-text, add text-center
+            { key: 'PointsDifference', label: 'SD', className: 'table-header text-center' }, // Remove vertical-text, add text-center
+            { key: 'TotalPoints', label: 'Pts', className: 'table-header text-center' } // Remove vertical-text, add text-center
         );
 
         return baseHeaders;
     }
 
-    const colgroupHtml = `
-        <colgroup>
-            <col class="col-team">
-            <col class="col-stat">
-            <col class="col-stat">
-            <col class="col-stat">
-            <col class="col-stat">
-            <col class="col-stat">
-            <col class="col-stat">
-            <col class="col-stat">
-            <col class="col-stat-wide">
-            <col class="col-stat-wide">
-            <col class="col-stat-wide">
-        </colgroup>
-    `;
+    // Function to generate colgroup dynamically based on number of teams
+    function generateColgroup(numTeams) {
+        let cols = '<col class="col-team">'; // First column for team name (flexible width)
+        // Add columns for 'T', vsTeams, and stats (fixed width)
+        const numFixedCols = 1 + numTeams + 7; // T + vsTeams + P, W, D, L, SF, SD, Pts
+        for (let i = 0; i < numFixedCols; i++) {
+            cols += '<col style="width: 30px;">';
+        }
+        return `<colgroup>${cols}</colgroup>`;
+    }
 
     // Handle case where data is undefined or empty
     if (!data || Object.keys(data).length === 0) {
@@ -117,6 +112,9 @@ module.exports = function generateGroupStandings(data) {
             );
             
             // Generate the table for this group's standings
+            // Generate colgroup based on the number of teams in this specific group
+            const colgroupHtml = generateColgroup(groupData.rows.length);
+
             html += generateTable({
                 data: groupData.rows.map((row, i) => ({
                     ...row,
@@ -125,8 +123,8 @@ module.exports = function generateGroupStandings(data) {
                 })), // Add team numbers
                 headersConfig: headersConfig,
                 rowGenerator: (row, i) => generateGroupStandingRow(row, i),
-                tableClassName: 'standings-table table-layout-fixed',
-                colgroupHtml: colgroupHtml,
+                tableClassName: 'standings-table table-layout-fixed', // Keep table-layout fixed
+                colgroupHtml: colgroupHtml, // Use dynamically generated colgroup
                 emptyDataMessage: `No standings available for Group ${groupData.groupName}.`
             });
         }
