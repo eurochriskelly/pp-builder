@@ -1,5 +1,4 @@
 const express = require('express');
-const express = require('express');
 const { getTournamentByUuid } = require('../../queries');
 // Import the combined data fetch function directly if needed, or rely on allowedViews config
 const { getCompetitionData } = require('../../queries/matches');
