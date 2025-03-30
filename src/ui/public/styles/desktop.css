@@ -21,7 +21,10 @@
 /* == Event Manager == */
 .event-manager-container { margin: 20px 0; }
 .event-manager-header { text-align: center; margin-bottom: 20px; }
-.event-manager-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 800px; margin: 0 auto; }
+.event-manager-nav {
+  display: flex; flex-wrap: wrap;
+  gap: 10px; max-width: 800px; 
+}
 .event-manager-nav-inner { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
 /* Removed #event-manager specificity prefix */
 .event-manager-link { 

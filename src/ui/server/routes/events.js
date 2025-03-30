@@ -104,7 +104,7 @@ router.get('/event/:uuid', async (req, res) => { // Removed optional :view? para
 
         const html = `
           ${generateHeader(pageTitle, tournamentId, 'execution', null, isLoggedIn, false)}
-          <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+          <div style="display: flex;">
             ${eventManagerHtml}
           </div>
           <div ${contentAttributes}>
