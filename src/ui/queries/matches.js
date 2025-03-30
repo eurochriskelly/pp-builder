@@ -194,4 +194,42 @@ module.exports = {
     getCardedPlayers,
     getFinalsResults,
     getGroupStandings,
+    getCompetitionData, // Add the new function here
 };
+
+// New function to fetch all data for a specific competition
+async function getCompetitionData(tournamentId, competitionName) {
+    if (!competitionName) {
+        throw new Error("Competition name is required to fetch competition data.");
+    }
+    try {
+        // Fetch all data concurrently
+        const [
+            groupFixtures,
+            groupStandings,
+            knockoutFixtures,
+            finalsResults
+            // Add other data fetches here if needed (e.g., carded players filtered by competition if API supports it)
+        ] = await Promise.all([
+            getGroupFixtures(tournamentId, competitionName),
+            getGroupStandings(tournamentId, competitionName),
+            getKnockoutFixtures(tournamentId, competitionName),
+            getFinalsResults(tournamentId, competitionName)
+            // Example: getCardedPlayers(tournamentId, competitionName)
+        ]);
+
+        // Return the data in a structured object
+        return {
+            competitionName, // Include the name for context if needed
+            groupFixtures,
+            groupStandings, // This will be an object keyed by category, but should only contain the requested competition
+            knockoutFixtures,
+            finalsResults
+            // cardedPlayers // If fetched
+        };
+    } catch (error) {
+        console.error(`Error fetching comprehensive data for competition ${competitionName} in tournament ${tournamentId}:`, error.message);
+        // Re-throw the error to be handled by the calling route
+        throw error; 
+    }
+}
