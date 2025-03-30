@@ -93,11 +93,11 @@ module.exports = function generateGroupStandings(data) {
                 return 0; // Or sort by name if all else fails
             });
 
-            // Add the spanning header row for the group
-            html += generateSpanningHeaderRow(`Group ${groupData.groupName}`, headersConfig.length, 'group-header'); 
-
-            // Generate headers config based on teams in this group
+            // Generate headers config based on teams in this group first
             const headersConfig = getHeadersConfig(groupData.rows);
+            
+            // Then add the spanning header row for the group
+            html += generateSpanningHeaderRow(`Group ${groupData.groupName}`, headersConfig.length, 'group-header');
             
             // Generate the table for this group's standings
             html += generateTable({
