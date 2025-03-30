@@ -224,7 +224,6 @@ body > article.execution .standings-table tr th {
   background-color: #eee;
 }
 body > article.execution .standings-table tr>th.table-header {
-  height: 9rem;
   whitespace: no-wrap;
 }
 body > article.execution .standings-table .col-team {
@@ -318,6 +317,5 @@ hr {
 .vertical-head {
   transform: rotate(90deg); /* or -90deg */
   transform-origin: center middle; 
-  width: 9rem;
   white-space: nowrap;
 }

@@ -15,7 +15,7 @@ function generateTableCell(content, className = '', style = '') {
 
   // Apply fixed width style if it's a centered (non-team) column
   if (className.includes('text-center')) {
-      cellStyle += ' width: 30px; max-width: 30px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+      cellStyle += ' width: 70px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
   }
 
   return `<td class="${combinedClassName}" style="${cellStyle.trim()}">${content ?? 'N/A'}</td>`;
