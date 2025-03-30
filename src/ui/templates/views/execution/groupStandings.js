@@ -81,6 +81,11 @@ module.exports = function generateGroupStandings(data) {
         </colgroup>
     `;
 
+    // Handle case where data is undefined or empty
+    if (!data || Object.keys(data).length === 0) {
+        return '<div id="group-standings"><p>No group standings data available.</p></div>';
+    }
+
     for (const cat of Object.keys(data)) {
 
         for (const groupData of data[cat]) {
@@ -93,6 +98,12 @@ module.exports = function generateGroupStandings(data) {
                 return 0; // Or sort by name if all else fails
             });
 
+            // Skip if no rows data
+            if (!groupData.rows || !groupData.rows.length) {
+                html += `<p>No standings data available for Group ${groupData.groupName}</p>`;
+                continue;
+            }
+
             // Generate headers config based on teams in this group first
             const headersConfig = getHeadersConfig(groupData.rows);
             
@@ -101,7 +112,11 @@ module.exports = function generateGroupStandings(data) {
             
             // Generate the table for this group's standings
             html += generateTable({
-                data: groupData.rows.map((row, i) => ({...row, teamNum: i+1})), // Add team numbers
+                data: groupData.rows.map((row, i) => ({
+                    ...row,
+                    teamNum: i+1,
+                    groupTeams: groupData.rows // Ensure groupTeams exists for row generation
+                })), // Add team numbers
                 headersConfig: headersConfig,
                 rowGenerator: (row, i) => generateGroupStandingRow(row, i),
                 tableClassName: 'standings-table table-layout-fixed',
