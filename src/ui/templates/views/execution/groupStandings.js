@@ -39,7 +39,7 @@ module.exports = function generateGroupStandings(data) {
     function getHeadersConfig(teams) {
         const baseHeaders = [
             { key: 'team', label: 'Team', className: 'table-header text-left' },
-            { key: 'teamNum', label: 'T', className: 'table-header vertical-head' }
+            { key: 'teamNum', label: 'T', className: 'table-header vertical-text' } // Use vertical-text
         ];
         
         // Add columns for each team
@@ -47,19 +47,19 @@ module.exports = function generateGroupStandings(data) {
             baseHeaders.push({
                 key: `vs${i+1}`, 
                 label: `${i+1}`,
-                className: 'table-header vertical-head'
+                className: 'table-header vertical-text' // Use vertical-text
             });
         });
 
         // Add standard stats columns
         baseHeaders.push(
-            { key: 'MatchesPlayed', label: 'P', className: 'table-header vertical-head' },
-            { key: 'Wins', label: 'W', className: 'table-header vertical-head' },
-            { key: 'Draws', label: 'D', className: 'table-header vertical-head' },
-            { key: 'Losses', label: 'L', className: 'table-header vertical-head' },
-            { key: 'PointsFrom', label: 'SF', className: 'table-header vertical-head' },
-            { key: 'PointsDifference', label: 'SD', className: 'table-header vertical-head' },
-            { key: 'TotalPoints', label: 'Pts', className: 'table-header vertical-head' }
+            { key: 'MatchesPlayed', label: 'P', className: 'table-header vertical-text' }, // Use vertical-text
+            { key: 'Wins', label: 'W', className: 'table-header vertical-text' }, // Use vertical-text
+            { key: 'Draws', label: 'D', className: 'table-header vertical-text' }, // Use vertical-text
+            { key: 'Losses', label: 'L', className: 'table-header vertical-text' }, // Use vertical-text
+            { key: 'PointsFrom', label: 'SF', className: 'table-header vertical-text' }, // Use vertical-text
+            { key: 'PointsDifference', label: 'SD', className: 'table-header vertical-text' }, // Use vertical-text
+            { key: 'TotalPoints', label: 'Pts', className: 'table-header vertical-text' } // Use vertical-text
         );
 
         return baseHeaders;
