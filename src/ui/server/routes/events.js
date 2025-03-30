@@ -44,12 +44,14 @@ router.get('/event/:uuid/select-competition', async (req, res) => {
         // 1. Generate the secondary menu HTML
         const secondMenuHtml = generateCompetitionViewMenu(uuid, competitionName, defaultView);
 
-        // 2. Generate the default view content (Finals)
-        const defaultViewContent = await generateViewContent(defaultView, tournament.id, competitionName);
+        // 2. Generate the default view content (Finals), getting title and content
+        const { title: defaultViewTitle, content: defaultViewContent } = await generateViewContent(defaultView, tournament.id, competitionName);
 
-        // 3. Construct the response with OOB swap for the menu
+        // 3. Construct the response with OOB swap for the menu and H1 prepended to main content
         const oobMenu = `<div id="competition-content" hx-swap-oob="innerHTML">${secondMenuHtml}</div>`;
-        const responseHtml = defaultViewContent + oobMenu; // Combine main content and OOB swap
+        // Prepend H1 to the default view content
+        const mainContentWithTitle = `<h1>${defaultViewTitle}</h1>${defaultViewContent}`;
+        const responseHtml = mainContentWithTitle + oobMenu; // Combine main content (with H1) and OOB swap
 
         res.send(responseHtml);
 
@@ -76,9 +78,10 @@ Object.keys(allowedViews).forEach(view => {
         const competitionName = req.query.competition; 
 
         try {
-            // Pass competitionName to generateViewContent
-            const content = await generateViewContent(view, tournament.id, competitionName); 
-            res.send(content);
+            // Pass competitionName to generateViewContent, get title and content
+            const { title, content } = await generateViewContent(view, tournament.id, competitionName);
+            // Prepend H1 to the content for the swap
+            res.send(`<h1>${title}</h1>${content}`);
         } catch (error) {
             // Handle errors from generateViewContent itself (e.g., invalid view or fetch error)
             // Although getTournamentAndHandleErrors should catch most issues earlier
@@ -97,18 +100,15 @@ router.get('/event/:uuid/:view?', async (req, res) => {
     const tournamentId = tournament.id;
     const isLoggedIn = !!req.session.user;
 
-    let title = 'Event Overview'; // Default title
+    // Title for the <title> tag and potentially header.js if navigation=true
+    let pageTitle = 'Event Overview'; 
     let currentView = null;
-    
-    // Show specific view title if we have a view selected
-    if (requestedView && allowedViews[requestedView]) {
-        title = allowedViews[requestedView].title;
-    }
-    let content = '<p class="p-4 text-gray-600">Select a competition above to view details.</p>'; // Placeholder for main content
+    let content = '<p class="p-4 text-gray-600">Select a competition above to view details.</p>'; // Default placeholder for #content
     let contentAttributes = 'id="content"'; // Default attributes for the content div
 
     if (requestedView) {
         currentView = requestedView;
+        // Check if the requested view is valid *before* trying to generate content
         // A specific view was requested in the URL
         if (!allowedViews[requestedView]) {
             // Handle invalid/disallowed view
@@ -123,39 +123,39 @@ router.get('/event/:uuid/:view?', async (req, res) => {
             return res.status(403).send(html);
         }
 
-        // Valid view requested, proceed to generate its content
-        currentView = requestedView;
-        title = allowedViews[currentView].title; // Get title for the specific view
+        // Valid view requested, proceed to generate its content including H1
         const competitionName = req.query.competition; // Extract competition name from query
         try {
-            // Pass competitionName when generating initial content for a direct view load
-            content = await generateViewContent(currentView, tournamentId, competitionName); 
+            // Get title and content object
+            const { title: viewTitle, content: viewContent } = await generateViewContent(currentView, tournamentId, competitionName);
+            pageTitle = viewTitle; // Update the page title for the <title> tag
+            // Prepend H1 to the content for the initial load
+            content = `<h1>${viewTitle}</h1>${viewContent}`;
             // Add HTMX polling attributes, including competitionName in the hx-get URL
             const pollingUrl = `/event/${uuid}/${currentView}-update${competitionName ? `?competition=${encodeURIComponent(competitionName)}` : ''}`;
             contentAttributes = `id="content" hx-get="${pollingUrl}" hx-trigger="every 30s" hx-swap="innerHTML"`;
         } catch (error) {
             console.error(`Error generating main view ${currentView} for tournament ${tournamentId} (competition: ${competitionName}):`, error.message);
-            content = `<p class="error p-4">An error occurred while loading the content for ${title}.</p>`;
-            // Use a generic error header title
-            title = 'Server Error'; 
+            pageTitle = 'Server Error'; // Update page title for error
+            content = `<p class="error p-4">An error occurred while loading the content for ${allowedViews[currentView]?.title || 'this view'}.</p>`;
+            // No polling on error
+            contentAttributes = 'id="content"';
         }
     }
-    // Else: No specific view requested, use the default title and placeholder content defined above
+    // Else: No specific view requested, use the default pageTitle and placeholder content defined above
 
     // Construct the final HTML
     try {
-        // The second menu is now ONLY added via OOB swap when a competition is selected.
-        // The initial state of competition-content should just be the placeholder.
-        const placeholderHtml = '<p class="text-gray-600">Select a competition above to view details.</p>';
+        // generateEventManager now handles the competition selection and the initial placeholder/menu area
+        const eventManagerHtml = generateEventManager(tournamentId, uuid, tournament, isLoggedIn);
 
         const html = `
+          ${generateHeader(pageTitle, tournamentId, 'execution', currentView, isLoggedIn, false)} 
           <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-            ${generateEventManager(tournamentId, uuid, tournament, isLoggedIn)} 
-            <!-- The #competition-content div is now solely generated within generateEventManager -->
+            ${eventManagerHtml} 
           </div>
-          ${generateHeader(title, tournamentId, 'execution', currentView, isLoggedIn, false)}
           <div ${contentAttributes}>
-            ${content} 
+            ${content} <!-- Initial content (placeholder or view with H1) -->
           </div>
           ${generateFooter()}
         `;
@@ -174,20 +174,21 @@ async function generateViewContent(view, tournamentId, competitionName = null) {
     if (!allowedViews[view]) {
         throw new Error(`Invalid view specified: ${view}`); // Should be caught by caller
     }
-    const { fetch, generator } = allowedViews[view];
+    const { title, fetch, generator } = allowedViews[view]; // Get title from config
     try {
         // Pass competitionName to the fetch function
-        const data = await fetch(tournamentId, competitionName); 
+        const data = await fetch(tournamentId, competitionName);
         // Handle the special case for 'recent' view generator signature
-        // Note: 'recent' view might also need competition filtering if applicable
-        const content = view === 'recent' ? generator(data.matches, data.count) : generator(data);
-        return content;
+        const generatedHtml = view === 'recent' ? generator(data.matches, data.count) : generator(data);
+        // Return title and generated content
+        return { title: title, content: generatedHtml };
     } catch (error) {
-        console.error(`Error generating content for view ${view}, tournament ${tournamentId}:`, error.message);
-        // Return an error message or throw to be handled by the route
-        return `<p class="error">Error loading data for ${allowedViews[view].title}. Please try again later.</p>`; 
-    } // <-- Added missing closing brace for the function
+        console.error(`Error generating content for view ${view}, tournament ${tournamentId} (competition: ${competitionName}):`, error.message);
+        // Return title and an error message as content
+        return { title: title || 'Error', content: `<p class="error">Error loading data for ${title || 'this view'}. Please try again later.</p>` };
+    }
 }
+
 // Modify the main view route to also use the helper (optional but consistent)
 // Note: This requires adjusting the main route logic slightly if you adopt it.
 // Example modification (Illustrative - apply carefully):

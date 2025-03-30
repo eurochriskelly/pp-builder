@@ -102,12 +102,9 @@ i<!-- Views breadcrumbs -->
             </nav>
             <hr/>
         `;
-    } else {
-        html += `
-            <h1 style="padding: 20px; text-align: center;">${title}</h1>
-            <hr/>
-        `;
-    }
+    } 
+    // Removed the else block that generated the H1 when navigation=false
+    // The H1 is now part of the #content div managed by events.js routes
 
     return html;
 };
