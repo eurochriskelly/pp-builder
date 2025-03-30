@@ -6,19 +6,28 @@ const {
 const { processTeamName } = require('../../../utils'); // For consistent team styling
 
 // Row generator function for group standings
-function generateGroupStandingRow(row) {
-    const { teamName, teamStyle } = processTeamName(row.team); // Use consistent team styling
+function generateGroupStandingRow(row, index) {
+    const { teamName, teamStyle } = processTeamName(row.team);
     let html = '<tr>';
-    // Apply team style (dynamic) and text-left class
-    html += generateTableCell(teamName, 'uppercase font-bold text-left', teamStyle); 
-    // Use text-center class for stats
+    
+    // Team name and number
+    html += generateTableCell(teamName, 'uppercase font-bold text-left', teamStyle);
+    html += generateTableCell(index + 1, 'text-center'); // Team number
+    
+    // Empty cells for vs columns (will populate later)
+    for (let i = 0; i < row.groupTeams.length; i++) {
+        html += generateTableCell('', 'text-center');
+    }
+    
+    // Stats columns
     html += generateTableCell(row.MatchesPlayed, 'text-center');
     html += generateTableCell(row.Wins, 'text-center');
     html += generateTableCell(row.Draws, 'text-center');
     html += generateTableCell(row.Losses, 'text-center');
-    html += generateTableCell(row.PointsFrom, 'text-center'); // Scores For
-    html += generateTableCell(row.PointsDifference, 'text-center'); // Score Diff
-    html += generateTableCell(row.TotalPoints, 'text-center'); // Points
+    html += generateTableCell(row.PointsFrom, 'text-center');
+    html += generateTableCell(row.PointsDifference, 'text-center');
+    html += generateTableCell(row.TotalPoints, 'text-center');
+    
     html += '</tr>';
     return html;
 }
@@ -26,20 +35,42 @@ function generateGroupStandingRow(row) {
 module.exports = function generateGroupStandings(data) {
     let html = '<div id="group-standings">';
     
-    const headersConfig = [
-        { key: 'team', label: 'Team', className: 'table-header text-left' },
-        { key: 'MatchesPlayed', label: 'P', className: 'table-header vertical-head' },
-        { key: 'Wins', label: 'W', className: 'table-header vertical-head' },
-        { key: 'Draws', label: 'D', className: 'table-header vertical-head' },
-        { key: 'Losses', label: 'L', className: 'table-header vertical-head' },
-        { key: 'PointsFrom', label: 'SF', className: 'table-header vertical-head' }, // Scores For
-        { key: 'PointsDifference', label: 'SD', className: 'table-header vertical-head' }, // Score Diff
-        { key: 'TotalPoints', label: 'Pts', className: 'table-header vertical-head' } // Points
-    ];
+    // Generate headers config dynamically based on teams in group
+    function getHeadersConfig(teams) {
+        const baseHeaders = [
+            { key: 'team', label: 'Team', className: 'table-header text-left' },
+            { key: 'teamNum', label: 'T', className: 'table-header vertical-head' }
+        ];
+        
+        // Add columns for each team
+        teams.forEach((_, i) => {
+            baseHeaders.push({
+                key: `vs${i+1}`, 
+                label: `${i+1}`,
+                className: 'table-header vertical-head'
+            });
+        });
+
+        // Add standard stats columns
+        baseHeaders.push(
+            { key: 'MatchesPlayed', label: 'P', className: 'table-header vertical-head' },
+            { key: 'Wins', label: 'W', className: 'table-header vertical-head' },
+            { key: 'Draws', label: 'D', className: 'table-header vertical-head' },
+            { key: 'Losses', label: 'L', className: 'table-header vertical-head' },
+            { key: 'PointsFrom', label: 'SF', className: 'table-header vertical-head' },
+            { key: 'PointsDifference', label: 'SD', className: 'table-header vertical-head' },
+            { key: 'TotalPoints', label: 'Pts', className: 'table-header vertical-head' }
+        );
+
+        return baseHeaders;
+    }
 
     const colgroupHtml = `
         <colgroup>
             <col class="col-team">
+            <col class="col-stat">
+            <col class="col-stat">
+            <col class="col-stat">
             <col class="col-stat">
             <col class="col-stat">
             <col class="col-stat">
@@ -65,19 +96,16 @@ module.exports = function generateGroupStandings(data) {
             // Add the spanning header row for the group
             html += generateSpanningHeaderRow(`Group ${groupData.groupName}`, headersConfig.length, 'group-header'); 
 
+            // Generate headers config based on teams in this group
+            const headersConfig = getHeadersConfig(groupData.rows);
+            
             // Generate the table for this group's standings
             html += generateTable({
-                data: groupData.rows, // Use the sorted rows
+                data: groupData.rows.map((row, i) => ({...row, teamNum: i+1})), // Add team numbers
                 headersConfig: headersConfig,
-                rowGenerator: generateGroupStandingRow,
-                // Pass table-layout-fixed as a class
-                tableClassName: 'standings-table table-layout-fixed', 
-                // tableStyle: 'table-layout: fixed;', // Remove inline style
+                rowGenerator: (row, i) => generateGroupStandingRow(row, i),
+                tableClassName: 'standings-table table-layout-fixed',
                 colgroupHtml: colgroupHtml,
-                // Use generateStandingsHeaders for the header row within generateTable
-                // Need to adjust generateTable or pass header generator...
-                // For now, let's rely on generateTable's default header generation
-                // If generateStandingsHeaders is strictly needed, we'd need to modify generateTable
                 emptyDataMessage: `No standings available for Group ${groupData.groupName}.`
             });
         }
