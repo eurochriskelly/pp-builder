@@ -33,7 +33,7 @@ module.exports = function generateCompetitionView(data) {
     // Section: Group Fixtures
     if (groupFixtures && groupFixtures.length > 0) {
         html += '<section id="comp-group-fixtures">';
-        // html += '<h3 class="text-xl font-semibold mb-2">Group Games</h3>'; // Optional section title
+        html += '<h2 class="text-xl font-semibold mb-2 mt-4">Group Games</h2>'; // Added H2 subheading
         html += generateGroupFixtures(groupFixtures);
         html += '</section>';
     } else {
@@ -46,7 +46,7 @@ module.exports = function generateCompetitionView(data) {
     const standingsForCompetition = groupStandings && groupStandings[competitionName];
     if (standingsForCompetition && Object.keys(standingsForCompetition).length > 0) {
         html += '<section id="comp-group-standings">';
-        // html += '<h3 class="text-xl font-semibold mb-2">Group Tables</h3>'; // Optional section title
+        html += '<h2 class="text-xl font-semibold mb-2 mt-4">Group Tables</h2>'; // Added H2 subheading
         html += generateGroupStandings({ [competitionName]: standingsForCompetition }); // Pass it in the expected format
         html += '</section>';
     } else {
@@ -58,7 +58,7 @@ module.exports = function generateCompetitionView(data) {
     // Section: Knockout Fixtures
     if (knockoutFixtures && knockoutFixtures.length > 0) {
         html += '<section id="comp-knockout-fixtures">';
-        // html += '<h3 class="text-xl font-semibold mb-2">Knockout Games</h3>'; // Optional section title
+        html += '<h2 class="text-xl font-semibold mb-2 mt-4">Knockout Games</h2>'; // Added H2 subheading
         html += generateKnockoutFixtures(knockoutFixtures);
         html += '</section>';
     } else {
@@ -69,7 +69,7 @@ module.exports = function generateCompetitionView(data) {
     // Section: Finals Results
     if (finalsResults && finalsResults.length > 0) {
         html += '<section id="comp-finals-results">';
-        // html += '<h3 class="text-xl font-semibold mb-2">Finals</h3>'; // Optional section title
+        html += '<h2 class="text-xl font-semibold mb-2 mt-4">Finals</h2>'; // Added H2 subheading
         html += generateFinalsResults(finalsResults);
         html += '</section>';
     } else {
