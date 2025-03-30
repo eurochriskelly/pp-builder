@@ -32,7 +32,7 @@ function generateGroupFixtureRow(row) {
 }
 
 module.exports = function generateGroupFixtures(data) {
-    let html = '<div id="group-fixtures">';
+    let html = '<div id="group-fixtures" class="text-center">';
     
     const headersConfig = [
         { key: 'team1', label: 'Team 1', className: 'table-header' },
