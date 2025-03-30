@@ -6,11 +6,19 @@ const { hashString } = require('./styleUtils');
  * @param {string|number|null} content - The content for the cell.
  * @param {string} [className=''] - Optional CSS class(es) for the cell.
  * @param {string} [style=''] - Optional inline style(s) for the cell.
+ * @param {string} [style=''] - Optional inline style(s) for the cell.
  * @returns {string} HTML string for a <td> element.
  */
-function generateTableCell(content, className = '') {
+function generateTableCell(content, className = '', style = '') {
   const combinedClassName = className || '';
-  return `<td class="${combinedClassName}">${content ?? 'N/A'}</td>`;
+  let cellStyle = style || '';
+
+  // Apply fixed width style if it's a centered (non-team) column
+  if (className.includes('text-center')) {
+      cellStyle += ' width: 30px; max-width: 30px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+  }
+
+  return `<td class="${combinedClassName}" style="${cellStyle.trim()}">${content ?? 'N/A'}</td>`;
 }
 
 /**
@@ -61,10 +69,19 @@ function generateScoreCell(goals, points, className = '', defaultStyle = '') { /
  */
 function generateTableHeaderCell(content, className = '', style = '') {
     const combinedClassName = className || '';
-    const verticalStyle = className.includes('vertical-text') 
-        ? 'writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; padding: 4px 2px;'
-        : '';
-    return `<th class="${combinedClassName}" style="${verticalStyle} ${style}">${content}</th>`;
+    let cellStyle = style || '';
+    
+    // Apply vertical style if needed
+    if (className.includes('vertical-text')) {
+        cellStyle += ' writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; padding: 4px 2px;';
+    }
+    
+    // Apply fixed width style if it's a centered (non-team) column
+    if (className.includes('text-center')) {
+        cellStyle += ' width: 30px; max-width: 30px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+    }
+    
+    return `<th class="${combinedClassName}" style="${cellStyle.trim()}">${content}</th>`;
 }
 
 /**

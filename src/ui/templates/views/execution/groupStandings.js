@@ -67,17 +67,6 @@ module.exports = function generateGroupStandings(data) {
         return baseHeaders;
     }
 
-    // Function to generate colgroup dynamically based on number of teams
-    function generateColgroup(numTeams) {
-        let cols = '<col class="col-team">'; // First column for team name (flexible width)
-        // Add columns for 'T', vsTeams, and stats (fixed width)
-        const numFixedCols = 1 + numTeams + 7; // T + vsTeams + P, W, D, L, SF, SD, Pts
-        for (let i = 0; i < numFixedCols; i++) {
-            cols += '<col style="width: 30px;">';
-        }
-        return `<colgroup>${cols}</colgroup>`;
-    }
-
     // Handle case where data is undefined or empty
     if (!data || Object.keys(data).length === 0) {
         return '<div id="group-standings"><p>No group standings data available.</p></div>';
@@ -112,9 +101,6 @@ module.exports = function generateGroupStandings(data) {
             );
             
             // Generate the table for this group's standings
-            // Generate colgroup based on the number of teams in this specific group
-            const colgroupHtml = generateColgroup(groupData.rows.length);
-
             html += generateTable({
                 data: groupData.rows.map((row, i) => ({
                     ...row,
@@ -124,7 +110,7 @@ module.exports = function generateGroupStandings(data) {
                 headersConfig: headersConfig,
                 rowGenerator: (row, i) => generateGroupStandingRow(row, i),
                 tableClassName: 'standings-table table-layout-fixed', // Keep table-layout fixed
-                colgroupHtml: colgroupHtml, // Use dynamically generated colgroup
+                colgroupHtml: '', // Remove colgroup usage
                 emptyDataMessage: `No standings available for Group ${groupData.groupName}.`
             });
         }
