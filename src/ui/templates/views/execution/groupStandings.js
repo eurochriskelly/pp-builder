@@ -15,9 +15,16 @@ function generateGroupStandingRow(row, index) {
     const teamLabel = generateTeamLabel(row.team); // Generate label
     html += generateTableCell(`<span>${teamLabel}</span>`, 'text-center'); // Wrap label in span for 'T' column
     
-    // Empty cells for vs columns (will populate later)
+    // Cells for vs columns
     for (let i = 0; i < row.groupTeams.length; i++) {
-        html += generateTableCell('', 'text-center');
+        // Check if the current column index (i) matches the current row index (index)
+        if (i === index) {
+            // Team playing itself - add background color
+            html += generateTableCell('', 'text-center bg-gray-300'); // Use bg-gray-300 or similar
+        } else {
+            // Cell for match against another team (will populate later)
+            html += generateTableCell('', 'text-center'); 
+        }
     }
     
     // Stats columns
