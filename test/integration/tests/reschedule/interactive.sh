@@ -1,4 +1,4 @@
 #!/bin/bash
 
 
-node dist/bin/gcp.js
+node dist/bin/pp.js

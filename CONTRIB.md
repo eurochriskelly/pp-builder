@@ -9,7 +9,7 @@ This repository focuses on a GUI-driven application for tournament management, w
   - **Public Resources**: Static assets in `src/ui/public/` (e.g., `scripts/`, `styles/`).
   - **Backend API**: All frontend requests route through `src/ui/api.js` to the backend.
   - **HTMX**: Used for dynamic partial updates in the GUI.
-- **CLI**: Secondary, located in `bin/` (e.g., `gcp.ts`), with supporting logic in `src/` (e.g., `src/import/`, `src/simulation/`).
+- **CLI**: Secondary, located in `bin/` (e.g., `pp.ts`), with supporting logic in `src/` (e.g., `src/import/`, `src/simulation/`).
 - **Shared Logic**: Common code should move to a library (e.g., `src/utils.js`) if reused across modules.
 
 ## Contribution Guidelines
@@ -28,6 +28,6 @@ This repository focuses on a GUI-driven application for tournament management, w
 ## Development Setup
 - Install: `make deps`
 - Build: `npm run build`
-- Run CLI: `make install` then `gcp`
-- Serve GUI: `gcp serve`
+- Run CLI: `make install` then `pp`
+- Serve GUI: `pp serve`
 

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getScheduleProps } from './utils';
 import { validateFixtures } from './validate';
 const { REST_PORT, REST_HOST } = require('../../../src/ui/server');
-const API_BASE_URL = `http://${process.env['GCP_DB_HOST']}:${process.env['GCP_DB_PORT']}/api`;
+const API_BASE_URL = `http://${process.env['PP_DB_HOST']}:${process.env['PP_DB_PORT']}/api`;
 
 export const csvRows = (csv: string): string[][] => {
     const lines = csv.split('\n').filter(x => x.trim());

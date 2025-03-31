@@ -1,19 +1,19 @@
 {
-  "name": "gcp-builder",
+  "name": "pp-builder",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "bin": {
-    "gcp-import": "./dist/bin/gcp.js"
+    "pp-import": "./dist/bin/pp.js"
   },
   "scripts": {
     "build": "tsc;npx @tailwindcss/cli -i ./src/ui/public/styles/main.css -o ./src/ui/public/styles/main-compiled.css --minify",
     "tailwind:watch": "npx @tailwindcss/cli -i ./src/ui/public/styles/main.css -o ./src/ui/public/styles/main-compiled.css --watch",
     "watch": "tsc --watch",
     "integration": "bash test/integration/execute.sh",
-    "gcp": "clear;node ./dist/bin/gcp.js",
-    "gcp:test": "node ./dist/bin/gcp.js --import --schedule test/fixtures.csv -o output.sql --date 2027-01-01 --tournament-id 7 --title 'testing the title' --location 'Address, 123, foo' ",
-    "gcp:test-import": "node ./dist/bin/gcp.js --import-clubs data/teams.csv > data/insert-clubs.sql",
+    "pp": "clear;node ./dist/bin/pp.js",
+    "pp:test": "node ./dist/bin/pp.js --import --schedule test/fixtures.csv -o output.sql --date 2027-01-01 --tournament-id 7 --title 'testing the title' --location 'Address, 123, foo' ",
+    "pp:test-import": "node ./dist/bin/pp.js --import-clubs data/teams.csv > data/insert-clubs.sql",
     "test": "jest",
     "test:watch": "jest --watch",
     "storybook": "storybook dev -p 6006",
@@ -40,7 +40,8 @@
     "lit": "^3.2.1",
     "postcss": "^8.5.3",
     "storybook": "^8.6.11",
-    "tailwindcss": "^4.0.9"
+    "tailwindcss": "^4.0.9",
+    "ts-node": "^10.9.2"
   },
   "dependencies": {
     "@storybook/addon-links": "^8.6.11",

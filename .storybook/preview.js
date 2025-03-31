@@ -1,5 +1,5 @@
 import '../src/ui/public/styles/main-compiled.css'; // Relative to .storybook/
-import '../src/ui/public/scripts/htmx.min.js';
+import '../src/ui/public/scripts/vendor/htmx.min.js';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

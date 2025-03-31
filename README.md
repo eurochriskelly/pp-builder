@@ -1,4 +1,4 @@
-# GCP CLI Tools
+# PP CLI Tools
 
 This project provides a command-line interface (CLI) for managing and inspecting sports tournament schedules, clubs, and match simulations. It processes schedule files, imports club and fixture data into a SQL database, populates fixture lists, and simulates match outcomes.
 
@@ -21,15 +21,15 @@ This project provides a command-line interface (CLI) for managing and inspecting
    ```
 4. Make the CLI executable:
    ```bash
-   chmod +x bin/gcp.ts
+   chmod +x bin/pp.ts
    ```
 
 ## Usage
-Run the CLI from the command line using `bin/gcp.ts` followed by options. Below are the main commands and their usage:
+Run the CLI from the command line using `bin/pp.ts` followed by options. Below are the main commands and their usage:
 
 ### General Syntax
 ```bash
-bin/gcp.ts [options]
+bin/pp.ts [options]
 ```
 
 ### Options
@@ -45,37 +45,37 @@ bin/gcp.ts [options]
 1. **Build a Schedule**
    Organize a tournament schedule from a YAML file:
    ```bash
-   bin/gcp.ts -build --schedule path/to/schedule.yaml
+   bin/pp.ts -build --schedule path/to/schedule.yaml
    ```
 
 2. **Populate Fixtures**
    Interactively transcribe a schedule into a fixture list:
    ```bash
-   bin/gcp.ts --populate --schedule path/to/schedule.yaml
+   bin/pp.ts --populate --schedule path/to/schedule.yaml
    ```
 
 3. **Import Clubs**
    Import club data from a CSV file into a SQL database:
    ```bash
-   bin/gcp.ts --import-clubs path/to/clubs.csv
+   bin/pp.ts --import-clubs path/to/clubs.csv
    ```
 
 4. **Import Fixtures**
    Generate SQL import statements for fixtures:
    ```bash
-   bin/gcp.ts --import --schedule path/to/schedule.csv -o output.sql -t 1 -d "2025-03-01" -e "Spring Cup" -l "Dublin" -x "1234"
+   bin/pp.ts --import --schedule path/to/schedule.csv -o output.sql -t 1 -d "2025-03-01" -e "Spring Cup" -l "Dublin" -x "1234"
    ```
 
 5. **Simulate Matches**
    Play a specified number of matches for a tournament:
    ```bash
-   bin/gcp.ts --play -t 1 -c "gaa" --count 3
+   bin/pp.ts --play -t 1 -c "gaa" --count 3
    ```
 
 ## Example
 To import fixtures for a tournament:
 ```bash
-bin/gcp.ts --import --schedule schedule.csv -o fixtures.sql -t 1 -d "2025-03-01" -e "Spring Cup" -l "Dublin" -x "ABCD1234"
+bin/pp.ts --import --schedule schedule.csv -o fixtures.sql -t 1 -d "2025-03-01" -e "Spring Cup" -l "Dublin" -x "ABCD1234"
 ```
 
 ## Notes

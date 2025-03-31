@@ -19,7 +19,7 @@ const rl = readline.createInterface({
 
 const main = async () => {
     program
-        .name('gcp')
+        .name('pp')
         .description('CLI tool for managing tournament schedules and simulations')
         .option('-build', 'Organize a tournament schedule from a YAML file')
         .option('--populate', 'Interactively transcribe a schedule into fixtures')
@@ -50,9 +50,9 @@ const main = async () => {
             const port = parseInt(options.port, 10) || 5421;
             const restPort = parseInt(options.restPort, 10) || 4000;
             const restHost = options.restHost || '192.168.1.147';
-            process.env['GCP_DB_HOST'] = restHost
-            process.env['GCP_DB_PORT'] = restPort
-            process.env['GCP_DB_PORT3'] = restPort
+            process.env['PP_DB_HOST'] = restHost
+            process.env['PP_DB_PORT'] = restPort
+            process.env['PP_DB_PORT3'] = restPort
             const bypassAuth = !!options.bypassAuth;
             console.log(`Starting web server on port ${port} with REST API at ${restHost}:${restPort}${bypassAuth ? ' with authentication bypassed' : ''}`);
             // Run server directly
@@ -64,7 +64,7 @@ const main = async () => {
     const options = program.opts();
 
     if (process.argv.length <= 2) {
-        console.log('Welcome to GCP CLI Tools!');
+        console.log('Welcome to PP CLI Tools!');
         console.log('Run tournament management commands with ease.\n');
         program.help();
     }
