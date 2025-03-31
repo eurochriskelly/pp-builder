@@ -3,7 +3,8 @@ const { processTeamName } = require('../../../utils');
 const { formatCategory } = require('../../../utils/categoryFormatter');
 const {
   getScoreComparisonClasses,
-  getFinalScoreDisplay
+  getFinalScoreDisplay,
+  getMatchOutcomeStyles
 } = require('../../partials/scoreUtils');
 
 function createKnockoutTable(categoryData) {

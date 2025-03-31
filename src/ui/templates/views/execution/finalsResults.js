@@ -2,7 +2,8 @@ const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
 const { processTeamName } = require('../../../utils');
 const {
   getScoreComparisonClasses,
-  getFinalScoreDisplay
+  getFinalScoreDisplay,
+  getMatchOutcomeStyles
 } = require('../../partials/scoreUtils');
 
 function createFinalsTable(categoryData) {
@@ -27,10 +28,10 @@ function createFinalsTable(categoryData) {
             row.goals1, row.points1, row.goals2, row.points2, row.outcome
         );
 
-        const { 
-            team1ScoreClass, team2ScoreClass,
-            team1WinnerClass, team2WinnerClass 
-        } = getScoreComparisonClasses(team1ScoreFinal, team2ScoreFinal);
+        const styles = getMatchOutcomeStyles(
+            new ScoreData(row.goals1, row.points1),
+            new ScoreData(row.goals2, row.points2)
+        );
 
         const utilRow = new UtilRow()
             .setFields({
@@ -40,15 +41,25 @@ function createFinalsTable(categoryData) {
                 team2: row.team2,
                 score2: new ScoreData(row.goals2, row.points2)
             })
-            .setStyle('team1', { 
-                'font-weight': team1WinnerClass ? 'bold' : 'normal',
-                'background-color': team1WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
+            .setStyle('team1', {
+                'font-weight': styles.team1.fontWeight,
+                'background-color': styles.team1.backgroundColor,
+                'color': styles.team1.textColor,
                 ...team1Style
             })
             .setStyle('team2', {
-                'font-weight': team2WinnerClass ? 'bold' : 'normal',
-                'background-color': team2WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
+                'font-weight': styles.team2.fontWeight,
+                'background-color': styles.team2.backgroundColor,
+                'color': styles.team2.textColor,
                 ...team2Style
+            })
+            .setStyle('score1', {
+                'font-weight': styles.team1.fontWeight,
+                'color': styles.team1.textColor
+            })
+            .setStyle('score2', {
+                'font-weight': styles.team2.fontWeight,
+                'color': styles.team2.textColor
             });
 
         table.addRow(utilRow);
