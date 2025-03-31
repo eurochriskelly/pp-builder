@@ -13,9 +13,9 @@ module.exports = function generateHeader(
     const viewTitles = {
       'execution': {
         'recent': 'Most Recent Changes',
-        'view2': 'Group Fixtures',
-        'view3': 'Group Tables',
-        'view4': 'Knockout Fixtures',
+        'view2': 'Group Games',
+        'view3': 'Group Tables', 
+        'view4': 'Knockout Games',
         'view5': 'Carded Players',
         'view6': 'Matches by Pitch',
         'view7': 'Finals'
@@ -58,19 +58,8 @@ module.exports = function generateHeader(
                                  
                             </div>
                         </div>
-i<!-- Views breadcrumbs -->
-                        ${area === 'execution' && currentView 
-                          ? `
-                            <span class="separator">${chevron}</span>
-                            <div class="dropdown">
-                                <a href="#" onclick="toggleDropdown(event)" class="active">${viewTitles.execution[currentView]}</a>
-                                <div class="dropdown-content">
-                                    ${Object.entries(viewTitles.execution).map(([key, value]) => `
-                                        ${key !== currentView ? `<a href="${basePath}/${key}" hx-get="${basePath}/${key}" hx-target="body" hx-swap="outerHTML">${value}</a>` : ''}
-                                    `).join('')}
-                                </div>
-                            </div>
-                          ` : '' }
+                        <!-- Views breadcrumbs -->
+                        <!-- Removed Execution view dropdown as views are now combined -->
                         ${area === 'planning' && currentView ? `
                             <span class="separator">${chevron}</span>
                             <div class="dropdown">
@@ -102,12 +91,9 @@ i<!-- Views breadcrumbs -->
             </nav>
             <hr/>
         `;
-    } else {
-        html += `
-            <h1 style="padding: 20px; text-align: center;">${title}</h1>
-            <hr/>
-        `;
-    }
+    } 
+    // Removed the else block that generated the H1 when navigation=false
+    // The H1 is now part of the #content div managed by events.js routes
 
     return html;
 };

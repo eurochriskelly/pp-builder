@@ -1,6 +1,7 @@
 function processTeamName(teamName) {
     let teamStyle = '';
-    if (teamName.startsWith('~match:')) {
+  console.log(teamName)
+    if (teamName && teamName?.startsWith('~match:')) {
         const match = teamName.match(/~match:(\d+)\/p:(\d+)/);
         if (match) {
             const fullMatchId = match[1];
@@ -13,12 +14,14 @@ function processTeamName(teamName) {
             teamName = 'TBD';
             teamStyle = 'color:grey;';
         }
+    } else {
+      console.log('got teamname', teamName)
     }
     return { teamName, teamStyle };
 }
 
 function formatScore(goals, points) {
-    if (goals === null || points === null) {
+    if (goals == null || points == null) { // Use == null to check for both null and undefined
         return 'N/A';
     }
     const paddedPoints = points.toString().padStart(2, '0');
@@ -26,4 +29,23 @@ function formatScore(goals, points) {
     return `${goals}-${paddedPoints} (${calculatedScore})`;
 }
 
-module.exports = { processTeamName, formatScore };
+/**
+ * Generates a short label (up to 3 chars) from the capital letters and numbers in a team name.
+ * @param {string} teamName - The full name of the team.
+ * @returns {string} - The generated short label (e.g., "IU1", "FD", "AA"). Returns '???' if no label can be generated.
+ */
+function generateTeamLabel(teamName) {
+    if (!teamName || typeof teamName !== 'string') {
+        return '???'; // Handle null, undefined, or non-string input
+    }
+    // Extract capital letters and numbers
+    const extracted = teamName.match(/[A-Z0-9]/g);
+    if (!extracted || extracted.length === 0) {
+        // Fallback: Use first 3 letters if no caps/numbers found
+        return teamName.substring(0, 3).toUpperCase(); 
+    }
+    // Join the extracted characters and take the first 3
+    return extracted.join('').substring(0, 3);
+}
+
+module.exports = { processTeamName, formatScore, generateTeamLabel };

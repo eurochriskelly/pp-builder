@@ -1,42 +1,19 @@
-const generateRecentView = require('../templates/views/execution/recent');
-const generateGroupFixtures = require('../templates/views/execution/groupFixtures');
-const generateGroupStandings = require('../templates/views/execution/groupStandings');
-const generateKnockoutFixtures = require('../templates/views/execution/knockoutFixtures');
-const generateCardedPlayers = require('../templates/views/execution/cardedPlayers');
-const generateMatchesByPitch = require('../templates/views/execution/matchesByPitch/index');
-const generateFinalsResults = require('../templates/views/execution/finalsResults');
+// Import the new combined view generator
+const generateCompetitionView = require('../templates/views/execution/competitionView');
+// Import the combined data fetch function
+const { getCompetitionData } = require('../queries/matches');
 
-const { 
-    getRecentMatches, 
-    getGroupFixtures, 
-    getGroupStandings,
-    getKnockoutFixtures,
-    getCardedPlayers,
-    getMatchesByPitch,
-    getFinalsResults
-} = require('../queries/matches');
-
+// Define the single view configuration for the combined competition display
 const allowedViews = {
-    'view7': {
-        title: 'Finals',
-        generator: generateFinalsResults,
-        fetch: getFinalsResults
-    },
-    'view2': {
-        title: 'Group Games',
-        generator: generateGroupFixtures,
-        fetch: getGroupFixtures
-    },
-    'view3': {
-        title: 'Group Tables',
-        generator: generateGroupStandings,
-        fetch: getGroupStandings
-    },
-    'view4': {
-        title: 'Knockout Games',
-        generator: generateKnockoutFixtures,
-        fetch: getKnockoutFixtures
+    'competition': { // Use a descriptive key like 'competition'
+        title: 'Competition View', // Generic title, actual H1 will use competition name
+        generator: generateCompetitionView,
+        fetch: getCompetitionData // Use the function that fetches all data
     }
+    // Keep other views like 'recent', 'cardedPlayers', 'matchesByPitch' if they
+    // should remain accessible via direct URLs or other means.
+    // If not, remove their generators and fetch functions imports as well.
+    // For now, we assume they might be needed elsewhere or removed later.
 };
 
-module.exports = { allowedViews }
+module.exports = { allowedViews };

@@ -1,80 +1,99 @@
-const { processTeamName, formatScore } = require('../../../utils');
+const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
+const { processTeamName } = require('../../../utils');
+const {
+  getScoreComparisonClasses,
+  getFinalScoreDisplay,
+  getMatchOutcomeStyles
+} = require('../../partials/scoreUtils');
+
+function createFinalsTable(categoryData) {
+    const table = new UtilTable({
+        tableClassName: 'finals-table',
+        emptyMessage: `No finals results found for ${categoryData[0]?.category || 'this category'}.`
+    });
+
+    table.addHeaders({
+        division: { label: 'Level', align: 'left', width: 'auto' },
+        team1: { label: 'Team 1', align: 'left', width: '29%' },
+        score1: { label: 'Score 1', align: 'right', width: '14%' },
+        team2: { label: 'Team 2', align: 'left', width: '29%' },
+        score2: { label: 'Score 2', align: 'right', width: '14%' }
+    });
+
+    categoryData.forEach(row => {
+        const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
+        const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
+        
+        const { team1ScoreFinal, team2ScoreFinal } = getFinalScoreDisplay(
+            row.goals1, row.points1, row.goals2, row.points2, row.outcome
+        );
+
+        const styles = getMatchOutcomeStyles(
+            new ScoreData(row.goals1, row.points1),
+            new ScoreData(row.goals2, row.points2)
+        );
+
+        const utilRow = new UtilRow()
+            .setFields({
+                division: row?.division?.toUpperCase(),
+                team1: row.team1,
+                score1: new ScoreData(row.goals1, row.points1),
+                team2: row.team2,
+                score2: new ScoreData(row.goals2, row.points2)
+            })
+            .setStyle('team1', {
+                'font-weight': styles.team1.fontWeight,
+                'background-color': styles.team1.backgroundColor,
+                'color': styles.team1.textColor,
+                ...team1Style
+            })
+            .setStyle('team2', {
+                'font-weight': styles.team2.fontWeight,
+                'background-color': styles.team2.backgroundColor,
+                'color': styles.team2.textColor,
+                ...team2Style
+            })
+            .setStyle('score1', {
+                'font-weight': styles.team1.fontWeight,
+                'color': styles.team1.textColor
+            })
+            .setStyle('score2', {
+                'font-weight': styles.team2.fontWeight,
+                'color': styles.team2.textColor
+            });
+
+        table.addRow(utilRow);
+    });
+
+    return table;
+}
 
 module.exports = function generateFinalsResults(data) {
     let html = '<div id="finals-results">';
-    let currentCategory = null;
-    const headers = ['Level', 'Team 1', 'Score', 'Team 2', 'Score'];
-    
-    html += `<table class="finals-table">
-             <colgroup>
-                 <col class="col-level">
-                 <col class="col-team">
-                 <col class="col-score">
-                 <col class="col-team">
-                 <col class="col-score">
-             </colgroup>
-             <tr>${headers.map(h => `<th class="table-header">${h}</th>`).join('')}</tr>`;
-    data.forEach(row => {
-        if (row.category !== currentCategory) {
-            currentCategory = row.category;
-            html += `
-                <tr><th colspan="${headers.length}" class="category-header">${currentCategory}</th></tr>
-            `;
+
+    // Group data by category
+    const groupedData = data.reduce((acc, row) => {
+        const category = row.category || 'Uncategorized';
+        if (!acc[category]) {
+            acc[category] = [];
         }
-        html += '<tr>';
-        html += `<td>${row?.division?.toUpperCase() || 'N/A'}</td>`;
-        const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
-        const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
-        const team1Score = formatScore(row.goals1, row.points1);
-        const team2Score = formatScore(row.goals2, row.points2);
-        let team1ScoreFinal = team1Score;
-        let team2ScoreFinal = team2Score;
-        if (row.outcome === 'not played') {
-            if (row.goals1 === 0 && row.points1 === 0 && row.goals2 === 0 && row.points2 === 1) {
-                team1ScoreFinal = 'concede';
-                team2ScoreFinal = 'walked';
-            } else if (row.goals2 === 0 && row.points2 === 0 && row.goals1 === 0 && row.points1 === 1) {
-                team1ScoreFinal = 'walked';
-                team2ScoreFinal = 'concede';
-            } else if (row.goals1 === 0 && row.points1 === 0 && row.goals2 === 0 && row.points2 === 0) {
-                team1ScoreFinal = 'shared';
-                team2ScoreFinal = 'shared';
-            }
-        }
-        let winnerName = row.winner || 'N/A';
-        let winnerStyle = '';
-        if (winnerName === 'Draw') {
-            winnerStyle = 'font-weight:bold; color:blue;';
-        } else {
-            const processedWinner = processTeamName(winnerName);
-            winnerName = processedWinner.teamName;
-            winnerStyle = processedWinner.teamStyle;
-        }
-        const extractScore = score => {
-            const match = score.match(/\((\d+)\)/);
-            return match ? parseInt(match[1], 10) : 0;
-        };
-        const score1Value = extractScore(team1ScoreFinal);
-        const score2Value = extractScore(team2ScoreFinal);
-        let team1ScoreClass = '', team2ScoreClass = '';
-        if (score1Value > score2Value) {
-            team1ScoreClass = 'score-winner';
-            team2ScoreClass = 'score-loser';
-        } else if (score1Value < score2Value) {
-            team1ScoreClass = 'score-loser';
-            team2ScoreClass = 'score-winner';
-        } else {
-            team1ScoreClass = team2ScoreClass = 'score-draw';
-        }
-        const team1WinnerClass = score1Value > score2Value ? 'team-winner' : '';
-        const team2WinnerClass = score2Value > score1Value ? 'team-winner' : '';
-        html += `<td class="${team1ScoreClass} ${team1WinnerClass}" style="${team1Style}">${team1Name || 'N/A'}</td>`;
-        html += `<td class="${team1ScoreClass}">${team1ScoreFinal || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass} ${team2WinnerClass}" style="${team2Style}">${team2Name || 'N/A'}</td>`;
-        html += `<td class="${team2ScoreClass}">${team2ScoreFinal || 'N/A'}</td>`;
-        html += '</tr>';
-    });
-    html += '</table>';
+        acc[category].push(row);
+        return acc;
+    }, {});
+
+    // Generate a table for each category
+    for (const category in groupedData) {
+        const categoryData = groupedData[category];
+        
+        // Generate and add table
+        const table = createFinalsTable(categoryData);
+        html += table.toHTML();
+    }
+
+    if (Object.keys(groupedData).length === 0) {
+        html += '<p>No finals results found.</p>';
+    }
+
     html += '</div>';
     return html;
 };

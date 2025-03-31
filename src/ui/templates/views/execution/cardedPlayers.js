@@ -1,24 +1,39 @@
+const { generateTableCell, generateTable } = require('../../partials/tableUtils');
+const { getCardColorStyle } = require('../../partials/styleUtils');
+const { processTeamName } = require('../../../utils'); // For consistent team styling
+
+// Row generator function for carded players
+function generateCardedPlayerRow(row) {
+    const cardColorClass = getCardColorStyle(row.cardColor); // Get class name
+    const { teamName, teamStyle } = processTeamName(row.team); // Use consistent team styling
+
+    let html = '<tr>';
+    html += generateTableCell(row.playerNumber);
+    html += generateTableCell(row.playerName);
+    html += generateTableCell(teamName, '', teamStyle); // Apply team style (dynamic)
+    html += generateTableCell(row.cardColor, cardColorClass); // Pass class
+    html += '</tr>';
+    return html;
+}
+
 module.exports = function generateCardedPlayers(data) {
     let html = '<div id="carded-players">';
-    html += '<table>';
-    const headers = ['Player Number', 'Player Name', 'Team', 'Card Color'];
-    html += `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-    data.forEach(row => {
-        let cardColorStyle = '';
-        switch (row.cardColor) {
-            case 'yellow': cardColorStyle = 'color:gold;'; break;
-            case 'red': cardColorStyle = 'color:red;'; break;
-            case 'black': cardColorStyle = 'color:black;'; break;
-            default: cardColorStyle = '';
-        }
-        html += '<tr>';
-        html += `<td>${row.playerNumber || 'N/A'}</td>`;
-        html += `<td>${row.playerName || 'N/A'}</td>`;
-        html += `<td>${row.team || 'N/A'}</td>`;
-        html += `<td style="${cardColorStyle}">${row.cardColor || 'N/A'}</td>`;
-        html += '</tr>';
+
+    const headersConfig = [
+        { key: 'playerNumber', label: 'Player Number' },
+        { key: 'playerName', label: 'Player Name' },
+        { key: 'team', label: 'Team' },
+        { key: 'cardColor', label: 'Card Color' }
+    ];
+
+    html += generateTable({
+        data: data,
+        headersConfig: headersConfig,
+        rowGenerator: generateCardedPlayerRow,
+        tableClassName: '', // Add classes if needed
+        emptyDataMessage: 'No carded players recorded.'
     });
-    html += '</table>';
+
     html += '</div>';
     return html;
 };
