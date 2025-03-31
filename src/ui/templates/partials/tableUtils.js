@@ -154,8 +154,8 @@ function generateTable({
     // Generate Body Rows
     html += '<tbody>';
     if (data && data.length > 0) {
-        data.forEach(row => {
-            html += rowGenerator(row);
+        data.forEach((row, i) => {
+            html += rowGenerator(row, i);
         });
     } else {
         // Use a class for the empty message cell
