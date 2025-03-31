@@ -9,6 +9,7 @@ const { processTeamName, generateTeamLabel } = require('../../../utils'); // Imp
 function generateGroupStandingRow(row, index) {
     const { teamName, teamStyle } = processTeamName(row.team);
     let html = '<tr>';
+  debugger
     
     // Team name and label
     html += generateTableCell(teamName, 'uppercase font-bold text-left', teamStyle);
@@ -20,7 +21,7 @@ function generateGroupStandingRow(row, index) {
         // Check if the current column index (i) matches the current row index (index)
         if (i === index) {
             // Team playing itself - add background color
-            html += '<td style="width: 30px; max-width: 30px; height: 30px; background-color: #e5e7eb !important; padding: 0;" class="text-center">—</td>';
+            html += '<td style="width: 60px; max-width: 60px; height: 30px; background-color: #333 !important; padding: 0;" class="text-center">—</td>';
         } else {
             // Cell for match against another team (will populate later)
             html += generateTableCell('', 'text-center'); 
