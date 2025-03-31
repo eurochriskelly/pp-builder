@@ -1,8 +1,6 @@
 const { processTeamName, formatScore } = require('../../../utils');
 const {
   generateTableCell,
-  generateTeamCell,
-  generateScoreCell,
   generateSpanningHeaderRow,
   generateTable
 } = require('../../partials/tableUtils');
