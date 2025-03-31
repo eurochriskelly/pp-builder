@@ -1,179 +1,181 @@
 const { processTeamName, formatScore } = require('../../utils');
 const { hashString } = require('./styleUtils');
 
-/**
- * Generates a generic table cell (<td>).
- * @param {string|number|null} content - The content for the cell.
- * @param {string} [className=''] - Optional CSS class(es) for the cell.
- * @param {string} [style=''] - Optional inline style(s) for the cell.
- * @param {string} [style=''] - Optional inline style(s) for the cell.
- * @returns {string} HTML string for a <td> element.
- */
-function generateTableCell(content, className = '', style = '') {
-  const combinedClassName = className || '';
-  let cellStyle = style || '';
-
-  // Apply fixed width style if it's a centered (non-team) column
-  if (className.includes('text-center')) {
-      cellStyle += ' width: 70px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
-  }
-
-  return `<td class="${combinedClassName}" style="${cellStyle.trim()}">${content ?? 'N/A'}</td>`;
-}
-
-/**
- * Generates a table cell specifically for IDs, showing the last 3 digits.
- * @param {number|string|null} id - The ID.
- * @param {string} [className='id-column'] - Optional CSS class(es).
- * @returns {string} HTML string for a <td> element.
- */
-function generateIdCell(id, className = 'id-column') {
-  const idContent = id ? String(id).slice(-3) : 'N/A';
-  return generateTableCell(idContent, className);
-}
-
-/**
- * Generates a table cell for a team name, applying specific styling.
- * @param {string|null} team - The team name.
- * @param {string} [className=''] - Optional CSS class(es).
- * @returns {string} HTML string for a <td> element.
- */
-function generateTeamCell(team, className = '') {
-  const { teamName } = processTeamName(team);
-  const teamClass = team === 'TBD' ? 'team-tbd' : `team-${hashString(team)}`;
-  return generateTableCell(teamName, `${className} ${teamClass}`.trim());
-}
-
-/**
- * Generates a table cell for a score, applying specific styling.
- * @param {number|null} goals - Goals scored.
- * @param {number|null} points - Points scored.
- * @param {string} [className=''] - Optional CSS class(es).
- * @param {string} [defaultStyle=''] - Default style if score is valid.
- * @param {string} [naStyle='color:grey;'] - Style if score is N/A.
- * @returns {string} HTML string for a <td> element.
- */
-function generateScoreCell(goals, points, className = '', defaultStyle = '') { // Removed naStyle
-  const score = formatScore(goals, points);
-  const finalClassName = `${className} ${score === 'N/A' ? 'text-grey' : ''}`.trim();
-  // Keep defaultStyle for now, could be replaced by classes later if needed
-  return generateTableCell(score, finalClassName, defaultStyle); 
-}
-
-/**
- * Generates a table header cell (<th>).
- * @param {string} content - The header content.
- * @param {string} [className=''] - Optional CSS class(es).
- * @param {string} [style=''] - Optional inline style(s).
- * @returns {string} HTML string for a <th> element.
- */
-function generateTableHeaderCell(content, className = '', style = '') {
-    const combinedClassName = className || '';
-    let cellStyle = style || '';
-    
-    // Apply vertical style if needed
-    if (className.includes('vertical-text')) {
-        cellStyle += ' writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; padding: 4px 2px;';
+// Helper class to represent score data
+class ScoreData {
+    constructor(goals, points) {
+        this.goals = goals;
+        this.points = points;
     }
-    
-    // Apply fixed width style if it's a centered (non-team) column
-    if (className.includes('text-center')) {
-        cellStyle += ' width: 30px; max-width: 30px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+
+    toString() {
+        return formatScore(this.goals, this.points);
     }
-    
-    return `<th class="${combinedClassName}" style="${cellStyle.trim()}">${content}</th>`;
 }
 
-/**
- * Generates a table header row (<tr><th>...</th></tr>).
- * @param {string[]} headers - Array of header strings.
- * @param {Object.<string, {className?: string, style?: string}>} [headerConfig={}] - Optional config for specific headers.
- * @returns {string} HTML string for a <tr> element containing header cells.
- */
-function generateTableHeaderRow(headers, headerConfig = {}) {
-    let html = '<tr>';
-    html += headers.map(header => {
-        const config = headerConfig[header] || {};
-        return generateTableHeaderCell(header, config.className || '', config.style || '');
-    }).join('');
-    html += '</tr>';
-    return html;
-}
+// Row class to manage individual table rows
+class UtilRow {
+    constructor() {
+        this.fields = new Map();
+        this.styles = new Map();
+    }
 
-/**
- * Generates a table row with a single header cell spanning multiple columns.
- * @param {string} content - HTML content for the header cell.
- * @param {number} colspan - The number of columns to span.
- * @param {string} [className=''] - Optional CSS class(es) for the cell.
- * @param {string} [style=''] - Optional inline style(s) for the cell.
- * @returns {string} HTML string for a <tr> element.
- */
-function generateSpanningHeaderRow(content, colspan, className = '', style = '') {
-    // Ensure spanning headers are always horizontal
-    const combinedClassName = `${className.replace('vertical-text', '')} text-center`.trim();
-    const headerCell = generateTableHeaderCell(content, combinedClassName, style);
-    // Set colspan attribute on the generated th
-    const cellWithColspan = headerCell.replace('<th ', `<th colspan="${colspan}" `);
-    return `<tr>${cellWithColspan}</tr>`;
-}
-
-/**
- * Generates a complete HTML table structure.
- * @param {Object} config - Configuration object.
- * @param {Array<Object>} config.data - Array of data objects for table rows.
- * @param {Array<{key: string, label: string, className?: string, style?: string}>} config.headersConfig - Configuration for table headers.
- * @param {function(Object): string} config.rowGenerator - Function that takes a data row object and returns HTML for a <tr>.
- * @param {string} [config.tableClassName=''] - Optional CSS class(es) for the <table> element.
- * @param {string} [config.tableStyle=''] - Optional inline style(s) for the <table> element.
- * @param {string} [config.colgroupHtml=''] - Optional HTML string for <colgroup>.
- * @param {string} [config.emptyDataMessage='No data available.'] - Message to display if data array is empty.
- * @returns {string} HTML string for a complete <table> element.
- */
-function generateTable({
-    data,
-    headersConfig,
-    rowGenerator,
-    tableClassName = '',
-    tableStyle = '',
-    colgroupHtml = '',
-    emptyDataMessage = 'No data available.'
-}) {
-    let html = `<table class="${tableClassName}" style="${tableStyle}">`;
-    html += colgroupHtml;
-
-    // Generate Header Row
-    const headers = headersConfig.map(h => h.label);
-    const headerConfigMap = headersConfig.reduce((acc, h) => {
-        acc[h.label] = { className: h.className || '', style: h.style || '' };
-        return acc;
-    }, {});
-    html += '<thead>';
-    html += generateTableHeaderRow(headers, headerConfigMap);
-    html += '</thead>';
-
-    // Generate Body Rows
-    html += '<tbody>';
-    if (data && data.length > 0) {
-        data.forEach((row, i) => {
-            html += rowGenerator(row, i);
+    setFields(data) {
+        Object.entries(data).forEach(([key, value]) => {
+            this.setField(key, value);
         });
-    } else {
-        // Use a class for the empty message cell
-        html += `<tr><td colspan="${headers.length}" class="empty-data-message">${emptyDataMessage}</td></tr>`;
+        return this;
     }
-    html += '</tbody>';
 
-    html += '</table>';
-    return html;
+    setField(key, value) {
+        this.fields.set(key, value);
+        return this;
+    }
+
+    setStyle(key, styleObj) {
+        this.styles.set(key, styleObj);
+        return this;
+    }
+
+    getField(key) {
+        return this.fields.get(key);
+    }
+
+    getStyle(key) {
+        return this.styles.get(key) || {};
+    }
 }
 
-module.exports = {
-  generateTableCell,
-  generateIdCell,
-  generateTeamCell,
-  generateScoreCell,
-  generateTableHeaderCell,
-  generateTableHeaderRow,
-  generateSpanningHeaderRow,
-  generateTable
-};
+// Main table utility class
+class UtilTable {
+    constructor(options = {}) {
+        this.headers = new Map();
+        this.rows = [];
+        this.tableClassName = options.tableClassName || '';
+        this.tableStyle = options.tableStyle || '';
+        this.emptyMessage = options.emptyMessage || 'No data available.';
+    }
+
+    addHeaders(headerConfig) {
+        Object.entries(headerConfig).forEach(([key, config]) => {
+            this.headers.set(key, {
+                label: config.label || key,
+                width: config.width || 'auto',
+                align: config.align || 'left',
+                className: `text-${config.align || 'left'}`
+            });
+        });
+        return this;
+    }
+
+    addRow(row) {
+        if (!(row instanceof UtilRow)) {
+            throw new Error('Row must be an instance of UtilRow');
+        }
+        this.rows.push(row);
+        return this;
+    }
+
+    generateCell(content, headerKey) {
+        const header = this.headers.get(headerKey) || {};
+        const style = {
+            width: header.width,
+            'text-align': header.align
+        };
+        
+        let className = header.className || '';
+        let cellContent = (content === null || content === undefined) ? 'N/A' : content;
+
+        // Special handling based on field type
+        if (headerKey === 'id') {
+            cellContent = content ? String(content).slice(-3) : 'N/A';
+            className += ' id-column';
+        } else if (headerKey.includes('team')) {
+            if (typeof content === 'string') {
+                const { teamName, isScratched } = processTeamName(content);
+                cellContent = teamName;
+                let teamClass = content === 'TBD' ? 'team-tbd' : `team-${hashString(content)}`;
+                
+                if (isScratched) {
+                    className += ' scratched-team';
+                    cellContent += ' (S)';
+                } else if (content.toLowerCase().includes('walked')) {
+                    className += ' walked-team';
+                    cellContent += ' (W)';
+                }
+                
+                className += ` ${teamClass}`;
+            } else {
+                cellContent = 'N/A';
+                className += ' text-grey';
+            }
+        } else if (headerKey.includes('score')) {
+            cellContent = content instanceof ScoreData ? content.toString() : formatScore(null, null);
+            
+            if (typeof content === 'string') {
+                const lowerContent = content.toLowerCase();
+                if (lowerContent.includes('walked')) {
+                    className += ' walked-score';
+                } else if (lowerContent.includes('concede')) {
+                    className += ' conceded-score';
+                } else if (lowerContent.includes('shared')) {
+                    className += ' shared-score';
+                }
+            }
+            
+            className += content === 'N/A' ? ' text-grey' : '';
+        }
+
+        const styleStr = Object.entries(style)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join('; ');
+
+        return `<td class="${className.trim()}" style="${styleStr}">${cellContent}</td>`;
+    }
+
+    toHTML() {
+        let html = `<table class="util-table ${this.tableClassName}" style="${this.tableStyle}">`;
+
+        // Generate headers
+        html += '<thead><tr>';
+        for (const [key, header] of this.headers) {
+            const styleStr = `width: ${header.width}; text-align: ${header.align}`;
+            html += `<th class="${header.className}" style="${styleStr}">${header.label}</th>`;
+        }
+        html += '</tr></thead>';
+
+        // Generate body
+        html += '<tbody>';
+        if (this.rows.length === 0) {
+            html += `<tr><td colspan="${this.headers.size}" class="empty-data-message">${this.emptyMessage}</td></tr>`;
+        } else {
+            for (const row of this.rows) {
+                html += '<tr>';
+                console.log('headres', this.headers) 
+                console.log('header keys', this.headers.keys())
+                for (const headerKey of this.headers.keys()) {
+                    const content = row.getField(headerKey);
+                    console.log('c, hk', headerKey, content)
+                    const cellStyle = row.getStyle(headerKey);
+                    const baseCell = this.generateCell(content, headerKey);
+                    
+                    // Apply custom styles if they exist
+                    if (Object.keys(cellStyle).length > 0) {
+                        const styleStr = Object.entries(cellStyle)
+                            .map(([k, v]) => `${k}: ${v}`)
+                            .join('; ');
+                        html += baseCell.replace('style="', `style="${styleStr}; `);
+                    } else {
+                        html += baseCell;
+                    }
+                }
+                html += '</tr>';
+            }
+        }
+        html += '</tbody></table>';
+
+        return html;
+    }
+}
+
+module.exports = { UtilTable, UtilRow, ScoreData };

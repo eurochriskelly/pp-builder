@@ -319,3 +319,7 @@ hr {
   transform-origin: center middle; 
   white-space: nowrap;
 }
+
+table.util-table td {
+  text-transform: uppercase;
+}

@@ -38,10 +38,9 @@ module.exports = function generateCompetitionView(data) {
         html += '</section>';
     } else {
         // Optional: message if no group fixtures
-        // html += '<p>No group games scheduled for this competition.</p>';
+       html += '<p>No group games scheduled for this competition.</p>';
     }
 
-    // Section: Group Standings
     // groupStandings is an object keyed by category, but should only contain the current competition
     const standingsForCompetition = groupStandings && groupStandings[competitionName];
     if (standingsForCompetition && Object.keys(standingsForCompetition).length > 0) {
@@ -51,7 +50,7 @@ module.exports = function generateCompetitionView(data) {
         html += '</section>';
     } else {
          // Optional: message if no group standings
-        // html += '<p>No group standings available for this competition.</p>';
+       html += '<p>No group standings available for this competition.</p>';
     }
 
 
