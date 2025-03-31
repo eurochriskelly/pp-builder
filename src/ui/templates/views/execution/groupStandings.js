@@ -20,7 +20,7 @@ function generateGroupStandingRow(row, index) {
         // Check if the current column index (i) matches the current row index (index)
         if (i === index) {
             // Team playing itself - add background color
-            html += '<td style="background-color: #e5e7eb; min-width: 30px; padding: 8px;" class="text-center">&nbsp;</td>';
+            html += '<td style="width: 30px; max-width: 30px; height: 30px; background-color: #e5e7eb !important; padding: 0;" class="text-center">—</td>';
         } else {
             // Cell for match against another team (will populate later)
             html += generateTableCell('', 'text-center'); 
