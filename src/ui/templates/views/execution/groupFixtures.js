@@ -1,53 +1,10 @@
-const { processTeamName, formatScore } = require('../../../utils');
-const {
-  generateTableCell,
-  generateSpanningHeaderRow,
-  generateTable
-} = require('../../partials/tableUtils');
+const { processTeamName } = require('../../../utils');
+const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
 const { getScoreComparisonClasses } = require('../../partials/scoreUtils');
-
-// Row generator function for group fixtures
-function generateGroupFixtureRow(row) {
-    const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
-    const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
-    const team1ScoreFormatted = formatScore(row.goals1, row.points1);
-    const team2ScoreFormatted = formatScore(row.goals2, row.points2);
-    
-    const { 
-        team1ScoreClass, team2ScoreClass, 
-        team1WinnerClass, team2WinnerClass
-    } = getScoreComparisonClasses(team1ScoreFormatted, team2ScoreFormatted);
-
-    // N/A style is now handled by generateScoreCell using text-grey class
-
-    let html = '<tr>';
-    html += generateTableCell(team1Name, `${team1ScoreClass} ${team1WinnerClass}`, team1Style);
-    html += generateScoreCell(row.goals1, row.points1, team1ScoreClass); // Use generateScoreCell
-    html += generateTableCell(team2Name, `${team2ScoreClass} ${team2WinnerClass}`, team2Style);
-    html += generateScoreCell(row.goals2, row.points2, team2ScoreClass); // Use generateScoreCell
-    html += '</tr>';
-    return html;
-}
 
 module.exports = function generateGroupFixtures(data) {
     let html = '<div id="group-fixtures" class="text-center w-full mx-auto">';
     
-    const headersConfig = [
-        { key: 'team1', label: 'Team 1', className: 'table-header' },
-        { key: 'score1', label: 'Score 1', className: 'table-header' },
-        { key: 'team2', label: 'Team 2', className: 'table-header' },
-        { key: 'score2', label: 'Score 2', className: 'table-header' }
-    ];
-
-    const colgroupHtml = `
-        <colgroup>
-            <col class="col-team">
-            <col class="col-score">
-            <col class="col-team">
-            <col class="col-score">
-        </colgroup>
-    `;
-
     // Group data by category
     const groupedData = data.reduce((acc, row) => {
         const category = row.category || 'Uncategorized';
@@ -61,26 +18,63 @@ module.exports = function generateGroupFixtures(data) {
     // Generate a table for each category
     for (const category in groupedData) {
         const categoryData = groupedData[category];
-        // Add the spanning header row for the category
-        html += generateSpanningHeaderRow(
-            category.toUpperCase(),
-            headersConfig.length,
-            'group-header uppercase text-center font-bold text-xl my-4'
-        );
         
-        // Generate the table for this category's fixtures
-        html += generateTable({
-            data: categoryData,
-            headersConfig: headersConfig,
-            rowGenerator: generateGroupFixtureRow,
-            tableClassName: 'fixtures-table', 
-            colgroupHtml: colgroupHtml,
-            emptyDataMessage: `No group fixtures found for ${category}.`
+        // Create table with headers
+        const table = new UtilTable({
+            tableClassName: 'fixtures-table',
+            emptyMessage: `No group fixtures found for ${category}.`
         });
+
+        table.addHeaders({
+            team1: { label: 'Team 1', align: 'left', width: '35%' },
+            score1: { label: 'Score 1', align: 'right', width: '15%' },
+            team2: { label: 'Team 2', align: 'left', width: '35%' },
+            score2: { label: 'Score 2', align: 'right', width: '15%' }
+        });
+
+        // Add rows
+        categoryData.forEach(row => {
+            const { teamName: team1Name } = processTeamName(row.team1);
+            const { teamName: team2Name } = processTeamName(row.team2);
+            
+            const team1Score = new ScoreData(row.goals1, row.points1);
+            const team2Score = new ScoreData(row.goals2, row.points2);
+            
+            const { 
+                team1ScoreClass, team2ScoreClass,
+                team1WinnerClass, team2WinnerClass 
+            } = getScoreComparisonClasses(team1Score.toString(), team2Score.toString());
+
+            const utilRow = new UtilRow()
+                .setFields({
+                    team1: row.team1,
+                    score1: team1Score,
+                    team2: row.team2, 
+                    score2: team2Score
+                })
+                .setStyle('team1', { 
+                    'font-weight': team1WinnerClass ? 'bold' : 'normal',
+                    'background-color': team1WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent'
+                })
+                .setStyle('team2', { 
+                    'font-weight': team2WinnerClass ? 'bold' : 'normal',
+                    'background-color': team2WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent'
+                })
+                .setStyle('score1', {
+                    'font-weight': team1WinnerClass ? 'bold' : 'normal'
+                })
+                .setStyle('score2', {
+                    'font-weight': team2WinnerClass ? 'bold' : 'normal'
+                });
+
+            table.addRow(utilRow);
+        });
+
+        html += table.toHTML();
     }
 
     if (Object.keys(groupedData).length === 0) {
-         html += '<p>No group fixtures found.</p>'; // Message if there's no data at all
+        html += '<p>No group fixtures found.</p>';
     }
 
     html += '</div>';

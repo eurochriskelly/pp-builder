@@ -1,58 +1,64 @@
-const { processTeamName, formatScore } = require('../../../utils');
-const { 
+const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
+const { processTeamName } = require('../../../utils');
+const {
   getScoreComparisonClasses,
-  getFinalScoreDisplay,
-} = require('../../partials/scoreUtils.js');
-const { 
-  generateTableCell,
-  generateTableHeaderRow,
-  generateSpanningHeaderRow,
-  generateTable,
-} = require('../../partials/tableUtils.js');
+  getFinalScoreDisplay
+} = require('../../partials/scoreUtils');
 
-// Row generator function for finals results
-function generateFinalsResultRow(row) {
-    const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
-    const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
-    const { team1ScoreFinal, team2ScoreFinal } = getFinalScoreDisplay(
-        row.goals1, row.points1, row.goals2, row.points2, row.outcome
-    );
+function createFinalsTable(categoryData) {
+    const table = new UtilTable({
+        tableClassName: 'finals-table',
+        emptyMessage: `No finals results found for ${categoryData[0]?.category || 'this category'}.`
+    });
 
-    const { 
-        team1ScoreClass, team2ScoreClass, 
-        team1WinnerClass, team2WinnerClass 
-    } = getScoreComparisonClasses(team1ScoreFinal, team2ScoreFinal);
+    table.addHeaders({
+        division: { label: 'Level', align: 'left', width: 'auto' },
+        team1: { label: 'Team 1', align: 'left', width: '29%' },
+        score1: { label: 'Score 1', align: 'right', width: '14%' },
+        team2: { label: 'Team 2', align: 'left', width: '29%' },
+        score2: { label: 'Score 2', align: 'right', width: '14%' }
+    });
 
-    let html = '<tr>';
-    html += generateTableCell(row?.division?.toUpperCase());
-    html += generateTableCell(team1Name, `${team1ScoreClass} ${team1WinnerClass}`, team1Style);
-    html += generateTableCell(team1ScoreFinal, team1ScoreClass);
-    html += generateTableCell(team2Name, `${team2ScoreClass} ${team2WinnerClass}`, team2Style);
-    html += generateTableCell(team2ScoreFinal, team2ScoreClass);
-    html += '</tr>';
-    return html;
+    categoryData.forEach(row => {
+        const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
+        const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
+        
+        const { team1ScoreFinal, team2ScoreFinal } = getFinalScoreDisplay(
+            row.goals1, row.points1, row.goals2, row.points2, row.outcome
+        );
+
+        const { 
+            team1ScoreClass, team2ScoreClass,
+            team1WinnerClass, team2WinnerClass 
+        } = getScoreComparisonClasses(team1ScoreFinal, team2ScoreFinal);
+
+        const utilRow = new UtilRow()
+            .setFields({
+                division: row?.division?.toUpperCase(),
+                team1: row.team1,
+                score1: new ScoreData(row.goals1, row.points1),
+                team2: row.team2,
+                score2: new ScoreData(row.goals2, row.points2)
+            })
+            .setStyle('team1', { 
+                'font-weight': team1WinnerClass ? 'bold' : 'normal',
+                'background-color': team1WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
+                ...team1Style
+            })
+            .setStyle('team2', {
+                'font-weight': team2WinnerClass ? 'bold' : 'normal',
+                'background-color': team2WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
+                ...team2Style
+            });
+
+        table.addRow(utilRow);
+    });
+
+    return table;
 }
 
 module.exports = function generateFinalsResults(data) {
     let html = '<div id="finals-results">';
-    
-    const headersConfig = [
-        { key: 'division', label: 'Level', className: 'table-header' },
-        { key: 'team1', label: 'Team 1', className: 'table-header' },
-        { key: 'score1', label: 'Score 1', className: 'table-header' },
-        { key: 'team2', label: 'Team 2', className: 'table-header' },
-        { key: 'score2', label: 'Score 2', className: 'table-header' }
-    ];
-
-    const colgroupHtml = `
-        <colgroup>
-            <col class="col-level">
-            <col class="col-team">
-            <col class="col-score">
-            <col class="col-team">
-            <col class="col-score">
-        </colgroup>
-    `;
 
     // Group data by category
     const groupedData = data.reduce((acc, row) => {
@@ -68,19 +74,13 @@ module.exports = function generateFinalsResults(data) {
     for (const category in groupedData) {
         const categoryData = groupedData[category];
         
-        // Generate the table for this category's results
-        html += generateTable({
-            data: categoryData,
-            headersConfig: headersConfig,
-            rowGenerator: generateFinalsResultRow,
-            tableClassName: 'finals-table', 
-            colgroupHtml: colgroupHtml,
-            emptyDataMessage: `No finals results found for ${category}.`
-        });
+        // Generate and add table
+        const table = createFinalsTable(categoryData);
+        html += table.toHTML();
     }
 
     if (Object.keys(groupedData).length === 0) {
-         html += '<p>No finals results found.</p>'; // Message if there's no data at all
+        html += '<p>No finals results found.</p>';
     }
 
     html += '</div>';
