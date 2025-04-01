@@ -3,13 +3,17 @@ const { hashString } = require('./styleUtils');
 
 // Helper class to represent score data
 class ScoreData {
-    constructor(goals, points) {
+    constructor(goals, points, outcome = 'played') {
         this.goals = goals;
         this.points = points;
+        this.outcome = outcome;
     }
-
     toString() {
-        return formatScore(this.goals, this.points);
+        return this.outcome == 'played'
+         ? formatScore(this.goals, this.points)
+         : (this.goals === 0 && this.points === 0) 
+           ? 'SCRATCH' 
+           : (this.goals === 0 && this.points === 0) ? 'WALKED' : 'INVALID'
     }
 }
 
@@ -151,8 +155,6 @@ class UtilTable {
         } else {
             for (const row of this.rows) {
                 html += '<tr>';
-                console.log('headres', this.headers) 
-                console.log('header keys', this.headers.keys())
                 for (const headerKey of this.headers.keys()) {
                     const content = row.getField(headerKey);
                     console.log('c, hk', headerKey, content)

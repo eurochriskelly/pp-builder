@@ -29,8 +29,8 @@ function createFinalsTable(categoryData) {
         );
 
         const styles = getMatchOutcomeStyles(
-            new ScoreData(row.goals1, row.points1),
-            new ScoreData(row.goals2, row.points2)
+            new ScoreData(row.goals1, row.points1, row.outcome),
+            new ScoreData(row.goals2, row.points2, row.outcome)
         );
 
         const utilRow = new UtilRow()
