@@ -48,12 +48,48 @@ function getScoreComparisonClasses(score1Formatted, score2Formatted) {
 }
 
 function getMatchOutcomeStyles(sd1, sd2) {
-   console.log('sd1', sd1);
-   console.log('sd2', sd2);
-   return {
-     team1: {},
-     team2: {}
-   }
+    const winnerStyle = {
+        fontWeight: 'bold',
+        backgroundColor: '#e6ffe6', // light green
+        textColor: '#000000'
+    };
+    const loserStyle = {
+        fontWeight: 'normal',
+        backgroundColor: '#ffe6e6', // light pink
+        textColor: '#000000'
+    };
+    const drawStyle = {
+        fontWeight: 'normal',
+        backgroundColor: '#e6f3ff', // light blue
+        textColor: '#000000'
+    };
+
+    if (!sd1 || !sd2) {
+        return {
+            team1: {},
+            team2: {}
+        };
+    }
+
+    const score1 = sd1.goals * 3 + sd1.points;
+    const score2 = sd2.goals * 3 + sd2.points;
+
+    if (score1 > score2) {
+        return {
+            team1: winnerStyle,
+            team2: loserStyle
+        };
+    } else if (score1 < score2) {
+        return {
+            team1: loserStyle,
+            team2: winnerStyle
+        };
+    } else {
+        return {
+            team1: drawStyle,
+            team2: drawStyle
+        };
+    }
 }
 /**
  * Formats final scores, handling 'not played' outcomes like walkovers or concessions.
