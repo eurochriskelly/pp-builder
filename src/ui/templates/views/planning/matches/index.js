@@ -1,4 +1,3 @@
-// src/ui/templates/views/planning/matches/index.js
 module.exports = function generateMatchesPlanning(data) {
   let html = `
     <div id="planning-matches" class="p-4">
@@ -31,27 +30,29 @@ module.exports = function generateMatchesPlanning(data) {
       </tr>
       ${upcomingMatches
         .map((match, index) => `
-          <match-row
-            id="${match.id}"
-            group="${match.grp || 'N/A'}"
-            category="${match.category || 'N/A'}"
-            stage="${match.stage || 'N/A'}"
-            pitch="${match.pitch || 'N/A'}"
-            time="${match.scheduledTime || 'N/A'}"
-            team1="${match.team1 || 'N/A'}"
-            team2="${match.team2 || 'N/A'}"
-            umpire="${match.umpireTeam || 'N/A'}"
-            is-upcoming="true"
-            tournament-id="${data.tournamentId}"
-            index="${index}"
-          ></match-row>
+          <tr>
+            <match-row
+              id="${match.id}"
+              group="${match.grp || 'N/A'}"
+              category="${match.category || 'N/A'}"
+              stage="${match.stage || 'N/A'}"
+              pitch="${match.pitch || 'N/A'}"
+              time="${match.scheduledTime || 'N/A'}"
+              team1="${match.team1 || 'N/A'}"
+              team2="${match.team2 || 'N/A'}"
+              umpire="${match.umpireTeam || 'N/A'}"
+              is-upcoming="true"
+              tournament-id="${data.tournamentId}"
+              index="${index}"
+            ></match-row>
+          </tr>
         `)
         .join('')}
     </table>
     ${upcomingMatches.length > 10 ? `
       <div class="mt-2 text-center">
-        <a id="show-more-upcoming" href="#" class="text-blue-600 underline" onclick="document.querySelectorAll('#upcoming-table .upcoming-hidden-row').forEach(row => row.classList.remove('hidden')); this.classList.add('hidden'); document.getElementById('show-less-upcoming').classList.remove('hidden'); return false;">Show ${upcomingMatches.length - 10} More</a>
-        <a id="show-less-upcoming" href="#" class="text-blue-600 underline hidden" onclick="document.querySelectorAll('#upcoming-table .upcoming-hidden-row').forEach(row => row.classList.add('hidden')); document.getElementById('show-more-upcoming').classList.remove('hidden'); this.classList.add('hidden'); return false;">Show Less</a>
+        <a id="show-more-upcoming" href="#" class="text-blue-600 underline" onclick="document.querySelectorAll('#upcoming-table .upcoming-hidden-row').forEach(cell => cell.classList.remove('hidden')); this.classList.add('hidden'); document.getElementById('show-less-upcoming').classList.remove('hidden'); return false;">Show ${upcomingMatches.length - 10} More</a>
+        <a id="show-less-upcoming" href="#" class="text-blue-600 underline hidden" onclick="document.querySelectorAll('#upcoming-table .upcoming-hidden-row').forEach(cell => cell.classList.add('hidden')); document.getElementById('show-more-upcoming').classList.remove('hidden'); this.classList.add('hidden'); return false;">Show Less</a>
       </div>
     ` : ''}
   `;
@@ -73,27 +74,31 @@ module.exports = function generateMatchesPlanning(data) {
       </tr>
       ${finishedMatches
         .map((match, index) => `
-          <match-row
-            id="${match.id}"
-            group="${match.grp || 'N/A'}"
-            category="${match.category || 'N/A'}"
-            stage="${match.stage || 'N/A'}"
-            pitch="${match.pitch || 'N/A'}"
-            time="${match.scheduledTime || 'N/A'}"
-            team1="${match.team1 || 'N/A'}"
-            team2="${match.team2 || 'N/A'}"
-            umpire="${match.umpireTeam || 'N/A'}"
-            is-upcoming="false"
-            tournament-id="${data.tournamentId}"
-            index="${index}"
-          ></match-row>
+          <tr>
+            <match-row
+              id="${match.id}"
+              group="${match.grp || 'N/A'}"
+              category="${match.category || 'N/A'}"
+              stage="${match.stage || 'N/A'}"
+              pitch="${match.pitch || 'N/A'}"
+              time="${match.scheduledTime || 'N/A'}"
+              team1="${match.team1 || 'N/A'}"
+              team2="${match.team2 || 'N/A'}"
+              umpire="${match.umpireTeam || 'N/A'}"
+              is-upcoming="false"
+              tournament-id="${data.tournamentId}"
+              index="${index}"
+              team1-score="${match.team1Score || 'N/A'}"
+              team2-score="${match.team2Score || 'N/A'}"
+            ></match-row>
+          </tr>
         `)
         .join('')}
     </table>
     ${finishedMatches.length > 10 ? `
       <div class="mt-2 text-center">
-        <a id="show-more-finished" href="#" class="text-blue-600 underline" onclick="document.querySelectorAll('#finished-table .finished-hidden-row').forEach(row => row.classList.remove('hidden')); this.classList.add('hidden'); document.getElementById('show-less-finished').classList.remove('hidden'); return false;">Show ${finishedMatches.length - 10} More</a>
-        <a id="show-less-finished" href="#" class="text-blue-600 underline hidden" onclick="document.querySelectorAll('#finished-table .finished-hidden-row').forEach(row => row.classList.add('hidden')); document.getElementById('show-more-finished').classList.remove('hidden'); this.classList.add('hidden'); return false;">Show Less</a>
+        <a id="show-more-finished" href="#" class="text-blue-600 underline" onclick="document.querySelectorAll('#finished-table .finished-hidden-row').forEach(cell => cell.classList.remove('hidden')); this.classList.add('hidden'); document.getElementById('show-less-finished').classList.remove('hidden'); return false;">Show ${finishedMatches.length - 10} More</a>
+        <a id="show-less-finished" href="#" class="text-blue-600 underline hidden" onclick="document.querySelectorAll('#finished-table .finished-hidden-row').forEach(cell => cell.classList.add('hidden')); document.getElementById('show-more-finished').classList.remove('hidden'); this.classList.add('hidden'); return false;">Show Less</a>
       </div>
     ` : ''}
   `;

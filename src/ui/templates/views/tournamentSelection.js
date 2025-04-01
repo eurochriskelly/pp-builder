@@ -1,4 +1,3 @@
-// src/ui/templates/views/tournamentSelection.js
 module.exports = function generateTournamentSelection(tournaments, isLoggedIn = false) {
   let html = `
     <div id="tournament-selection" class="p-4">
@@ -18,17 +17,20 @@ module.exports = function generateTournamentSelection(tournaments, isLoggedIn = 
             ${isLoggedIn ? '<th class="p-2 bg-gray-200">Planning</th><th class="p-2 bg-gray-200">Execution</th><th class="p-2 bg-gray-200">Share</th>' : ''}
           </tr>
           ${tournaments
-            .sort((a, b) => (a.Date > b.Date) ? -1 : ((a.Date < b.Date) ? 1 : 0))
+            .sort((a, b) => (a.Date > b.Date ? -1 : a.Date < b.Date ? 1 : 0))
             .map(t => `
-              <tournament-row
-                id="${t.Id}"
-                title="${t.Title || t.title || 'N/A'}"
-                date="${t.Date || t.date || ''}"
-                location="${t.Location || t.location || 'N/A'}"
-                event-uuid="${t.eventUuid || 'N/A'}"
-                is-logged-in="${isLoggedIn}"
-              ></tournament-row>
-            `).join('')}
+              <tr>
+                <tournament-row
+                  id="${t.Id}"
+                  title="${t.Title || t.title || 'N/A'}"
+                  date="${t.Date || t.date || ''}"
+                  location="${t.Location || t.location || 'N/A'}"
+                  event-uuid="${t.eventUuid || 'N/A'}"
+                  is-logged-in="${isLoggedIn}"
+                ></tournament-row>
+              </tr>
+            `)
+            .join('')}
         </table>
       </div>
     </div>
@@ -37,4 +39,3 @@ module.exports = function generateTournamentSelection(tournaments, isLoggedIn = 
   `;
   return html;
 };
-
