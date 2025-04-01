@@ -4,6 +4,7 @@ const { formatCategory } = require('../../../utils/categoryFormatter');
 const {
   getScoreComparisonClasses,
   getFinalScoreDisplay,
+  getMatchOutcomeStyles,
 } = require('../../partials/scoreUtils');
 
 function createKnockoutTable(categoryData) {
@@ -28,14 +29,14 @@ function createKnockoutTable(categoryData) {
             row.goals1, row.points1, row.goals2, row.points2, row.outcome
         );
 
-        const { 
-            team1ScoreClass, team2ScoreClass,
-            team1WinnerClass, team2WinnerClass 
-        } = getScoreComparisonClasses(team1ScoreFinal, team2ScoreFinal);
+        const styles = getMatchOutcomeStyles(
+            new ScoreData(row.goals1, row.points1, row.outcome),
+            new ScoreData(row.goals2, row.points2, row.outcome)
+        );
 
         const specialScores = ['shared', 'walked', 'concede'];
-        const score1ExtraClass = specialScores.includes(team1ScoreFinal?.toLowerCase()) ? 'text-orange-600' : '';
-        const score2ExtraClass = specialScores.includes(team2ScoreFinal?.toLowerCase()) ? 'text-orange-600' : '';
+        const score1ExtraClass = specialScores.includes(team1ScoreFinal?.toLowerCase()) ? 'orange' : styles.team1.textColor;
+        const score2ExtraClass = specialScores.includes(team2ScoreFinal?.toLowerCase()) ? 'orange' : styles.team2.textColor;
 
         const utilRow = new UtilRow()
             .setFields({
@@ -45,21 +46,25 @@ function createKnockoutTable(categoryData) {
                 team2: row.team2,
                 score2: new ScoreData(row.goals2, row.points2)
             })
-            .setStyle('team1', { 
-                'font-weight': team1WinnerClass ? 'bold' : 'normal',
-                'background-color': team1WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
+            .setStyle('team1', {
+                'font-weight': styles.team1.fontWeight,
+                'background-color': styles.team1.backgroundColor,
+                'color': styles.team1.textColor,
                 ...team1Style
             })
             .setStyle('team2', {
-                'font-weight': team2WinnerClass ? 'bold' : 'normal',
-                'background-color': team2WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
+                'font-weight': styles.team2.fontWeight,
+                'background-color': styles.team2.backgroundColor,
+                'color': styles.team2.textColor,
                 ...team2Style
             })
             .setStyle('score1', {
-                'color': score1ExtraClass ? 'orange' : 'inherit'
+                'font-weight': styles.team1.fontWeight,
+                'color': score1ExtraClass
             })
             .setStyle('score2', {
-                'color': score2ExtraClass ? 'orange' : 'inherit'
+                'font-weight': styles.team2.fontWeight,
+                'color': score2ExtraClass
             });
 
         table.addRow(utilRow);
