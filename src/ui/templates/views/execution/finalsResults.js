@@ -3,7 +3,7 @@ const { processTeamName } = require('../../../utils');
 const {
   getScoreComparisonClasses,
   getFinalScoreDisplay,
-  getMatchOutcomeStyles
+  getMatchOutcomeStyles,
 } = require('../../partials/scoreUtils');
 
 function createFinalsTable(categoryData) {

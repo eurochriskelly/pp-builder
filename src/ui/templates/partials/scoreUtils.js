@@ -82,5 +82,5 @@ function getFinalScoreDisplay(goals1, points1, goals2, points2, outcome) {
 
 module.exports = {
   getScoreComparisonClasses,
-  getFinalScoreDisplay
+  getFinalScoreDisplay,
 };

@@ -1,3 +1,6 @@
+// src/ui/templates/views/planning/matches/index.js
+const { createMatchRow } = require('../../../../public/scripts/webcomponents/match-row.js');
+
 module.exports = function generateMatchesPlanning(data) {
   let html = `
     <div id="planning-matches" class="p-4">
@@ -29,24 +32,22 @@ module.exports = function generateMatchesPlanning(data) {
         <th class="p-2 text-left">Umpire</th>
       </tr>
       ${upcomingMatches
-        .map((match, index) => `
-          <tr>
-            <match-row
-              id="${match.id}"
-              group="${match.grp || 'N/A'}"
-              category="${match.category || 'N/A'}"
-              stage="${match.stage || 'N/A'}"
-              pitch="${match.pitch || 'N/A'}"
-              time="${match.scheduledTime || 'N/A'}"
-              team1="${match.team1 || 'N/A'}"
-              team2="${match.team2 || 'N/A'}"
-              umpire="${match.umpireTeam || 'N/A'}"
-              is-upcoming="true"
-              tournament-id="${data.tournamentId}"
-              index="${index}"
-            ></match-row>
-          </tr>
-        `)
+        .map((match, index) =>
+          createMatchRow({
+            id: match.id,
+            group: match.grp,
+            category: match.category,
+            stage: match.stage,
+            pitch: match.pitch,
+            time: match.scheduledTime,
+            team1: match.team1,
+            team2: match.team2,
+            umpire: match.umpireTeam,
+            isUpcoming: 'true',
+            tournamentId: data.tournamentId,
+            index: index
+          })
+        )
         .join('')}
     </table>
     ${upcomingMatches.length > 10 ? `
@@ -73,26 +74,24 @@ module.exports = function generateMatchesPlanning(data) {
         <th class="p-2 text-left">Score</th>
       </tr>
       ${finishedMatches
-        .map((match, index) => `
-          <tr>
-            <match-row
-              id="${match.id}"
-              group="${match.grp || 'N/A'}"
-              category="${match.category || 'N/A'}"
-              stage="${match.stage || 'N/A'}"
-              pitch="${match.pitch || 'N/A'}"
-              time="${match.scheduledTime || 'N/A'}"
-              team1="${match.team1 || 'N/A'}"
-              team2="${match.team2 || 'N/A'}"
-              umpire="${match.umpireTeam || 'N/A'}"
-              is-upcoming="false"
-              tournament-id="${data.tournamentId}"
-              index="${index}"
-              team1-score="${match.team1Score || 'N/A'}"
-              team2-score="${match.team2Score || 'N/A'}"
-            ></match-row>
-          </tr>
-        `)
+        .map((match, index) =>
+          createMatchRow({
+            id: match.id,
+            group: match.grp,
+            category: match.category,
+            stage: match.stage,
+            pitch: match.pitch,
+            time: match.scheduledTime,
+            team1: match.team1,
+            team2: match.team2,
+            umpire: match.umpireTeam,
+            isUpcoming: 'false',
+            tournamentId: data.tournamentId,
+            index: index,
+            team1Score: match.team1Score,
+            team2Score: match.team2Score
+          })
+        )
         .join('')}
     </table>
     ${finishedMatches.length > 10 ? `
@@ -105,7 +104,6 @@ module.exports = function generateMatchesPlanning(data) {
 
   html += `
     </div>
-    <script src="/scripts/webcomponents/match-row.js" defer></script>
     <script>
       async function playNextNMatches(n, tournamentId) {
         for (let i = 0; i < n; i++) {

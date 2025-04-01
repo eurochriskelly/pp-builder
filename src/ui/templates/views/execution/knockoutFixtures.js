@@ -4,7 +4,6 @@ const { formatCategory } = require('../../../utils/categoryFormatter');
 const {
   getScoreComparisonClasses,
   getFinalScoreDisplay,
-  getMatchOutcomeStyles
 } = require('../../partials/scoreUtils');
 
 function createKnockoutTable(categoryData) {

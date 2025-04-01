@@ -1,6 +1,6 @@
 const { processTeamName } = require('../../../utils');
 const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
-const { getScoreComparisonClasses, getMatchOutcomeStyles } = require('../../partials/scoreUtils');
+const { getScoreComparisonClasses } = require('../../partials/scoreUtils');
 
 module.exports = function generateGroupFixtures(data) {
     let html = '<div id="group-fixtures" class="text-center w-full mx-auto">';
