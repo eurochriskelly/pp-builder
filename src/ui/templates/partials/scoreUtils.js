@@ -47,6 +47,14 @@ function getScoreComparisonClasses(score1Formatted, score2Formatted) {
     return { team1ScoreClass, team2ScoreClass, team1WinnerClass, team2WinnerClass };
 }
 
+function getMatchOutcomeStyles(sd1, sd2) {
+   console.log('sd1', sd1);
+   console.log('sd2', sd2);
+   return {
+     team1: {},
+     team2: {}
+   }
+}
 /**
  * Formats final scores, handling 'not played' outcomes like walkovers or concessions.
  * @param {number|null} goals1 - Team 1 goals.
@@ -83,4 +91,5 @@ function getFinalScoreDisplay(goals1, points1, goals2, points2, outcome) {
 module.exports = {
   getScoreComparisonClasses,
   getFinalScoreDisplay,
+  getMatchOutcomeStyles,
 };
