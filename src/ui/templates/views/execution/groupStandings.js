@@ -113,6 +113,21 @@ module.exports = function generateGroupStandings(data) {
         html += '<p>No group standings available.</p>';
     }
 
-    html += '</div>';
+    html += `
+        <style>
+            .logo-cell {
+                padding: 2px !important;
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                min-height: 40px;
+            }
+            .logo-cell logo-box {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </div>`;
     return html;
 };
