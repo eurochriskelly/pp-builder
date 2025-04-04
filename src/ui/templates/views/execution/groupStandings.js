@@ -10,7 +10,12 @@ function createStandingsTable(groupData) {
     // Add fixed headers
     table.addHeaders({
         team: { label: 'Team', align: 'left', width: 'auto' },
-        teamLogo: { label: '', align: 'center', width: '5%' }
+        teamLogo: { 
+            label: 'T', 
+            align: 'center', 
+            width: '40px',
+            className: 'logo-cell'
+        }
     });
 
     // First add all vs columns at once
@@ -44,7 +49,7 @@ function createStandingsTable(groupData) {
         const utilRow = new UtilRow()
             .setFields({
                 team: row.team,
-                teamLogo: `<logo-box title="${row.team}" index="${rowIndex}" size="30px"></logo-box>`,
+                teamLogo: `<logo-box title="${row.team}" team="${row.team}" index="${rowIndex}" size="100%"></logo-box>`,
                 ...row
             })
             .setStyle('team', { 
