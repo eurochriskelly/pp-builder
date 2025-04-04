@@ -57,12 +57,12 @@ function createStandingsTable(groupData) {
         groupData.rows.forEach((_, colIndex) => {
             const fieldName = `vs${colIndex}`;
             if (colIndex === rowIndex) {
-                utilRow.setField(fieldName, '—')
+                utilRow.setField(fieldName, '&nbsp;')
                     .setStyle(fieldName, {
                         'width': '60px',
                         'max-width': '60px',
                         'height': '30px',
-                        'background-color': '#333',
+                        'background-color': '#999',
                         'padding': '0'
                     });
             } else {

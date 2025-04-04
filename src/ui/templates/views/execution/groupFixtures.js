@@ -1,6 +1,6 @@
 const { processTeamName } = require('../../../utils');
 const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
-const { getScoreComparisonClasses } = require('../../partials/scoreUtils');
+const { getMatchOutcomeStyles } = require('../../partials/scoreUtils');
 
 module.exports = function generateGroupFixtures(data) {
     let html = '<div id="group-fixtures" class="text-center w-full mx-auto">';
@@ -40,10 +40,7 @@ module.exports = function generateGroupFixtures(data) {
             const team1Score = new ScoreData(row.goals1, row.points1);
             const team2Score = new ScoreData(row.goals2, row.points2);
             
-            const { 
-                team1ScoreClass, team2ScoreClass,
-                team1WinnerClass, team2WinnerClass 
-            } = getScoreComparisonClasses(team1Score.toString(), team2Score.toString());
+            const styles = getMatchOutcomeStyles(team1Score, team2Score);
 
             const utilRow = new UtilRow()
                 .setFields({
@@ -52,19 +49,23 @@ module.exports = function generateGroupFixtures(data) {
                     team2: row.team2, 
                     score2: team2Score
                 })
-                .setStyle('team1', { 
-                    'font-weight': team1WinnerClass ? 'bold' : 'normal',
-                    'background-color': team1WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent'
+                .setStyle('team1', {
+                    'font-weight': styles.team1.fontWeight,
+                    'background-color': styles.team1.backgroundColor,
+                    'color': styles.team1.textColor
                 })
-                .setStyle('team2', { 
-                    'font-weight': team2WinnerClass ? 'bold' : 'normal',
-                    'background-color': team2WinnerClass ? 'rgba(0, 255, 0, 0.1)' : 'transparent'
+                .setStyle('team2', {
+                    'font-weight': styles.team2.fontWeight,
+                    'background-color': styles.team2.backgroundColor,
+                    'color': styles.team2.textColor
                 })
                 .setStyle('score1', {
-                    'font-weight': team1WinnerClass ? 'bold' : 'normal'
+                    'font-weight': styles.team1.fontWeight,
+                    'color': styles.team1.textColor
                 })
                 .setStyle('score2', {
-                    'font-weight': team2WinnerClass ? 'bold' : 'normal'
+                    'font-weight': styles.team2.fontWeight,
+                    'color': styles.team2.textColor
                 });
 
             table.addRow(utilRow);
