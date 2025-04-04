@@ -82,12 +82,20 @@ class UtilTable {
 
     generateCell(content, headerKey) {
         const header = this.headers.get(headerKey) || {};
-        const style = {
-            width: header.width,
-            'text-align': header.align
-        };
+        const style = {};
         
         let className = header.className || '';
+        
+        // Special handling for logo column
+        if (headerKey === 'teamLogo') {
+            return `<td class="${className.trim()}" style="padding: 2px; width: 40px; min-width: 40px; height: 40px; min-height: 40px; box-sizing: border-box">
+                        ${cellContent}
+                    </td>`;
+        }
+
+        // Regular column styling
+        style.width = header.width;
+        style['text-align'] = header.align;
         let cellContent = (content === null || content === undefined) ? 'N/A' : content;
 
         // Special handling based on field type
