@@ -85,10 +85,11 @@ class UtilTable {
         const style = {};
         
         let className = header.className || '';
-        
+        let cellContent = (content === null || content === undefined) ? 'N/A' : content;
+
         // Special handling for logo column
         if (headerKey === 'teamLogo') {
-            cellContent = (content === null || content === undefined) ? '' : content;
+            cellContent = content === null || content === undefined ? '' : content;
             return `<td class="${className.trim()}" style="padding: 2px; width: 40px; min-width: 40px; height: 40px; min-height: 40px; box-sizing: border-box">
                         ${cellContent}
                     </td>`;
