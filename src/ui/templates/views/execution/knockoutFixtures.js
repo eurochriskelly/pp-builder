@@ -48,13 +48,11 @@ function createKnockoutTable(categoryData) {
             })
             .setStyle('team1', {
                 'font-weight': styles.team1.fontWeight,
-                'background-color': styles.team1.backgroundColor,
                 'color': styles.team1.textColor,
                 ...team1Style
             })
             .setStyle('team2', {
                 'font-weight': styles.team2.fontWeight,
-                'background-color': styles.team2.backgroundColor,
                 'color': styles.team2.textColor,
                 ...team2Style
             })

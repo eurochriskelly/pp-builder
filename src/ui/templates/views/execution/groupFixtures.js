@@ -44,19 +44,17 @@ module.exports = function generateGroupFixtures(data) {
 
             const utilRow = new UtilRow()
                 .setFields({
-                    team1: row.team1,
+                    team1: `<team-name name="${row.team1}" />`,
                     score1: team1Score,
-                    team2: row.team2, 
+                    team2: `<team-name name="${row.team2}" />`, 
                     score2: team2Score
                 })
                 .setStyle('team1', {
                     'font-weight': styles.team1.fontWeight,
-                    'background-color': styles.team1.backgroundColor,
                     'color': styles.team1.textColor
                 })
                 .setStyle('team2', {
                     'font-weight': styles.team2.fontWeight,
-                    'background-color': styles.team2.backgroundColor,
                     'color': styles.team2.textColor
                 })
                 .setStyle('score1', {

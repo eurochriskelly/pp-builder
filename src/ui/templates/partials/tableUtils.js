@@ -98,7 +98,7 @@ class UtilTable {
         // Regular column styling
         style.width = header.width;
         style['text-align'] = header.align;
-        let cellContent = (content === null || content === undefined) ? 'N/A' : content;
+        cellContent = (content === null || content === undefined) ? 'N/A' : content;
 
         // Special handling based on field type
         if (headerKey === 'id') {

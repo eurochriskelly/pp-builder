@@ -25,7 +25,7 @@ export default {
   },
 };
 
-// Template function to render the component with args
+// Template function to render the component with argsn
 const Template = ({ title, index, size, image }) => {
   const element = document.createElement('logo-box');
   element.setAttribute('title', title);

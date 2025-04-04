@@ -13,7 +13,7 @@ function createStandingsTable(groupData) {
         teamLogo: { 
             label: 'T', 
             align: 'center', 
-            width: '40px',
+            width: '57px',
             className: 'logo-cell'
         }
     });
@@ -23,7 +23,7 @@ function createStandingsTable(groupData) {
     groupData.rows.forEach((row, i) => {
         const label = generateTeamLabel(row.team);
         vsHeaders[`vs${i}`] = {
-            label: `<span>${label}</span>`,
+            label: `<lg>${label}</span>`,
             align: 'center',
             width: '6%'
         };
@@ -45,11 +45,13 @@ function createStandingsTable(groupData) {
     groupData.rows.forEach((row, rowIndex) => {
         const { teamName, teamStyle } = processTeamName(row.team);
         const teamLabel = generateTeamLabel(row.team);
-        
+
+        console.log('row - ', row); 
+
         const utilRow = new UtilRow()
             .setFields({
                 team: row.team,
-                teamLogo: `<logo-box title="${row.team}" team="${row.team}" index="${rowIndex}" size="100%"></logo-box>`,
+                teamLogo: `<logo-box title="${row.team}" team="${row.team}" index="${rowIndex}" size="57px"></logo-box>`,
                 ...row
             })
             .setStyle('team', { 
@@ -71,7 +73,7 @@ function createStandingsTable(groupData) {
                         'padding': '0'
                     });
             } else {
-                utilRow.setField(fieldName, '');
+                utilRow.setField(fieldName, 'XX');
             }
         });
 
