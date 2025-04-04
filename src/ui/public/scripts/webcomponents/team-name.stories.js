@@ -8,6 +8,11 @@ export default {
         name: { control: 'text', description: 'Team name, can include slashes' },
         showLogo: { control: 'boolean', description: 'Whether to show the logo' },
         height: { control: 'text', description: 'Height of the logo and component (e.g., "30px")' },
+        direction: {
+            control: { type: 'radio' },
+            options: ['l2r', 'r2l'],
+            description: 'Direction of layout: left-to-right or right-to-left',
+        }
     },
 };
 
@@ -25,12 +30,12 @@ const MultiTemplate = ({ teams }) => {
     container.style.flexDirection = 'column';
     container.style.gap = '10px';
     container.style.width = '300px';
-
-    teams.forEach(({ name, showLogo, height }) => {
+    teams.forEach(({ name, showLogo, height, direction }) => {
         const element = document.createElement('team-name');
         element.setAttribute('name', name);
         element.setAttribute('showLogo', showLogo.toString());
         if (height) element.setAttribute('height', height);
+        if (direction) element.setAttribute('direction', direction);
         container.appendChild(element);
     });
     return container;
@@ -55,6 +60,7 @@ MultipleTeamsOrder1.args = {
         { name: 'Manchester United', showLogo: true, height: '30px' },
         { name: 'Chelsea/London F.C.', showLogo: true, height: '30px' },
         { name: 'Arsenal F.C.', showLogo: true, height: '30px' },
+        { name: 'Arsenal F.C.', direction: 'r2l', showLogo: true, height: '30px' },
         { name: 'Foo/Bar United', showLogo: true, height: '30px' },
     ],
 };

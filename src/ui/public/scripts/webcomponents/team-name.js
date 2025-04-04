@@ -5,7 +5,7 @@ class TeamName extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['name', 'showLogo', 'height'];
+        return ['name', 'showLogo', 'height', 'direction'];
     }
 
     connectedCallback() {
@@ -33,22 +33,28 @@ class TeamName extends HTMLElement {
         const name = this.getAttribute('name') || '';
         const showLogo = this.getAttribute('showLogo') !== 'false';
         const height = this.getAttribute('height') || '30px';
-        const marginRight = `calc(${height} / 2)`;
+        const direction = this.getAttribute('direction') || 'l2r';
+        const isR2L = direction === 'r2l';
+
+        const marginSide = `calc(${height} / 2)`;
+        const logoSize = `calc(${height} * 1.15)`;
+
+        const containerStyle = `
+            display: flex;
+            flex-direction: ${isR2L ? 'row-reverse' : 'row'};
+            align-items: center;
+            justify-content: ${isR2L ? 'flex-end' : 'flex-start'};
+            text-align: ${isR2L ? 'right' : 'left'};
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 100%;
+        `;
+
+        const logoMarginStyle = `margin-${isR2L ? 'left' : 'right'}: ${marginSide}; flex-shrink: 0;`;
 
         const template = document.createElement('template');
         template.innerHTML = `
             <style>
-                .container {
-                    display: flex;
-                    align-items: center;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    max-width: 100%;
-                }
-                .logo-container {
-                    margin-right: ${marginRight};
-                    flex-shrink: 0;
-                }
                 .name-container {
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -56,10 +62,10 @@ class TeamName extends HTMLElement {
                     align-items: center;
                 }
             </style>
-            <span class="container">
+            <span class="container" style="${containerStyle}">
                 ${showLogo ? `
-                    <span class="logo-container">
-                        <logo-box width="${height}" title="${name}"></logo-box>
+                    <span class="logo-container" style="${logoMarginStyle}">
+                        <logo-box width="${logoSize}" title="${name}"></logo-box>
                     </span>
                 ` : ''}
                 <span class="name-container">
