@@ -77,7 +77,14 @@ function createStandingsTable(groupData, fixtures) {
 
                 let scoreContent = '&nbsp;'; // Default if no fixture found or not played
                 let cellStyle = {
-                    'background-color': '#eee', // Default background for empty/TBD cells
+                    // Default hatched background for all vs cells initially
+                    'background': `repeating-linear-gradient(
+                        45deg,
+                        #666, /* Dark grey */
+                        #666 5px, /* Dark grey stripe width */
+                        #ccc 5px, /* Light grey */
+                        #ccc 10px /* Light grey stripe width */
+                    )`,
                     'padding': '0',
                     'margin': '0',
                     'text-align': 'center', // Center content by default
@@ -118,10 +125,11 @@ function createStandingsTable(groupData, fixtures) {
                                                 layout="compare"
                                                 scale="1.0"
                                             />`;
-                            // Remove default background for cells with actual scores
-                            delete cellStyle['background-color'];
+                            // Remove the default hatched background when a score component is rendered
+                            delete cellStyle['background'];
                         } else {
                              // Handle cases like walkovers, concessions, or not played yet (scores are null/undefined)
+                             // Keep the default hatched background for these cases
                              scoreContent = '-'; // Indicate not played or invalid score
                              cellStyle['color'] = '#aaa';
                              cellStyle['font-style'] = 'italic';

@@ -56,7 +56,7 @@ class GaelicScore extends HTMLElement {
         let diffText = '';
         let diffClass = '';
         const absDiff = Math.abs(diff);
-        const opacity = Math.min(90, Math.max(10, Math.floor(absDiff / 2) * 10));
+        const opacity = Math.min(50, Math.max(10, Math.floor(absDiff / 2) * 10));
         
         if (diff > 0) {
           diffText = `+${diff}`;
@@ -75,7 +75,7 @@ class GaelicScore extends HTMLElement {
         this.style.setProperty('--text-color', textColor);
         
         const topRow = `<div class="compare-top">${goalStr} - ${pointStr}</div>`;
-        const bottomRow = `<div class="compare-bottom">${diffText}</div>`;
+        const bottomRow = `<div class="compare-bottom"><span class="difference">${diffText}</span></div>`;
 
         content = topRow + bottomRow;
     } else {
@@ -110,45 +110,47 @@ class GaelicScore extends HTMLElement {
 
           .compare-top {
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.32rem; /* Increased by 20% */
             letter-spacing: 0em;
             margin-bottom: 0.1em;
           }
 
           .compare-bottom {
             text-align: center;
-            font-size: 2rem;
+            font-size: 1.44rem; /* Decreased by 20% */
             line-height: 1;
           }
 
           :host {
-            display: inline-block;
-            font-family: sans-serif;
-            transform: scale(${scale});
-            transform-origin: top left;
-            /* padding: 0.5em 0.8em; */ /* Removed padding to allow filling TD */
-            color: var(--text-color, white);
-            border: 0.15rem solid;
-            text-align: center;
-            /* Ensure component fills the container */
-            width: 100%; 
+            display: block;
+            width: 100%;
             height: 100%;
-            box-sizing: border-box; /* Include border in size */
+            padding: 0.3em;
+            box-sizing: border-box;
           }
 
           :host(.green) {
-            border-color: #4caf50;
             background: rgba(76, 175, 80, calc(var(--opacity) / 100));
           }
 
           :host(.red) {
-            border-color: #f44336;
             background: rgba(244, 67, 54, calc(var(--opacity) / 100));
           }
 
           :host(.blue) {
-            border-color: #2196f3;
             background: rgba(33, 150, 243, calc(var(--opacity) / 100));
+          }
+
+          .difference {
+            display: inline-block;
+            color: var(--text-color, white);
+            font-weight: normal;
+            font-size: 1em; /* Adjusted to match new base size */
+            min-width: 2em;
+            text-align: center;
+            padding: 0.5rem;
+            padding-left: 0;
+            padding-right: 0;
           }
 
           .slash {
