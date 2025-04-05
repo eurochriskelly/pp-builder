@@ -93,7 +93,7 @@ class GaelicScore extends HTMLElement {
             transform-origin: top left;
           }
 
-          .bracket {
+            .bracket {
             color: #bbb;
           }
 
@@ -148,7 +148,7 @@ class GaelicScore extends HTMLElement {
             font-size: 1em; /* Adjusted to match new base size */
             min-width: 2em;
             text-align: center;
-            padding: 0.5rem;
+            padding: 0.7rem;
             padding-left: 0;
             padding-right: 0;
           }

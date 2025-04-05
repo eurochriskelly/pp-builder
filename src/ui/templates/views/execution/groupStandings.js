@@ -7,11 +7,6 @@ function createStandingsTable(groupData, fixtures) {
         emptyMessage: `No standings available for Group ${groupData.groupName}.`
     });
 
-    // Add fixed headers
-    table.addHeaders({
-        team: { label: 'Team', align: 'left', width: 'auto' },
-    });
-
     // First add all vs columns at once
     const vsHeaders = {};
     groupData.rows.forEach((row, i) => {
@@ -22,6 +17,11 @@ function createStandingsTable(groupData, fixtures) {
         };
     });
     table.addHeaders(vsHeaders);
+
+    // Add Team header after vs columns
+    table.addHeaders({
+        team: { label: 'Team', align: 'left', width: 'auto' },
+    });
 
     // Add stats columns
     table.addHeaders({
@@ -39,7 +39,7 @@ function createStandingsTable(groupData, fixtures) {
         console.log('processing row ', rowIndex);
 
         const { teamName, teamStyle } = processTeamName(row.team);
-        const teamLabel = `<team-name name="${row.team}" height="30px" direction="r2l" />`;
+        const teamLabel = `<team-name name="${row.team}" height="30px" direction="l2r" />`;
 
         const fields = {
           ...row,
@@ -154,8 +154,9 @@ function createStandingsTable(groupData, fixtures) {
         });
  
         // Apply specific styles after all fields are set for the row
-        utilRow.setStyle('TotalPoints', { 'font-weight': 'bold', 'border-left': '1px solid #ccc' });
-        utilRow.setStyle('PointsFrom', { 'border-left': '1px solid #ccc' });
+        utilRow.setStyle('TotalPoints', { 'font-weight': 'bold' }) // Keep bold style
+               .addBorder('TotalPoints', 'left');                 // Use addBorder for left border
+        utilRow.addBorder('PointsFrom', 'left');                  // Use addBorder for left border
  
         table.addRow(utilRow);
     });
