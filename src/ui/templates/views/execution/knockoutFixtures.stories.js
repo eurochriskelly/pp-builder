@@ -6,7 +6,30 @@ import '../../../public/scripts/webcomponents/gaelic-score.js';
 
 // Realistic tournament progression data
 const sampleData = [
-  // Cup Tournament - 8 teams
+  // Final (winners from semis)
+  {
+    category: "Senior",
+    stage: "cup_final",
+    team1: "Dublin A",
+    team2: "Kerry A",
+    goals1: 1,
+    points1: 8,
+    goals2: 3,
+    points2: 10,
+    outcome: "played"
+  },
+  // Final (winners from shield semis)
+  {
+    category: "Senior",
+    stage: "shield_final",
+    team1: "Donegal A",
+    team2: "Cork A",
+    goals1: 1,
+    points1: 10,
+    goals2: 0,
+    points2: 8,
+    outcome: "played"
+  },
   // Quarter Finals
   {
     category: "Senior",
@@ -70,25 +93,13 @@ const sampleData = [
     stage: "cup_semi",
     team1: "Kerry A",
     team2: "Galway A",
-    goals1: 3,
+    goals1: 1,
     points1: 5,
-    goals2: 1,
+    goals2: 3,
     points2: 7,
     outcome: "played"
   },
   
-  // Final (winners from semis)
-  {
-    category: "Senior",
-    stage: "cup_final",
-    team1: "Dublin A",
-    team2: "Kerry A",
-    goals1: 2,
-    points1: 8,
-    goals2: 1,
-    points2: 10,
-    outcome: "played"
-  },
   
   // 3rd/4th playoff (losers from semis)
   {
@@ -97,7 +108,7 @@ const sampleData = [
     team1: "Mayo A",
     team2: "Galway A",
     goals1: 1,
-    points1: 12,
+    points1: 2,
     goals2: 1,
     points2: 10,
     outcome: "played"
@@ -174,18 +185,6 @@ const sampleData = [
     outcome: "played"
   },
   
-  // Final (winners from shield semis)
-  {
-    category: "Senior",
-    stage: "shield_final",
-    team1: "Donegal A",
-    team2: "Cork A",
-    goals1: 1,
-    points1: 10,
-    goals2: 0,
-    points2: 8,
-    outcome: "played"
-  }
 ];
 
 // Export the story metadata
