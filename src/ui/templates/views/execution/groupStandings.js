@@ -58,14 +58,90 @@ function createStandingsTable(groupData, fixtures) {
         groupData.rows.forEach((r, colIndex) => {
             const fieldName = `vs${colIndex}`;
             if (colIndex === rowIndex) {
+                // Apply a diagonal stripe pattern for the cell where a team intersects itself
                 utilRow.setField(fieldName, '&nbsp;')
                     .setStyle(fieldName, {
-                        'background-color': '#BBB',
+                        'background': `repeating-linear-gradient(
+                            45deg,
+                            #666, /* Dark grey */
+                            #666 5px, /* Dark grey stripe width */
+                            #ccc 5px, /* Light grey */
+                            #ccc 10px /* Light grey stripe width */
+                        )`,
                         'padding': '0'
                     });
             } else {
-                console.log('r', fieldName, r)
-                utilRow.setField(fieldName, 'XX');
+                // Access original team names directly using indices from the loops
+                const currentRowTeamName = groupData.rows[rowIndex].team; // Original name from the data row
+                const currentColTeamName = groupData.rows[colIndex].team; // Original name from the corresponding column's data row
+
+                let scoreContent = '&nbsp;'; // Default if no fixture found or not played
+                let cellStyle = {
+                    'background-color': '#eee', // Default background for empty/TBD cells
+                    'padding': '0',
+                    'margin': '0',
+                    'text-align': 'center', // Center content by default
+                };
+
+                // Check if we have valid team names before proceeding
+                if (currentRowTeamName && currentColTeamName) {
+                    // Find the fixture between the original team names
+                    const fixture = fixtures.find(f =>
+                        (f.team1 === currentRowTeamName && f.team2 === currentColTeamName) ||
+                        (f.team1 === currentColTeamName && f.team2 === currentRowTeamName)
+                    );
+
+                    if (fixture) {
+                        let goals, points, goalsAgainst, pointsAgainst;
+
+                        // Assign scores based on which team is team1/team2 in the fixture
+                        if (fixture.team1 === currentRowTeamName) {
+                            goals = fixture.goals1;
+                            points = fixture.points1;
+                            goalsAgainst = fixture.goals2;
+                            pointsAgainst = fixture.points2;
+                        } else { // fixture.team2 === currentRowTeamName
+                            goals = fixture.goals2;
+                            points = fixture.points2;
+                            goalsAgainst = fixture.goals1;
+                            pointsAgainst = fixture.points1;
+                        }
+
+                        // Check if scores are valid numbers before rendering the component
+                        if (typeof goals === 'number' && typeof points === 'number' &&
+                            typeof goalsAgainst === 'number' && typeof pointsAgainst === 'number') {
+                            scoreContent = `<gaelic-score
+                                                goals="${goals}"
+                                                points="${points}"
+                                                goalsagainst="${goalsAgainst}"
+                                                pointsagainst="${pointsAgainst}"
+                                                layout="compare"
+                                                scale="0.9"
+                                            />`;
+                            // Remove default background for cells with actual scores
+                            delete cellStyle['background-color'];
+                        } else {
+                             // Handle cases like walkovers, concessions, or not played yet (scores are null/undefined)
+                             scoreContent = '-'; // Indicate not played or invalid score
+                             cellStyle['color'] = '#aaa';
+                             cellStyle['font-style'] = 'italic';
+                        }
+                    } else {
+                        // No fixture found at all for these two teams in the provided fixtures list
+                        scoreContent = '-';
+                        cellStyle['color'] = '#aaa';
+                        cellStyle['font-style'] = 'italic';
+                    }
+                } else {
+                    // This case handles potential null/undefined team names in the source groupData.rows
+                    // It should be less likely now that we're not relying on regex extraction
+                    scoreContent = '?'; // Should only appear if original team names are invalid in the input data
+                    cellStyle['color'] = '#aaa';
+                    cellStyle['font-style'] = 'italic';
+                }
+
+                utilRow.setField(fieldName, scoreContent)
+                    .setStyle(fieldName, cellStyle);
             }
         });
 

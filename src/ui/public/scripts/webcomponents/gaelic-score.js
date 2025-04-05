@@ -72,9 +72,9 @@ class GaelicScore extends HTMLElement {
 
         content = topRow + bottomRow;
     } else {
-      content = `
+      content = `<span class="gaelic-score">
         ${goalStr} - ${pointStr} <span class="bracket">(</span>${totalStr}<span class="bracket">)</span>
-      `;
+      </span>`;
     }
 
     this.shadowRoot.innerHTML = `
@@ -92,7 +92,7 @@ class GaelicScore extends HTMLElement {
 
           .top {
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.2rem;
           }
 
           .bottom {
@@ -103,7 +103,7 @@ class GaelicScore extends HTMLElement {
 
           .compare-top {
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.2rem;
             letter-spacing: 0em;
             margin-bottom: 0.1em;
           }
