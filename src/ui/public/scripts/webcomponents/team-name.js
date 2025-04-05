@@ -37,13 +37,13 @@ class TeamName extends HTMLElement {
         const isR2L = direction === 'r2l';
 
         const marginSide = `calc(${height} / 2)`;
-        const logoSize = `calc(${height} * 1.15)`;
+        const logoSize = `calc(${height} * 1.4)`;
 
         const containerStyle = `
             display: flex;
             flex-direction: ${isR2L ? 'row-reverse' : 'row'};
             align-items: center;
-            justify-content: ${isR2L ? 'flex-end' : 'flex-start'};
+            justify-content: flex-start;
             text-align: ${isR2L ? 'right' : 'left'};
             white-space: nowrap;
             overflow: hidden;
@@ -65,7 +65,7 @@ class TeamName extends HTMLElement {
             <span class="container" style="${containerStyle}">
                 ${showLogo ? `
                     <span class="logo-container" style="${logoMarginStyle}">
-                        <logo-box width="${logoSize}" title="${name}"></logo-box>
+                        <logo-box size="${logoSize}" title="${name}"></logo-box>
                     </span>
                 ` : ''}
                 <span class="name-container">

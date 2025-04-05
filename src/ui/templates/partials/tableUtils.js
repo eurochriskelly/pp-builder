@@ -8,6 +8,7 @@ class ScoreData {
         this.points = points;
         this.outcome = outcome;
     }
+
     toString() {
         return this.outcome == 'played'
          ? formatScore(this.goals, this.points)
@@ -58,8 +59,13 @@ class UtilTable {
         this.tableClassName = options.tableClassName || '';
         this.tableStyle = options.tableStyle || '';
         this.emptyMessage = options.emptyMessage || 'No data available.';
+        this.showHeader = true;
     }
 
+    noHeader() {
+      this.showHeader = false;
+      return this;
+    }
     addHeaders(headerConfig) {
         Object.entries(headerConfig).forEach(([key, config]) => {
             this.headers.set(key, {
@@ -151,12 +157,14 @@ class UtilTable {
         let html = `<table class="util-table ${this.tableClassName}" style="${this.tableStyle}">`;
 
         // Generate headers
-        html += '<thead><tr>';
-        for (const [key, header] of this.headers) {
-            const styleStr = `width: ${header.width}; text-align: ${header.align}`;
-            html += `<th class="${header.className}" style="${styleStr}">${header.label}</th>`;
+        if (this.showHeader) {
+            html += '<thead><tr>';
+            for (const [key, header] of this.headers) {
+                const styleStr = `width: ${header.width}; text-align: ${header.align}`;
+                html += `<th class="${header.className}" style="${styleStr}">${header.label}</th>`;
+            }
+            html += '</tr></thead>';
         }
-        html += '</tr></thead>';
 
         // Generate body
         html += '<tbody>';
@@ -167,7 +175,6 @@ class UtilTable {
                 html += '<tr>';
                 for (const headerKey of this.headers.keys()) {
                     const content = row.getField(headerKey);
-                    console.log('c, hk', headerKey, content)
                     const cellStyle = row.getStyle(headerKey);
                     const baseCell = this.generateCell(content, headerKey);
                     

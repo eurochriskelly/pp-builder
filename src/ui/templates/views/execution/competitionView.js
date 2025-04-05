@@ -46,7 +46,10 @@ module.exports = function generateCompetitionView(data) {
     if (standingsForCompetition && Object.keys(standingsForCompetition).length > 0) {
         html += '<section id="comp-group-standings">';
         html += '<h2 class="text-xl font-semibold mb-2 mt-4">Group Tables</h2>'; // Added H2 subheading
-        html += generateGroupStandings({ [competitionName]: standingsForCompetition }); // Pass it in the expected format
+        html += generateGroupStandings(
+          { [competitionName]: standingsForCompetition },
+          groupFixtures,
+        );
         html += '</section>';
     } else {
          // Optional: message if no group standings

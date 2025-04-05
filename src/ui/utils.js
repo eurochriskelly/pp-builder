@@ -1,6 +1,6 @@
 function processTeamName(teamName) {
     let teamStyle = '';
-  console.log(teamName)
+
     if (teamName && teamName?.startsWith('~match:')) {
         const match = teamName.match(/~match:(\d+)\/p:(\d+)/);
         if (match) {
@@ -14,8 +14,6 @@ function processTeamName(teamName) {
             teamName = 'TBD';
             teamStyle = 'color:grey;';
         }
-    } else {
-      console.log('got teamname', teamName)
     }
     return { teamName, teamStyle };
 }

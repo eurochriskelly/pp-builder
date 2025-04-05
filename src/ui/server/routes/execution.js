@@ -57,8 +57,9 @@ router.get('/execution/:id/view3', async (req, res) => {
     try {
         console.log(`Fetching group standings for tournament ${tournamentId}...`);
         const data = await getGroupStandings(tournamentId);
+        const groupFixtures = await getGroupFixtures(tournamentId);
         console.log(`Group standings categories: ${Object.keys(data).length}`);
-        const content = generateGroupStandings(data);
+        const content = generateGroupStandings(data, groupFixtures);
         const isLoggedIn = !!req.session.user;
         const html = `${generateHeader('Group Tables', tournamentId, 'execution', 'view3', isLoggedIn, isLoggedIn)}<div id="content" hx-get="/execution/${tournamentId}/view3-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);

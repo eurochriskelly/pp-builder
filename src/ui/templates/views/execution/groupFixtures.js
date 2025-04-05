@@ -23,14 +23,14 @@ module.exports = function generateGroupFixtures(data) {
         const table = new UtilTable({
             tableClassName: 'fixtures-table',
             emptyMessage: `No group fixtures found for ${category}.`
-        });
-
-        table.addHeaders({
-            team1: { label: 'Team 1', align: 'left', width: '35%' },
-            score1: { label: 'Score 1', align: 'right', width: '15%' },
-            team2: { label: 'Team 2', align: 'left', width: '35%' },
-            score2: { label: 'Score 2', align: 'right', width: '15%' }
-        });
+          })
+          .addHeaders({
+            team1: { label: 'Team 1', align: 'left', width: '38%' },
+            score1: { label: 'Score 1', align: 'center', width: '12%' },
+            score2: { label: 'Score 2', align: 'center', width: '12%' },
+            team2: { label: 'Team 2', align: 'left', width: '38%' },
+          })
+          .noHeader()
 
         // Add rows
         categoryData.forEach(row => {
@@ -44,10 +44,10 @@ module.exports = function generateGroupFixtures(data) {
 
             const utilRow = new UtilRow()
                 .setFields({
-                    team1: `<team-name name="${row.team1}" />`,
+                    team1: `<team-name name="${row.team1}" direction="r2l" />`,
                     score1: team1Score,
+                    score2: team2Score,
                     team2: `<team-name name="${row.team2}" />`, 
-                    score2: team2Score
                 })
                 .setStyle('team1', {
                     'font-weight': styles.team1.fontWeight,
