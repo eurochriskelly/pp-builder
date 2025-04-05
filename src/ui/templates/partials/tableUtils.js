@@ -7,6 +7,7 @@ class ScoreData {
         this.goals = goals;
         this.points = points;
         this.outcome = outcome;
+        this.total = goals || goals === 0 ? goals * 3 + points : null
     }
 
     toString() {

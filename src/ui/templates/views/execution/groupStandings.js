@@ -116,7 +116,7 @@ function createStandingsTable(groupData, fixtures) {
                                                 goalsagainst="${goalsAgainst}"
                                                 pointsagainst="${pointsAgainst}"
                                                 layout="compare"
-                                                scale="0.9"
+                                                scale="1.0"
                                             />`;
                             // Remove default background for cells with actual scores
                             delete cellStyle['background-color'];

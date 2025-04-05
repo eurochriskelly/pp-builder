@@ -26,10 +26,10 @@ module.exports = function generateGroupFixtures(data) {
           })
           .addHeaders({
             team1: { label: 'Team 1', align: 'left', width: '38%' },
-            score1: { label: 'Score 1', align: 'center', width: '12%' },
-            winner1: { label: '', align: 'center', width: '10px' },
-            winner2: { label: '', align: 'center', width: '10px' },
-            score2: { label: 'Score 2', align: 'center', width: '12%' },
+            score1: { label: 'Score 1', align: 'center', width: '10%' },
+            winner1: { label: '', align: 'left', width: '4%' },
+            winner2: { label: '', align: 'right', width: '4%' },
+            score2: { label: 'Score 2', align: 'center', width: '10%' },
             team2: { label: 'Team 2', align: 'left', width: '38%' },
           })
           .noHeader()
@@ -46,6 +46,7 @@ module.exports = function generateGroupFixtures(data) {
 
             const team1Won = team1Score.total > team2Score.total;
             const team2Won = team2Score.total > team1Score.total;
+      console.log('t1s', team1Score)
             
             const utilRow = new UtilRow()
                 .setFields({
@@ -62,11 +63,11 @@ module.exports = function generateGroupFixtures(data) {
                 })
                 .setStyle('team2', {
                     'font-weight': styles.team2.fontWeight,
-                    'color': styles.team2.textColor
+                    'color': styles.team2.textColor,
                 })
                 .setStyle('score1', {
                     'font-weight': styles.team1.fontWeight,
-                    'color': styles.team1.textColor
+                    'color': styles.team1.textColor, 
                 })
                 .setStyle('score2', {
                     'font-weight': styles.team2.fontWeight,
@@ -75,7 +76,7 @@ module.exports = function generateGroupFixtures(data) {
                 .setStyle('winner1', {
                     'padding': '0',
                     'margin': '0',
-                    'font-size': '0.8em'
+                    'font-size': '0.8em',
                 })
                 .setStyle('winner2', {
                     'padding': '0',
