@@ -76,12 +76,16 @@ module.exports = function generateGroupFixtures(data) {
                 .setStyle('winner1', {
                     'padding': '0',
                     'margin': '0',
-                    'font-size': '0.8em',
+                    'font-size': '1.2em',
+                    'vertical-align': 'middle',
+                    'line-height': '1.5'
                 })
                 .setStyle('winner2', {
                     'padding': '0',
                     'margin': '0',
-                    'font-size': '0.8em'
+                    'font-size': '1.2em',
+                    'vertical-align': 'middle',
+                    'line-height': '1.5'
                 });
 
             table.addRow(utilRow);
