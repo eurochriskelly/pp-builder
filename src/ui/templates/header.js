@@ -7,9 +7,12 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
       <title>${title}</title>
       <link rel="stylesheet" href="/styles/main-compiled.css">
       <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-      <script src="/scripts/webcomponents/nav-dropdown.js" defer></script>
       <script src="/scripts/webcomponents/logo-box.js" defer></script>
+      <script src="/scripts/webcomponents/gaelic-score.js" defer></script>
       <script src="/scripts/webcomponents/team-name.js" defer></script>
+      <script src="/scripts/webcomponents/nav-dropdown.js" defer></script>
+      <script src="/scripts/webcomponents/tournament-row.js" defer></script>
+      <script src="/scripts/webcomponents/match-row.js" defer></script>
     </head>
     <body>
       <article class="execution">
