@@ -152,10 +152,14 @@ function createStandingsTable(groupData, fixtures) {
                     .setStyle(fieldName, cellStyle);
             }
         });
-
+ 
+        // Apply specific styles after all fields are set for the row
+        utilRow.setStyle('TotalPoints', { 'font-weight': 'bold', 'border-left': '1px solid #ccc' });
+        utilRow.setStyle('PointsFrom', { 'border-left': '1px solid #ccc' });
+ 
         table.addRow(utilRow);
     });
-
+ 
     return table;
 }
 

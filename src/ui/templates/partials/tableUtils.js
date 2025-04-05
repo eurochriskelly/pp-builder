@@ -43,6 +43,15 @@ class UtilRow {
         return this;
     }
 
+    addBorder(key, side, style = '1px solid #ccc') {
+        const currentStyle = this.styles.get(key) || {};
+        this.styles.set(key, {
+            ...currentStyle,
+            [`border-${side}`]: style
+        });
+        return this;
+    }
+
     getField(key) {
         return this.fields.get(key);
     }
@@ -151,7 +160,10 @@ class UtilTable {
             .map(([k, v]) => `${k}: ${v}`)
             .join('; ');
 
-        return `<td class="${className.trim()}" style="${styleStr}; border-left: none; border-right: none;">${cellContent}</td>`;
+        // Only remove borders if they're not explicitly set
+        const borderLeft = style['border-left'] ? '' : 'border-left: none;';
+        const borderRight = style['border-right'] ? '' : 'border-right: none;';
+        return `<td class="${className.trim()}" style="${styleStr}; ${borderLeft} ${borderRight}">${cellContent}</td>`;
     }
 
     toHTML() {
@@ -161,8 +173,16 @@ class UtilTable {
         if (this.showHeader) {
             html += '<thead><tr>';
             for (const [key, header] of this.headers) {
-                const styleStr = `width: ${header.width}; text-align: ${header.align}`;
-                html += `<th class="${header.className}" style="${styleStr}; border-left: none; border-right: none;">${header.label}</th>`;
+                let styleStr = `width: ${header.width}; text-align: ${header.align}`;
+                if (!header.style?.['border-left']) styleStr += '; border-left: none';
+                if (!header.style?.['border-right']) styleStr += '; border-right: none';
+                // Add specific styles for standings table headers
+                if (key === 'TotalPoints') {
+                    styleStr += ` font-weight: bold; border-left: 1px solid #ccc;`;
+                } else if (key === 'PointsFrom') {
+                    styleStr += ` border-left: 1px solid #ccc;`;
+                }
+                html += `<th class="${header.className}" style="${styleStr}">${header.label}</th>`;
             }
             html += '</tr></thead>';
         }
