@@ -127,7 +127,7 @@ class GaelicScore extends HTMLElement {
             font-size: 1.1em;
             min-width: 2em;
             text-align: center;
-            border: 0.3rem solid;
+            border: 0.15rem solid;
           }
 
           .circle.green {
