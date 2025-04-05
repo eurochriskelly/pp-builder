@@ -70,9 +70,12 @@ class GaelicScore extends HTMLElement {
         }
 
         const textColor = opacity < 70 ? 'black' : 'white';
-        const circle = `<span class="circle ${diffClass}" style="--opacity: ${opacity}; --text-color: ${textColor}">${diffText}</span>`;
+        this.classList.add(diffClass);
+        this.style.setProperty('--opacity', opacity);
+        this.style.setProperty('--text-color', textColor);
+        
         const topRow = `<div class="compare-top">${goalStr} - ${pointStr}</div>`;
-        const bottomRow = `<div class="compare-bottom">${circle}</div>`;
+        const bottomRow = `<div class="compare-bottom">${diffText}</div>`;
 
         content = topRow + bottomRow;
     } else {
@@ -96,7 +99,7 @@ class GaelicScore extends HTMLElement {
 
           .top {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1rem;
           }
 
           .bottom {
@@ -107,40 +110,43 @@ class GaelicScore extends HTMLElement {
 
           .compare-top {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1rem;
             letter-spacing: 0em;
             margin-bottom: 0.1em;
           }
 
           .compare-bottom {
             text-align: center;
-            font-size: 1.3rem;
-            line-height: 1.2;
+            font-size: 2rem;
+            line-height: 1;
           }
 
-          .circle {
+          :host {
             display: inline-block;
+            font-family: sans-serif;
+            transform: scale(${scale});
+            transform-origin: top left;
+            /* padding: 0.5em 0.8em; */ /* Removed padding to allow filling TD */
             color: var(--text-color, white);
-            border-radius: 14px;
-            padding: 0.2em 0.25em;
-            font-weight: normal;
-            font-size: 1.1em;
-            min-width: 2em;
-            text-align: center;
             border: 0.15rem solid;
+            text-align: center;
+            /* Ensure component fills the container */
+            width: 100%; 
+            height: 100%;
+            box-sizing: border-box; /* Include border in size */
           }
 
-          .circle.green {
+          :host(.green) {
             border-color: #4caf50;
             background: rgba(76, 175, 80, calc(var(--opacity) / 100));
           }
 
-          .circle.red {
+          :host(.red) {
             border-color: #f44336;
             background: rgba(244, 67, 54, calc(var(--opacity) / 100));
           }
 
-          .circle.blue {
+          :host(.blue) {
             border-color: #2196f3;
             background: rgba(33, 150, 243, calc(var(--opacity) / 100));
           }
