@@ -4,11 +4,12 @@ import '../../../public/scripts/webcomponents/team-name.js';
 import '../../../public/scripts/webcomponents/logo-box.js';
 import '../../../public/scripts/webcomponents/gaelic-score.js';
 
-// Sample data to showcase the function
+// Comprehensive sample data showing cup and shield tournaments
 const sampleData = [
+  // Cup Tournament
   {
     category: "Senior",
-    stage: "Quarter Final",
+    stage: "cup_final",
     team1: "Dublin A",
     team2: "Kerry A",
     goals1: 2,
@@ -19,36 +20,159 @@ const sampleData = [
   },
   {
     category: "Senior",
-    stage: "Quarter Final",
+    stage: "cup_3rd4th",
     team1: "Mayo A",
     team2: "Galway A",
+    goals1: 1,
+    points1: 12,
+    goals2: 1,
+    points2: 10,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "cup_semi",
+    team1: "Dublin A",
+    team2: "Mayo A",
+    goals1: 2,
+    points1: 10,
+    goals2: 0,
+    points2: 8,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "cup_semi",
+    team1: "Kerry A",
+    team2: "Galway A",
+    goals1: 3,
+    points1: 5,
+    goals2: 1,
+    points2: 7,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "cup_quarter",
+    team1: "Dublin A",
+    team2: "Tyrone A",
+    goals1: 2,
+    points1: 12,
+    goals2: 0,
+    points2: 5,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "cup_quarter",
+    team1: "Mayo A",
+    team2: "Donegal A",
+    goals1: 1,
+    points1: 15,
+    goals2: 0,
+    points2: 8,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "cup_quarter",
+    team1: "Kerry A",
+    team2: "Cork A",
+    goals1: 2,
+    points1: 10,
+    goals2: 3,
+    points2: 9,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "cup_quarter",
+    team1: "Galway A",
+    team2: "Armagh A",
+    goals1: 1,
+    points1: 12,
+    goals2: 0,
+    points2: 10,
+    outcome: "played"
+  },
+
+  // Shield Tournament
+  {
+    category: "Senior",
+    stage: "shield_final",
+    team1: "Tyrone A",
+    team2: "Donegal A",
+    goals1: 1,
+    points1: 1,
+    goals2: 0,
+    points2: 8,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "shield_semi",
+    team1: "Tyrone A",
+    team2: "Armagh A",
+    goals1: 2,
+    points1: 7,
+    goals2: 1,
+    points2: 8,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "shield_semi",
+    team1: "Donegal A",
+    team2: "Cork A",
+    goals1: 1,
+    points1: 12,
+    goals2: 0,
+    points2: 5,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "shield_quarter",
+    team1: "Tyrone A",
+    team2: "Derry A",
     goals1: 0,
     points1: 0,
     goals2: 0,
     points2: 1,
-    outcome: "not played" // Will show as walkover
+    outcome: "not played" // Walkover
   },
   {
     category: "Senior",
-    stage: "Semi Final",
-    team1: "Winner QF1",
-    team2: "Winner QF2",
-    goals1: null,
-    points1: null,
-    goals2: null,
-    points2: null,
-    outcome: "pending"
+    stage: "shield_quarter",
+    team1: "Armagh A",
+    team2: "Monaghan A",
+    goals1: 1,
+    points1: 10,
+    goals2: 1,
+    points2: 9,
+    outcome: "played"
   },
   {
-    category: "Junior",
-    stage: "Final",
-    team1: "Cork B",
-    team2: "Tipperary B",
-    goals1: 3,
-    points1: 5,
-    goals2: 3,
+    category: "Senior",
+    stage: "shield_quarter",
+    team1: "Donegal A",
+    team2: "Down A",
+    goals1: 2,
+    points1: 8,
+    goals2: 0,
+    points2: 7,
+    outcome: "played"
+  },
+  {
+    category: "Senior",
+    stage: "shield_quarter",
+    team1: "Cork A",
+    team2: "Kildare A",
+    goals1: 1,
+    points1: 12,
+    goals2: 0,
     points2: 5,
-    outcome: "shared" // Will show as shared result
+    outcome: "played"
   }
 ];
 
