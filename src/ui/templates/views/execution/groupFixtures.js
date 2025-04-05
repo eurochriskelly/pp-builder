@@ -27,6 +27,8 @@ module.exports = function generateGroupFixtures(data) {
           .addHeaders({
             team1: { label: 'Team 1', align: 'left', width: '38%' },
             score1: { label: 'Score 1', align: 'center', width: '12%' },
+            winner1: { label: '', align: 'center', width: '10px' },
+            winner2: { label: '', align: 'center', width: '10px' },
             score2: { label: 'Score 2', align: 'center', width: '12%' },
             team2: { label: 'Team 2', align: 'left', width: '38%' },
           })
@@ -42,10 +44,15 @@ module.exports = function generateGroupFixtures(data) {
             
             const styles = getMatchOutcomeStyles(team1Score, team2Score);
 
+            const team1Won = team1Score.total > team2Score.total;
+            const team2Won = team2Score.total > team1Score.total;
+            
             const utilRow = new UtilRow()
                 .setFields({
                     team1: `<team-name name="${row.team1}" direction="r2l" />`,
                     score1: team1Score,
+                    winner1: team1Won ? '◄' : '',
+                    winner2: team2Won ? '►' : '',
                     score2: team2Score,
                     team2: `<team-name name="${row.team2}" />`, 
                 })
@@ -64,6 +71,16 @@ module.exports = function generateGroupFixtures(data) {
                 .setStyle('score2', {
                     'font-weight': styles.team2.fontWeight,
                     'color': styles.team2.textColor
+                })
+                .setStyle('winner1', {
+                    'padding': '0',
+                    'margin': '0',
+                    'font-size': '0.8em'
+                })
+                .setStyle('winner2', {
+                    'padding': '0',
+                    'margin': '0',
+                    'font-size': '0.8em'
                 });
 
             table.addRow(utilRow);
