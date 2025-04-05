@@ -261,6 +261,9 @@ class LogoBox extends HTMLElement {
                     align-items: center;
                     justify-content: center;
                     overflow: hidden;
+                    border: 3px solid #333;
+                    border-radius: 5px;
+                    box-sizing: border-box;
                 }
                 .overlay {
                     position: absolute;

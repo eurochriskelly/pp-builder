@@ -25,12 +25,12 @@ module.exports = function generateGroupFixtures(data) {
             emptyMessage: `No group fixtures found for ${category}.`
           })
           .addHeaders({
-            team1: { label: 'Team 1', align: 'left', width: '38%' },
-            score1: { label: 'Score 1', align: 'center', width: '10%' },
+            team1: { label: 'Team 1', align: 'left', width: '30%' },
+            score1: { label: 'Score 1', align: 'center', width: '8%' },
             winner1: { label: '', align: 'left', width: '4%' },
             winner2: { label: '', align: 'right', width: '4%' },
-            score2: { label: 'Score 2', align: 'center', width: '10%' },
-            team2: { label: 'Team 2', align: 'left', width: '38%' },
+            score2: { label: 'Score 2', align: 'center', width: '8%' },
+            team2: { label: 'Team 2', align: 'left', width: '30%' },
           })
           .noHeader()
 
@@ -76,16 +76,16 @@ module.exports = function generateGroupFixtures(data) {
                 .setStyle('winner1', {
                     'padding': '0',
                     'margin': '0',
-                    'font-size': '1.2em',
+                    'font-size': '1em',
                     'vertical-align': 'middle',
-                    'line-height': '1.5'
+                    'line-height': '1.2'
                 })
                 .setStyle('winner2', {
                     'padding': '0',
                     'margin': '0',
-                    'font-size': '1.2em',
+                    'font-size': '1em',
                     'vertical-align': 'middle',
-                    'line-height': '1.5'
+                    'line-height': '1.2'
                 });
 
             table.addRow(utilRow);
