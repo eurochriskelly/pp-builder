@@ -55,6 +55,9 @@ class GaelicScore extends HTMLElement {
 
         let diffText = '';
         let diffClass = '';
+        const absDiff = Math.abs(diff);
+        const opacity = Math.min(90, Math.max(10, Math.floor(absDiff / 2) * 10));
+        
         if (diff > 0) {
           diffText = `+${diff}`;
           diffClass = 'green';
@@ -66,7 +69,8 @@ class GaelicScore extends HTMLElement {
           diffClass = 'blue';
         }
 
-        const circle = `<span class="circle ${diffClass}">${diffText}</span>`;
+        const textColor = opacity < 70 ? 'black' : 'white';
+        const circle = `<span class="circle ${diffClass}" style="--opacity: ${opacity}; --text-color: ${textColor}">${diffText}</span>`;
         const topRow = `<div class="compare-top">${goalStr} - ${pointStr}</div>`;
         const bottomRow = `<div class="compare-bottom">${circle}</div>`;
 
@@ -116,25 +120,29 @@ class GaelicScore extends HTMLElement {
 
           .circle {
             display: inline-block;
-            color: white;
+            color: var(--text-color, white);
             border-radius: 14px;
             padding: 0.2em 0.25em;
             font-weight: normal;
             font-size: 1.1em;
             min-width: 2em;
             text-align: center;
+            border: 0.3rem solid;
           }
 
           .circle.green {
-            background: #4caf50;
+            border-color: #4caf50;
+            background: rgba(76, 175, 80, calc(var(--opacity) / 100));
           }
 
           .circle.red {
-            background: #f44336;
+            border-color: #f44336;
+            background: rgba(244, 67, 54, calc(var(--opacity) / 100));
           }
 
           .circle.blue {
-            background: #2196f3;
+            border-color: #2196f3;
+            background: rgba(33, 150, 243, calc(var(--opacity) / 100));
           }
 
           .slash {

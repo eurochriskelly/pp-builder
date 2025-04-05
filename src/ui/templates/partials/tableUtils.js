@@ -150,18 +150,18 @@ class UtilTable {
             .map(([k, v]) => `${k}: ${v}`)
             .join('; ');
 
-        return `<td class="${className.trim()}" style="${styleStr}">${cellContent}</td>`;
+        return `<td class="${className.trim()}" style="${styleStr}; border-left: none; border-right: none;">${cellContent}</td>`;
     }
 
     toHTML() {
-        let html = `<table class="util-table ${this.tableClassName}" style="${this.tableStyle}">`;
+        let html = `<table class="util-table ${this.tableClassName}" style="${this.tableStyle}; border-collapse: collapse; border-spacing: 0; border-left: none; border-right: none;">`;
 
         // Generate headers
         if (this.showHeader) {
             html += '<thead><tr>';
             for (const [key, header] of this.headers) {
                 const styleStr = `width: ${header.width}; text-align: ${header.align}`;
-                html += `<th class="${header.className}" style="${styleStr}">${header.label}</th>`;
+                html += `<th class="${header.className}" style="${styleStr}; border-left: none; border-right: none;">${header.label}</th>`;
             }
             html += '</tr></thead>';
         }
