@@ -27,6 +27,12 @@ function formatCategory(category) {
             part2 = '3/4th';
         } else if (part2 === '4th5th') {
             part2 = '4/5th';
+        } else if (part2 === '5th6th') {
+            part2 = '5/6th';
+        } else if (part2 === '6th7th') {
+            part2 = '6/7th';
+        } else if (part2 === '7th8th') {
+            part2 = '7/8th';
         } else {
             part2 = part2.toUpperCase();
         }

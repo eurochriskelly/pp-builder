@@ -68,7 +68,6 @@ class GaelicScore extends HTMLElement {
         const scoreFor = goals * 3 + points;
         const scoreAgainst = goalsAgainst * 3 + pointsAgainst;
         const diff = scoreFor - scoreAgainst;
-            console.log('diff', diff)
 
         let diffText = '';
         let diffClass = '';
