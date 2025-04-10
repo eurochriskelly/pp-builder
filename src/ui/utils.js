@@ -24,7 +24,8 @@ function formatScore(goals, points) {
     }
     const paddedPoints = points.toString().padStart(2, '0');
     const calculatedScore = (goals * 3 + points).toString().padStart(2, '0');
-    return `${goals}-${paddedPoints} (${calculatedScore})`;
+    // Wrap goals-points in a nowrap span, and total in a separate span, add space between
+    return `<span style="white-space: nowrap;">${goals}-${paddedPoints}</span> <span>(${calculatedScore})</span>`;
 }
 
 /**

@@ -53,16 +53,22 @@ class GaelicScore extends HTMLElement {
     const totalStr = total.toString().padStart(2, '0');
     const gray = '#bbb';
 
+    // Formatted score parts
+    const scorePart = `<span style="white-space: nowrap;">${goalStr}-${pointStr}</span>`; // Goals-Points with nowrap
+    const totalPart = `<span>(${totalStr})</span>`; // Total points in separate span
+
     let content = '';
 
     if (layout === 'r2l') {
       content = `
-        <span class="bracket">(</span>${totalStr}<span class="bracket">)</span> ${goalStr} - ${pointStr}
-      `;
+        <span class="score-group">
+          ${totalPart} ${scorePart} 
+        </span>
+      `; // Added space after scorePart for consistency, though layout might override
     } else if (layout === 'over') {
       content = `
-        <div class="top">${goalStr} - ${pointStr}</div>
-        <div class="bottom"><span class="bracket">(</span>${totalStr}<span class="bracket">)</span></div>
+        <div class="top">${scorePart}</div>
+        <div class="bottom">${totalPart}</div>
       `;
     } else if (layout === 'compare' || layout === 'compare-rtl') {
         const scoreFor = goals * 3 + points;
@@ -89,14 +95,14 @@ class GaelicScore extends HTMLElement {
         this.classList.add(diffClass);
         this.style.setProperty('--opacity', opacity);
         
-        const topRow = `<div class="compare-top">${goalStr} - ${pointStr}</div>`;
+        // Use the scorePart span here
+        const topRow = `<div class="compare-top">${scorePart}</div>`;
         const bottomRow = `<div class="compare-bottom"><span class="difference">${diffText}</span></div>`;
 
         content = topRow + bottomRow;
-    } else {
-      content = `<span class="gaelic-score">
-        ${goalStr} - ${pointStr} <span class="bracket">(</span>${totalStr}<span class="bracket">)</span>
-      </span>`;
+    } else { // Default layout
+      // Combine the two separate spans with a space
+      content = `<span class="gaelic-score">${scorePart} ${totalPart}</span>`; // Space already exists here from previous change
     }
 
     this.shadowRoot.innerHTML = `
@@ -108,9 +114,7 @@ class GaelicScore extends HTMLElement {
             transform-origin: top left;
           }
 
-            .bracket {
-            color: #bbb;
-          }
+          /* Removed .bracket style as it's now part of the span */
 
           .top {
             text-align: center;
