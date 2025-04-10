@@ -96,10 +96,16 @@ class UtilTable {
         return this;
     }
 
-    generateCell(content, headerKey) {
+    // Modified to accept the row object
+    generateCell(content, headerKey, row) {
         const header = this.headers.get(headerKey) || {};
         const style = {};
-        
+        let spacerHtml = ''; // Initialize spacer HTML
+
+        // Check if this cell needs a spacer and retrieve it from the row
+        if ((headerKey === 'team1' || headerKey === 'team2') && row) {
+            spacerHtml = row.getField('spacer') || '';
+        }
         let className = header.className || '';
         let cellContent = (content === null || content === undefined) ? 'N/A' : content;
 
@@ -163,7 +169,8 @@ class UtilTable {
         // Only remove borders if they're not explicitly set
         const borderLeft = style['border-left'] ? '' : 'border-left: none;';
         const borderRight = style['border-right'] ? '' : 'border-right: none;';
-        return `<td class="${className.trim()}" style="${styleStr}; ${borderLeft} ${borderRight}">${cellContent}</td>`;
+        // Append spacer HTML if it exists
+        return `<td class="${className.trim()}" style="${styleStr}; ${borderLeft} ${borderRight}">${cellContent}${spacerHtml}</td>`;
     }
 
     toHTML() {
@@ -197,8 +204,9 @@ class UtilTable {
                 for (const headerKey of this.headers.keys()) {
                     const content = row.getField(headerKey);
                     const cellStyle = row.getStyle(headerKey);
-                    const baseCell = this.generateCell(content, headerKey);
-                    
+                    // Pass the row object to generateCell
+                    const baseCell = this.generateCell(content, headerKey, row);
+
                     // Apply custom styles if they exist
                     if (Object.keys(cellStyle).length > 0) {
                         const styleStr = Object.entries(cellStyle)

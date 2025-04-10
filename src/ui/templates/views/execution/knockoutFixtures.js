@@ -105,20 +105,24 @@ function createKnockoutTable(categoryData) {
         if (stageParts[1]?.includes('quarter')) progression = 3;
         else if (stageParts[1]?.includes('semi') || stageParts[1]?.includes('3rd4th')) progression = 2;
         else if (stageParts[1]?.includes('final')) progression = 1;
-
-        // Calculate indent width for staggered display
-        const indentWidth = (3 - progression) * 2;
+ 
+        // Calculate indent width for staggered display (earlier rounds = more indent)
+        // progression: 1=final, 2=semi/3rd4th, 3=quarter
+        // indent: 0rem for final, 1.5rem for semi, 3rem for quarter
+        const indentMultiplier = 1.5; 
+        const indentWidth = progression > 0 ? (progression - 1) * indentMultiplier : 0;
         const spacerHtml = `<span style="display: inline-block; width: ${indentWidth}rem;"></span>`;
-
+ 
         const utilRow = new UtilRow()
             .setFields({
-                team1: `${spacerHtml}<team-name name="${team1}" direction="r2l"></team-name>`,
+                team1: `<team-name name="${team1}" direction="r2l"></team-name>`,
                 score1: score1,
                 rank1: isTeam1Last ? 'X' : '',
                 stage: row.stage ? abbreviateStage(row.stage) : 'N/A',
                 rank2: isTeam2Last ? 'X' : '',
                 score2: score2,
-                team2: `${spacerHtml}<team-name name="${team2}"></team-name>`
+                team2: `<team-name name="${team2}"></team-name>`,
+                spacer: spacerHtml // Add spacer as a separate field
             })
             .setStyle('team1', {
                 'font-weight': 'bold',

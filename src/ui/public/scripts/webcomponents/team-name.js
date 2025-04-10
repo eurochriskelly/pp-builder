@@ -5,7 +5,7 @@ class TeamName extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['name', 'showLogo', 'height', 'direction', 'maxchars'];
+        return ['name', 'showLogo', 'height', 'direction', 'maxchars', 'completion'];
     }
 
     connectedCallback() {
@@ -45,10 +45,12 @@ class TeamName extends HTMLElement {
         const showLogo = this.getAttribute('showLogo') !== 'false';
         const height = this.getAttribute('height') || '30px';
         const direction = this.getAttribute('direction') || 'l2r';
+        const completion = parseInt(this.getAttribute('completion') || '1');
         const isR2L = direction === 'r2l';
 
         const marginSide = `calc(${height} / 2)`;
         const logoSize = `calc(${height} * 1.4)`;
+        const spacerWidth = `calc(${logoSize} * ${completion - 1})`;
 
         const containerStyle = `
             display: flex;
@@ -74,6 +76,9 @@ class TeamName extends HTMLElement {
                 }
             </style>
             <span class="container" style="${containerStyle}">
+                ${isR2L ? '' : `
+                    <span class="spacer" style="width: ${spacerWidth}; flex-shrink: 0;"></span>
+                `}
                 ${showLogo ? `
                     <span class="logo-container" style="${logoMarginStyle}">
                         <logo-box size="${logoSize}" title="${name}"></logo-box>
@@ -82,6 +87,9 @@ class TeamName extends HTMLElement {
                 <span class="name-container">
                     ${this.renderNameParts(name)}
                 </span>
+                ${isR2L ? `
+                    <span class="spacer" style="width: ${spacerWidth}; flex-shrink: 0;"></span>
+                ` : ''}
             </span>
         `;
 
