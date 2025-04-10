@@ -20,15 +20,20 @@ export default {
         maxchars: {
             control: { type: 'number' },
             description: 'Max characters before truncation',
+        },
+        width: {
+            control: { type: 'text' },
+            description: 'Strict width (e.g. "200px") that will be enforced',
         }
     },
 };
 
-const Template = ({ name, showLogo, height }) => {
+const Template = ({ name, showLogo, height, width }) => {
     const element = document.createElement('team-name');
     element.setAttribute('name', name);
     element.setAttribute('showLogo', showLogo.toString());
     if (height) element.setAttribute('height', height);
+    if (width) element.setAttribute('width', width);
     return element;
 };
 
@@ -46,6 +51,7 @@ const MultiTemplate = ({ teams }) => {
         if (direction) element.setAttribute('direction', direction);
         if (completion) element.setAttribute('completion', completion);
         if (maxchars) element.setAttribute('maxchars', maxchars);
+        if (width) element.setAttribute('width', width);
         container.appendChild(element);
     });
     return container;
@@ -111,3 +117,14 @@ EdgeCases.args = {
     ],
 };
 EdgeCases.storyName = 'Edge Cases with Completion';
+
+export const StrictWidth = MultiTemplate.bind({});
+StrictWidth.args = {
+    teams: [
+        { name: 'Normal Width Team', showLogo: true, height: '30px', width: '200px' },
+        { name: 'Very Long Team Name That Should Overflow', showLogo: true, height: '30px', width: '150px' },
+        { name: 'Narrow With Logo', showLogo: true, height: '30px', width: '100px' },
+        { name: 'Narrow No Logo', showLogo: false, height: '30px', width: '50px' },
+    ],
+};
+StrictWidth.storyName = 'Strict Width Enforcement';

@@ -33,14 +33,15 @@ function createKnockoutTable(categoryData) {
     // Get each team's last match
     const teamLastFixtures = getTeamLastFixtures(categoryData);
     
+    const wid  = 300;
     table.addHeaders({
-        team1: { label: 'Team 1', align: 'left', width: 'auto' },
+        team1: { label: 'Team 1', align: 'left', width: `auto` },
         score1: { label: 'Score 1', align: 'center', width: '80px' },
         rank1: { label: 'X', align: 'left', width: '3%' },
         stage: { label: 'Stage', align: 'center', width: '4%' },
         rank2: { label: 'X', align: 'right', width: '3%' },
         score2: { label: 'Score 2', align: 'center', width: '80px' },
-        team2: { label: 'Team 2', align: 'left', width: 'auto' }
+        team2: { label: 'Team 2', align: 'left', width: `auto` }
     })
     .noHeader();
 
@@ -135,18 +136,17 @@ function createKnockoutTable(categoryData) {
         // progression: 1=final, 2=semi, 3=quarter/playoffs
         // indent: 0rem for final, 1.5rem for semi, 3rem for quarter (Handled by team-name component now)
         // Removed spacerHtml calculation
- 
         const utilRow = new UtilRow()
             .setFields({
-                // Add completion attribute based on progression
-                team1: `<team-name name="${team1}" direction="r2l" completion="${progression}"></team-name>`,
+                // Add completion attribute based on progression and width
+                team1: `<team-name name="${team1}" direction="r2l" completion="${progression}" ></team-name>`,
                 score1: score1,
                 rank1: isTeam1Last ? 'X' : '',
                 stage: row.stage ? abbreviateStage(row.stage) : 'N/A',
                 rank2: isTeam2Last ? 'X' : '',
                 score2: score2,
-                // Add completion attribute based on progression
-                team2: `<team-name name="${team2}" completion="${progression}"></team-name>`,
+                // Add completion attribute based on progression and width
+                team2: `<team-name name="${team2}" completion="${progression}" ></team-name>`,
                 // Removed spacer field
             })
             .setStyle('team1', {
