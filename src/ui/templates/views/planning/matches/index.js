@@ -142,12 +142,9 @@ module.exports = function generateMatchesPlanning(data) {
         html += `<td>${processStage(row.stage)}</td>`;
         html += `<td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>`;
         html += `<td>${row.scheduledTime || 'N/A'}</td>`;
-        const { teamName: team1Name } = processTeamName(row.team1);
-        const { teamName: team2Name } = processTeamName(row.team2);
-        const { teamName: umpireTeamName } = processTeamName(row.umpireTeam);
-        html += `<td style="${team1CellStyle}"><span style="${team1Style}">${truncateTeamName(team1Name.toUpperCase()) || 'N/A'}</span></td>`;
-        html += `<td style="${team2CellStyle}"><span style="${team2Style}">${truncateTeamName(team2Name.toUpperCase()) || 'N/A'}</span></td>`;
-        html += `<td style="${umpireCellStyle}"><span style="${umpireStyle}">${truncateTeamName(umpireTeamName.toUpperCase()) || 'N/A'}</span></td>`;
+        html += `<td style="${team1CellStyle}"><team-name name="${row.team1}" maxchars="25"></team-name></td>`;
+        html += `<td style="${team2CellStyle}"><team-name name="${row.team2}" maxchars="25"></team-name></td>`;
+        html += `<td style="${umpireCellStyle}"><team-name name="${row.umpireTeam}" maxchars="25"></team-name></td>`;
         html += '</tr>';
     });
     if (upcomingMatches.length > 10) {
@@ -172,12 +169,9 @@ module.exports = function generateMatchesPlanning(data) {
             html += `<td>${processStage(row.stage)}</td>`;
             html += `<td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>`;
             html += `<td>${row.scheduledTime || 'N/A'}</td>`;
-            const { teamName: team1Name } = processTeamName(row.team1);
-            const { teamName: team2Name } = processTeamName(row.team2);
-            const { teamName: umpireTeamName } = processTeamName(row.umpireTeam);
-            html += `<td style="${team1CellStyle}"><span style="${team1Style}">${truncateTeamName(team1Name.toUpperCase()) || 'N/A'}</span></td>`;
-            html += `<td style="${team2CellStyle}"><span style="${team2Style}">${truncateTeamName(team2Name.toUpperCase()) || 'N/A'}</span></td>`;
-            html += `<td style="${umpireCellStyle}"><span style="${umpireStyle}">${truncateTeamName(umpireTeamName.toUpperCase()) || 'N/A'}</span></td>`;
+            html += `<td style="${team1CellStyle}"><team-name name="${row.team1}" maxchars="25"></team-name></td>`;
+            html += `<td style="${team2CellStyle}"><team-name name="${row.team2}" maxchars="25"></team-name></td>`;
+            html += `<td style="${umpireCellStyle}"><team-name name="${row.umpireTeam}" maxchars="25"></team-name></td>`;
             html += '</tr>';
         });
         html += '</table>';
@@ -193,7 +187,7 @@ module.exports = function generateMatchesPlanning(data) {
     // Finished Games table
     html += `<h3 style="font-size: 1.25em; margin-top: 30px;">FINISHED GAMES (${finishedMatches.length}/${totalMatches})</h3>`;
     html += '<table id="finished-table" style="margin-top: 20px;">';
-    const finishedHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Team 2', 'Score'];
+    const finishedHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Score', 'Team 2'];
     html += `<tr>${finishedHeaders.map(h => `<th style="background-color: transparent">${h.toUpperCase()}</th>`).join('')}</tr>`;
     finishedMatches.slice(0, 10).forEach((row, index) => {
         const rowStyle = `background-color: ${index % 2 === 0 ? '#f1f1f1' : '#e1e1e1'};`;
@@ -201,23 +195,22 @@ module.exports = function generateMatchesPlanning(data) {
         const pitchColor = getRandomColor(row.pitch);
         const team1Color = getRandomColor(row.team1, true);
         const team2Color = getRandomColor(row.team2, true);
+        const showTime = row.scheduledTime ? row.scheduledTime.substring(10) : 'N/A'
         html += `<tr style="${rowStyle}">`;
         html += `<td style="background-color: #808080; color: white;">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
         html += `<td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>`;
         html += `<td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>`;
         html += `<td>${processStage(row.stage)}</td>`;
         html += `<td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>`;
-        html += `<td>${row.scheduledTime || 'N/A'}</td>`;
-        const { teamName: team1Name } = processTeamName(row.team1);
-        const { teamName: team2Name } = processTeamName(row.team2);
+        html += `<td>${showTime}</td>`;
         const team1Score = formatScore(row.goals1, row.points1);
         const team2Score = formatScore(row.goals2, row.points2);
         const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
         const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
-        html += `<td><span style="${teamPillStyle(team1Color)}">${truncateTeamName(team1Name.toUpperCase()) || 'N/A'}</span></td>`;
+        html += `<td><team-name direction="r2l" name="${row.team1}" maxchars="25"></team-name></td>`;
         html += `<td style="${score1Style}">${team1Score}</td>`;
-        html += `<td><span style="${teamPillStyle(team2Color)}">${truncateTeamName(team2Name.toUpperCase()) || 'N/A'}</span></td>`;
         html += `<td style="${score2Style}">${team2Score}</td>`;
+        html += `<td><team-name name="${row.team2}" maxchars="25"></team-name></td>`;
         html += '</tr>';
     });
     if (finishedMatches.length > 10) {
@@ -234,15 +227,11 @@ module.exports = function generateMatchesPlanning(data) {
             html += `<td>${processStage(row.stage)}</td>`;
             html += `<td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>`;
             html += `<td>${row.scheduledTime || 'N/A'}</td>`;
-            const { teamName: team1Name } = processTeamName(row.team1);
-            const { teamName: team2Name } = processTeamName(row.team2);
             const team1Score = formatScore(row.goals1, row.points1);
             const team2Score = formatScore(row.goals2, row.points2);
             const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
             const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
-            html += `<td><span style="${teamPillStyle(team1Color)}">${truncateTeamName(team1Name.toUpperCase()) || 'N/A'}</span></td>`;
-            html += `<td style="${score1Style}">${team1Score}</td>`;
-            html += `<td><span style="${teamPillStyle(team2Color)}">${truncateTeamName(team2Name.toUpperCase()) || 'N/A'}</span></td>`;
+            html += `<td><team-name name="${row.team2}" maxchars="25"></team-name></td>`;
             html += `<td style="${score2Style}">${team2Score}</td>`;
             html += '</tr>';
         });

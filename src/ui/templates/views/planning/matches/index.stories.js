@@ -1,3 +1,6 @@
+import '../../../../public/scripts/webcomponents/team-name.js';
+import '../../../../public/scripts/webcomponents/logo-box.js';
+
 import generateMatchesPlanning from './index.js';
 
 const sampleData = {
@@ -39,7 +42,7 @@ const sampleData = {
 };
 
 export default {
-  title: 'Matches Page',
+  title: 'planning/Matches Page',
   parameters: {
     layout: 'fullscreen'
   }
