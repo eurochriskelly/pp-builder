@@ -310,7 +310,7 @@ class LogoBox extends HTMLElement {
                 ${image 
                     ? `<img src="${image}" alt="${this.getInitials(title)}">`
                     : `<div class="overlay"></div>
-                       <span class="text">${this.getInitials(title)}</span>`
+                       ${this.hasAttribute('icon-only') ? '' : `<span class="text">${this.getInitials(title)}</span>`}`
                 }
             </div>
         `;
