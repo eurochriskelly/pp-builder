@@ -43,7 +43,7 @@ const MultiTemplate = ({ teams }) => {
     container.style.flexDirection = 'column';
     container.style.gap = '10px';
     container.style.width = '300px';
-    teams.forEach(({ name, showLogo, height, direction, completion, maxchars }) => {
+    teams.forEach(({ name, showLogo, height, direction, completion, maxchars, width }) => { // Added width here
         const element = document.createElement('team-name');
         element.setAttribute('name', name);
         element.setAttribute('showLogo', showLogo.toString());
@@ -128,3 +128,15 @@ StrictWidth.args = {
     ],
 };
 StrictWidth.storyName = 'Strict Width Enforcement';
+
+export const NameMaxWidthDemo = MultiTemplate.bind({});
+NameMaxWidthDemo.args = {
+    teams: [
+        { name: 'This Is A Very Very Long Team Name That Absolutely Must Be Truncated By The Name Container', showLogo: true, height: '30px', completion: 1 },
+        { name: 'Another Excessively Long Team Name For The Right-To-Left Layout Example', showLogo: true, height: '30px', direction: 'r2l', completion: 1 },
+        { name: 'Long Name No Logo Example That Also Needs Truncation', showLogo: false, height: '30px', completion: 1 },
+        { name: 'Short Name', showLogo: true, height: '30px', completion: 1 },
+        { name: 'Long Name With Wider Component Width', showLogo: true, height: '30px', width: '400px', completion: 1 }, // Component wider, name still capped at 200px
+    ],
+};
+NameMaxWidthDemo.storyName = 'Name Container Max Width (200px)';

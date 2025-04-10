@@ -52,16 +52,14 @@ class TeamName extends HTMLElement {
         const logoSize = `calc(${height} * 1.4)`;
         const spacerWidth = `calc(${logoSize} * ${completion - 1} * 1.3)`;
 
-        const width = this.getAttribute('width');
+        const widthAttr = this.getAttribute('width');
         const containerStyle = `
             display: flex;
             flex-direction: ${isR2L ? 'row-reverse' : 'row'};
             align-items: center;
-            justify-content: flex-start;
-            text-align: ${isR2L ? 'right' : 'left'};
+            width: 100%; /* Default to 100% */
             white-space: nowrap;
-            overflow: visible;
-            ${width ? `width: ${width}; min-width: ${width}; max-width: ${width};` : 'width: 100%;'}
+            ${widthAttr ? `width: ${widthAttr}; min-width: ${widthAttr}; max-width: ${widthAttr};` : ''} /* Apply width attribute if present */
             box-sizing: border-box;
         `;
 
@@ -78,22 +76,20 @@ class TeamName extends HTMLElement {
                 }
             </style>
             <span class="container" style="${containerStyle}">
-                ${completion > 1 ? `
-                    <span class="spacer" style="width: ${spacerWidth}; flex-shrink: 0; display: flex; align-items: center; justify-content: center;"></span>
-                ` : `
-                    <span style="width: 0; flex-shrink: 0;"></span>
-                `}
+                ${isR2L && completion > 1 ? `
+                    <span class="spacer" style="width: ${spacerWidth}; flex-shrink: 0;"></span>
+                ` : ''}
+                ${!isR2L && completion > 1 ? `
+                    <span class="spacer" style="width: ${spacerWidth}; flex-shrink: 0;"></span>
+                ` : ''}
                 ${showLogo ? `
                     <span class="logo-container" style="${logoMarginStyle}; flex-shrink: 0;">
                         <logo-box size="${logoSize}" title="${name}"></logo-box>
                     </span>
                 ` : ''}
-                <span class="name-container" style="flex-grow: 1; min-width: 0; display: flex; justify-content: ${isR2L ? 'flex-end' : 'flex-start'};">
-                    <span style="text-align: left;">
-                        ${this.renderNameParts(name)}
-                    </span>
+                <span class="name-container" style="flex: 1; min-width: 0; max-width: 170px; overflow: hidden; text-overflow: ellipsis; ${isR2L ? 'justify-content: flex-end;' : ''}">
+                    ${this.renderNameParts(name)}
                 </span>
-                <span class="expandable" style="width: ${spacerWidth}; flex-shrink: 0;"></span>
             </span>
         `;
 
