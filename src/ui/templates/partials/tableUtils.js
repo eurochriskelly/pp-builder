@@ -80,11 +80,21 @@ class UtilTable {
         this.tableStyle = options.tableStyle || '';
         this.emptyMessage = options.emptyMessage || 'No data available.';
         this.showHeader = true;
+        this.fullHeaders = [];
     }
 
     noHeader() {
       this.showHeader = false;
       return this;
+    }
+
+    fullHeader(text, options = {}) {
+        this.fullHeaders.push({
+            text,
+            position: options.position || 'before', // 'before' or 'after' a row
+            rowIndex: options.rowIndex || this.rows.length
+        });
+        return this;
     }
     addHeaders(headerConfig) {
         Object.entries(headerConfig).forEach(([key, config]) => {
@@ -180,6 +190,8 @@ class UtilTable {
 
     toHTML() {
         let html = `<table class="util-table ${this.tableClassName}" style="${this.tableStyle}; border-collapse: collapse; border-spacing: 0; border-left: none; border-right: none;">`;
+        
+        // Removed pre-processing of 'before' headers here.
 
         // Generate headers
         if (this.showHeader) {
@@ -204,7 +216,20 @@ class UtilTable {
         if (this.rows.length === 0) {
             html += `<tr><td colspan="${this.headers.size}" class="empty-data-message">${this.emptyMessage}</td></tr>`;
         } else {
-            for (const row of this.rows) {
+            for (let i = 0; i < this.rows.length; i++) {
+                // Check for and add 'before' headers for this row index
+                const beforeHeaders = this.fullHeaders.filter(h => 
+                    h.position === 'before' && h.rowIndex === i
+                );
+                for (const header of beforeHeaders) {
+                    html += `<tr class="full-header-row">
+                        <td colspan="${this.headers.size}" style="background-color: #f0f0f0; color: #333; text-align: center; text-transform: uppercase; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">
+                            ${header.text}
+                        </td>
+                    </tr>`;
+                }
+
+                const row = this.rows[i];
                 const rawData = row.getRawData();
                 let dataAttribute = '';
                 let rowClass = '';
@@ -239,6 +264,18 @@ class UtilTable {
                     }
                 }
                 html += '</tr>';
+                
+                // Add full headers that should appear after this row
+                const postHeaders = this.fullHeaders.filter(h => 
+                    h.position === 'after' && h.rowIndex === i
+                );
+                for (const header of postHeaders) {
+                    html += `<tr class="full-header-row">
+                        <td colspan="${this.headers.size}" style="background-color: #f0f0f0; color: #333; text-align: center; text-transform: uppercase; font-weight: bold; padding: 8px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;">
+                            ${header.text}
+                        </td>
+                    </tr>`;
+                }
             }
         }
         html += '</tbody></table>';

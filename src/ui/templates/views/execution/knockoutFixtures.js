@@ -44,9 +44,22 @@ function createKnockoutTable(categoryData) {
     })
     .noHeader();
 
-    categoryData.forEach(row => {
+    let currentTournamentPart = null; // Track the current tournament part
+
+    categoryData.forEach((row, index) => {
         const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
         const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
+
+        // Determine the current tournament part (e.g., 'cup', 'shield')
+        const stageParts = row.stage?.split('_') || [];
+        const tournamentPart = stageParts[0] || 'unknown';
+        const tournamentPartDisplay = tournamentPart.toUpperCase();
+
+        // Add a full header if the tournament part changes
+        if (tournamentPart !== currentTournamentPart) {
+            table.fullHeader(tournamentPartDisplay, { position: 'before', rowIndex: index });
+            currentTournamentPart = tournamentPart;
+        }
         
         const { team1ScoreFinal, team2ScoreFinal } = getFinalScoreDisplay(
             row.goals1, row.points1, row.goals2, row.points2, row.outcome
@@ -93,7 +106,7 @@ function createKnockoutTable(categoryData) {
         const isTeam2Last = teamLastFixtures.some(f => f.team === team2 && f.lastFixture === row);
 
         // Determine round and progression based on stage
-        const stageParts = row.stage?.split('_') || [];
+        // Use the existing stageParts variable declared earlier in the loop
         const roundName = stageParts[0] || '';
         let round = 0;
         let progression = 0;
@@ -105,15 +118,15 @@ function createKnockoutTable(categoryData) {
         const hierarchyPart = stageParts[1]?.toLowerCase() || '';
         if (hierarchyPart.includes('final')) {
             progression = 1;
-        } else if (hierarchyPart.includes('semi')) {
+        } else if (hierarchyPart.includes('semi') || 
+                   hierarchyPart.includes('3rd4th')) { // 3rd/4th playoff is level 2
             progression = 2;
         } else if (hierarchyPart.includes('quarter') || 
-                   hierarchyPart.includes('3rd4th') || 
                    hierarchyPart.includes('4th5th') || 
                    hierarchyPart.includes('5th6th') || 
                    hierarchyPart.includes('6th7th') || 
                    hierarchyPart.includes('7th8th')) {
-            progression = 3; // Quarter-finals and all playoffs are level 3
+            progression = 3; // Quarter-finals and other playoffs are level 3
         } else {
             progression = 0; // Default for unknown stages
         }
@@ -197,9 +210,9 @@ module.exports = function generateKnockoutFixtures(data) {
         return acc;
     }, {});
 
-    // Sort each category's matches by stage level (highest first)
+    // Sort each category's matches by stage level (lowest first - reverse order)
     for (const category in groupedData) {
-        groupedData[category].sort((a, b) => b.stageLevel - a.stageLevel);
+        groupedData[category].sort((a, b) => a.stageLevel - b.stageLevel);
     }
 
     // Generate a table for each category

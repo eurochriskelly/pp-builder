@@ -45,40 +45,34 @@ function abbreviateStage(stage) {
     const [tournamentPart, hierarchyPart] = stage.split('_');
     if (!hierarchyPart) return '';
 
-    // Determine tournament prefix
-    let prefix = '';
-    switch(tournamentPart.toLowerCase()) {
-        case 'cup': prefix = 'C'; break;
-        case 'shield': prefix = 'S'; break;
-        case 'plate': prefix = 'P'; break;
-        case 'spoon': prefix = 'O'; break;
-        default: prefix = '';
-    }
+    // Removed tournament prefix logic
 
-    // Determine hierarchy suffix (handle specific playoffs first)
-    let suffix = '';
+    // Determine descriptive stage name
+    let stageName = '';
     const lowerHierarchy = hierarchyPart.toLowerCase();
 
     if (lowerHierarchy.includes('final')) {
-        suffix = 'F';
+        stageName = 'Finals';
     } else if (lowerHierarchy.includes('semi')) {
-        suffix = 'S';
+        stageName = 'Semis';
     } else if (lowerHierarchy.includes('quarter')) {
-        suffix = 'Q';
-    } else if (lowerHierarchy.includes('3rd4th')) { // Simplified suffix
-        suffix = '4';
-    } else if (lowerHierarchy.includes('4th5th')) { // Added check
-        suffix = '5';
-    } else if (lowerHierarchy.includes('5th6th')) { // Simplified suffix
-        suffix = '6';
-    } else if (lowerHierarchy.includes('6th7th')) { // Added check (just in case)
-        suffix = '7';
-    } else if (lowerHierarchy.includes('7th8th')) { // Simplified suffix
-        suffix = '8';
+        stageName = 'Quarters';
+    } else if (lowerHierarchy.includes('3rd4th')) {
+        stageName = '3rd/4th';
+    } else if (lowerHierarchy.includes('4th5th')) {
+        stageName = '4th/5th';
+    } else if (lowerHierarchy.includes('5th6th')) {
+        stageName = '5th/6th';
+    } else if (lowerHierarchy.includes('6th7th')) {
+        stageName = '6th/7th';
+    } else if (lowerHierarchy.includes('7th8th')) {
+        stageName = '7th/8th';
+    } else {
+        // Fallback if no specific match found
+        stageName = hierarchyPart; 
     }
-    // Removed unreliable fallback logic
 
-    return prefix + suffix;
+    return stageName;
 }
 
 module.exports = {
