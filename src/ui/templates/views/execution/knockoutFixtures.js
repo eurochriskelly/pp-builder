@@ -8,18 +8,37 @@ const {
   getMatchOutcomeStyles,
 } = require('../../partials/scoreUtils');
 
+function getTeamLastFixtures(categoryData) {
+    const teamLastFixtures = {};
+    
+    categoryData.forEach(match => {
+        if (match.outcome === 'played') {
+            teamLastFixtures[match.team1] = match;
+            teamLastFixtures[match.team2] = match;
+        }
+    });
+    
+    return Object.entries(teamLastFixtures).map(([team, fixture]) => ({
+        team,
+        lastFixture: fixture
+    }));
+}
+
 function createKnockoutTable(categoryData) {
     const table = new UtilTable({
         tableClassName: 'fixtures-table',
         emptyMessage: `No knockout fixtures found for ${categoryData[0]?.category || 'this category'}.`
     });
 
+    // Get each team's last match
+    const teamLastFixtures = getTeamLastFixtures(categoryData);
+    
     table.addHeaders({
         team1: { label: 'Team 1', align: 'left', width: '35%' },
         score1: { label: 'Score 1', align: 'center', width: '10%' },
-        rank1: { label: 'R', align: 'left', width: '3%' },
+        rank1: { label: 'X', align: 'left', width: '3%' },
         stage: { label: 'Stage', align: 'center', width: '4%' },
-        rank2: { label: 'R', align: 'right', width: '3%' },
+        rank2: { label: 'X', align: 'right', width: '3%' },
         score2: { label: 'Score 2', align: 'center', width: '10%' },
         team2: { label: 'Team 2', align: 'left', width: '35%' }
     })
@@ -69,15 +88,37 @@ function createKnockoutTable(categoryData) {
             new ScoreData(row.goals2, row.points2, row.outcome)
         );
 
+        // Check if this is each team's last match
+        const isTeam1Last = teamLastFixtures.some(f => f.team === team1 && f.lastFixture === row);
+        const isTeam2Last = teamLastFixtures.some(f => f.team === team2 && f.lastFixture === row);
+
+        // Determine round and progression based on stage
+        const stageParts = row.stage?.split('_') || [];
+        const roundName = stageParts[0] || '';
+        let round = 0;
+        let progression = 0;
+        
+        if (roundName === 'cup') round = 0;
+        else if (roundName === 'shield') round = 3;
+        else if (roundName === 'plate') round = 6;
+        
+        if (stageParts[1]?.includes('quarter')) progression = 3;
+        else if (stageParts[1]?.includes('semi') || stageParts[1]?.includes('3rd4th')) progression = 2;
+        else if (stageParts[1]?.includes('final')) progression = 1;
+
+        // Calculate indent width for staggered display
+        const indentWidth = (3 - progression) * 2;
+        const spacerHtml = `<span style="display: inline-block; width: ${indentWidth}rem;"></span>`;
+
         const utilRow = new UtilRow()
             .setFields({
-                team1: `<team-name name="${team1}" direction="r2l" />`,
+                team1: `${spacerHtml}<team-name name="${team1}" direction="r2l"></team-name>`,
                 score1: score1,
-                rank1: 'R',
+                rank1: isTeam1Last ? 'X' : '',
                 stage: row.stage ? abbreviateStage(row.stage) : 'N/A',
-                rank2: 'R',
+                rank2: isTeam2Last ? 'X' : '',
                 score2: score2,
-                team2: `<team-name name="${team2}" />`
+                team2: `${spacerHtml}<team-name name="${team2}"></team-name>`
             })
             .setStyle('team1', {
                 'font-weight': 'bold',
