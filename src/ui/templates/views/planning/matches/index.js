@@ -1,38 +1,23 @@
 const { processTeamName, formatScore } = require('../../../../utils');
 
-// Function to determine if a match is the next to be played
-function isNextMatch(match, upcomingMatches) {
-    return match.id === upcomingMatches[0].id;
-}
+// **Helper Functions**
 
-// Function to process stage display
-function processStage(stage) {
-    if (stage !== 'group') {
-        const parts = stage.split('_');
-        if (parts.length === 2) {
-            return `<b>${parts[0]}:</b>${parts[1]}`;
-        }
-    }
-    return stage;
-}
-
-// Improved hash function for better distribution
+// Generate consistent colors based on a string hash
 function hashString(str) {
-    let hash = 17; // Start with a prime number seed
+    let hash = 17;
     for (let i = 0; i < str.length; i++) {
-        hash = (hash * 23 + str.charCodeAt(i)) & 0xFFFFFFFF; // Use 23 for better spread
+        hash = (hash * 23 + str.charCodeAt(i)) & 0xFFFFFFFF;
     }
     return hash;
 }
 
-// Function to generate a consistent pastel color for categories/pitches or dark color for teams
 function getRandomColor(name, isTeam = false) {
     const hash = hashString(name || 'unknown');
-    const hue = hash % 360; // Keep hue in 0-359 range
-    return isTeam ? `hsl(${hue}, 50%, 30%)` : `hsl(${hue}, 40%, 75%)`; // Dark for teams, pastel for others
+    const hue = hash % 360;
+    return isTeam ? `hsl(${hue}, 50%, 30%)` : `hsl(${hue}, 40%, 75%)`;
 }
 
-// Style for pill-like display for categories and pitches
+// Styles
 const pillStyle = (color) => `
     background-color: ${color};
     color: white;
@@ -48,7 +33,6 @@ const pillStyle = (color) => `
     text-overflow: ellipsis;
 `;
 
-// Style for team names with transparent white pill background, no wrap, larger padding
 const teamPillStyle = (color, isUmpire = false, isTBDNonGroup = false) => `
     color: ${color};
     ${isUmpire || isTBDNonGroup ? '' : 'background-color: rgba(255, 255, 255, 0.5); padding: 3.6px 10.8px; border-radius: 10px;'}
@@ -59,22 +43,7 @@ const teamPillStyle = (color, isUmpire = false, isTBDNonGroup = false) => `
     ${isTBDNonGroup ? 'font-style: italic;' : ''}
 `;
 
-// Function to truncate team names longer than 25 characters
-function truncateTeamName(name) {
-    return name.length > 25 ? `${name.substring(0, 22)}...` : name;
-}
-
-// Function to determine group column background color with 30% transparency
-function getGroupBackground(stage) {
-    return stage === 'group' ? 'background-color: rgba(255, 235, 204, 0.8);' : 'background-color: rgba(230, 255, 230, 0.8);';
-}
-
-// Inline CSS for row and play button
-const rowStyleBase = `
-    position: relative;
-    transition: background-color 0.2s;
-`;
-
+const rowStyleBase = `position: relative; transition: background-color 0.2s;`;
 const playButtonStyle = `
     position: absolute;
     left: 5px;
@@ -94,20 +63,126 @@ const playButtonStyle = `
     line-height: 31.2px;
 `;
 
+// Background and stage processing
+function getGroupBackground(stage) {
+    return stage === 'group' ? 'background-color: rgba(255, 235, 204, 0.8);' : 'background-color: rgba(230, 255, 230, 0.8);';
+}
+
+function processStage(stage) {
+    if (stage !== 'group') {
+        const parts = stage.split('_');
+        if (parts.length === 2) return `<b>${parts[0]}:</b>${parts[1]}`;
+    }
+    return stage;
+}
+
+// **Cell Generators**
+function generatePillCell(value) {
+    const color = getRandomColor(value);
+    return `<span style="${pillStyle(color)}">${value || 'N/A'}</span>`;
+}
+
+function generateUpcomingTeamCell(team, stage, isUmpire = false) {
+    const isTBDNonGroup = team === 'TBD' && stage !== 'group';
+    const color = isTBDNonGroup ? '#ff4500' : getRandomColor(team, true);
+    const teamStyle = teamPillStyle(color, isUmpire, isTBDNonGroup);
+    const cellStyle = isTBDNonGroup ? 'background-color: rgba(255, 69, 0, 0.2);' : '';
+    return `<td style="${cellStyle}"><team-name name="${team}" maxchars="25" style="${teamStyle}"></team-name></td>`;
+}
+
+function generateFinishedTeamCell(team, direction = null) {
+    const dirAttr = direction ? ` direction="${direction}"` : '';
+    return `<td><team-name name="${team}" maxchars="25"${dirAttr}></team-name></td>`;
+}
+
+// **Column Renderers**
+const commonColumnRenderers = {
+    id: (row) => `<td style="background-color: #808080; color: white;">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`,
+    group: (row) => `<td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>`,
+    category: (row) => `<td>${generatePillCell(row.category)}</td>`,
+    stage: (row) => `<td>${processStage(row.stage)}</td>`,
+    pitch: (row) => `<td>${generatePillCell(row.pitch)}</td>`,
+    time: (row) => `<td>${ row.scheduledTime ? row.scheduledTime.substring(10).trim() : 'N/A' }</td>`,
+};
+
+const upcomingIdRenderer = (row, index, tournamentId) => {
+    const playButton = `<button class="play-btn" style="${playButtonStyle}" onclick="playNextNMatches(${index + 1}, '${tournamentId}')">▶</button>`;
+    return `<td style="position: relative; background-color: #808080; color: white;">${playButton}${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
+};
+
+const upcomingColumnRenderers = [
+    upcomingIdRenderer,
+    commonColumnRenderers.group,
+    commonColumnRenderers.category,
+    commonColumnRenderers.stage,
+    commonColumnRenderers.pitch,
+    commonColumnRenderers.time,
+    (row) => generateUpcomingTeamCell(row.team1, row.stage),
+    (row) => generateUpcomingTeamCell(row.team2, row.stage),
+    (row) => generateUpcomingTeamCell(row.umpireTeam, row.stage, true),
+];
+
+const finishedColumnRenderers = [
+    commonColumnRenderers.id,
+    commonColumnRenderers.group,
+    commonColumnRenderers.category,
+    commonColumnRenderers.stage,
+    commonColumnRenderers.pitch,
+    (row) => `<td>${row.scheduledTime ? row.scheduledTime.substring(10) : 'N/A'}</td>`,
+    (row) => generateFinishedTeamCell(row.team1, 'r2l'),
+    (row) => {
+        const score = formatScore(row.goals1, row.points1);
+        const scoreStyle = score === 'N/A' ? 'color: grey;' : '';
+        return `<td style="${scoreStyle}">${score}</td>`;
+    },
+    (row) => {
+        const score = formatScore(row.goals2, row.points2);
+        const scoreStyle = score === 'N/A' ? 'color: grey;' : '';
+        return `<td style="${scoreStyle}">${score}</td>`;
+    },
+    (row) => generateFinishedTeamCell(row.team2),
+];
+
+// **Row Templates**
+function upcomingRowTemplate(row, index, isHidden, tournamentId, isNext) {
+    const rowClass = isHidden ? 'upcoming-hidden-row' : '';
+    let rowStyle = isNext ? `${rowStyleBase} background-color: lightblue;` : `${rowStyleBase} background-color: ${index % 2 === 0 ? '#f1f1f1' : '#e1e1e1'};`;
+    if (isHidden) rowStyle += ' display: none;';
+    const cells = upcomingColumnRenderers.map(renderer => renderer(row, index, tournamentId)).join('');
+    return `<tr class="${rowClass}" style="${rowStyle}" onmouseover="this.querySelector('.play-btn').style.display='block';" onmouseout="this.querySelector('.play-btn').style.display='none';">${cells}</tr>`;
+}
+
+function finishedRowTemplate(row, index, isHidden) {
+    const rowClass = isHidden ? 'finished-hidden-row' : '';
+    let rowStyle = `background-color: ${index % 2 === 0 ? '#f1f1f1' : '#e1e1e1'};`;
+    if (isHidden) rowStyle += ' display: none;';
+    const cells = finishedColumnRenderers.map(renderer => renderer(row)).join('');
+    return `<tr class="${rowClass}" style="${rowStyle}">${cells}</tr>`;
+}
+
+// **Table Generator**
+function generateTable(headers, rows, rowTemplate, tableId, hiddenClass, tournamentId, isUpcoming = false) {
+    let html = `<table id="${tableId}">`;
+    html += `<tr>${headers.map(h => `<th style="background-color: transparent">${h.toUpperCase()}</th>`).join('')}</tr>`;
+    rows.forEach((row, index) => {
+        const isHidden = index >= 10;
+        const isNext = isUpcoming && index === 0;
+        html += rowTemplate(row, index, isHidden, tournamentId, isNext);
+    });
+    html += '</table>';
+    if (rows.length > 10) {
+        const moreCount = rows.length - 10;
+        html += `<div style="margin-top: 10px; text-align: center;">`;
+        html += `<a id="show-more-${tableId}" href="#" style="color: #3498db; text-decoration: underline;" onclick="document.querySelectorAll('#${tableId} .${hiddenClass}').forEach(row => row.style.display = ''); document.getElementById('show-more-${tableId}').style.display = 'none'; document.getElementById('show-less-${tableId}').style.display = 'inline-block'; return false;">Show ${moreCount} More</a>`;
+        html += `<a id="show-less-${tableId}" href="#" style="color: #3498db; text-decoration: underline; display: none;" onclick="document.querySelectorAll('#${tableId} .${hiddenClass}').forEach(row => row.style.display = 'none'); document.getElementById('show-more-${tableId}').style.display = 'inline-block'; this.style.display = 'none'; return false;">Show Less</a>`;
+        html += `</div>`;
+    }
+    return html;
+}
+
+// **Main Function**
 module.exports = function generateMatchesPlanning(data) {
-    let html = '<div id="planning-matches">';
-    html += '<h2>Simulate running tournament</h2>';
-    html += '<p>Simulate tournament scenarios by playing upcoming matches or import fixtures from a CSV.</p>';
-
-    html += '<div style="margin-bottom: 20px; overflow: hidden;">';
-    html += '<button style="background-color: #e74c3c; color: white;" hx-get="/planning/' + data.tournamentId + '/reset" hx-target="#planning-matches" hx-swap="outerHTML" hx-trigger="click" hx-on::after-request="htmx.ajax(\'GET\', \'/planning/' + data.tournamentId + '\', \'#planning-matches\')">Reset Tournament</button> ';
-    html += '<button hx-post="/planning/' + data.tournamentId + '/simulate/1" hx-target="#planning-matches" hx-swap="outerHTML">Play Next Match</button> ';
-    html += `<input type="number" id="play-n-matches-input" min="1" style="width: 80px; margin-left: 10px; padding: 8px;" placeholder="N"> `;
-    html += `<button onclick="playNextNMatches(document.getElementById('play-n-matches-input').value, '${data.tournamentId}')" style="margin-left: 5px;">Play Next N Matches</button>`;
-    html += '<button hx-get="/planning/' + data.tournamentId + '/import-fixtures" hx-target="body" hx-swap="outerHTML" style="background-color: #e67e22; color: white; margin-left: 10px; float: right;">Import Fixtures</button>';
-    html += '</div>';
-
-    // Split matches into upcoming and finished with deterministic sorting
+    // Split and sort matches
     const upcomingMatches = data.matches
         .filter(match => match.started === 'false')
         .sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime) || a.id - b.id);
@@ -116,138 +191,35 @@ module.exports = function generateMatchesPlanning(data) {
         .sort((a, b) => b.scheduledTime.localeCompare(a.scheduledTime) || b.id - a.id);
     const totalMatches = data.matches.length;
 
-    // Upcoming Games table
-    html += `<h3 style="font-size: 1.25em; margin-top: 30px;">UPCOMING GAMES (${upcomingMatches.length}/${totalMatches})</h3>`;
-    html += '<table id="upcoming-table">';
+    // Define headers
     const upcomingHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Team 2', 'Umpire'];
-    html += `<tr>${upcomingHeaders.map(h => `<th style="background-color: transparent">${h.toUpperCase()}</th>`).join('')}</tr>`;
-    upcomingMatches.slice(0, 10).forEach((row, index) => {
-        const isNext = isNextMatch(row, upcomingMatches);
-        const rowStyle = isNext ? `${rowStyleBase} background-color: lightblue;` : `${rowStyleBase} background-color: ${index % 2 === 0 ? '#f1f1f1' : '#e1e1e1'};`;
-        const categoryColor = getRandomColor(row.category);
-        const pitchColor = getRandomColor(row.pitch);
-        const team1Color = row.team1 === 'TBD' && row.stage !== 'group' ? '#ff4500' : getRandomColor(row.team1, true);
-        const team2Color = row.team2 === 'TBD' && row.stage !== 'group' ? '#ff4500' : getRandomColor(row.team2, true);
-        const umpireColor = row.umpireTeam === 'TBD' && row.stage !== 'group' ? '#ff4500' : getRandomColor(row.umpireTeam, true);
-        const team1Style = row.team1 === 'TBD' && row.stage !== 'group' ? teamPillStyle(team1Color, false, true) : teamPillStyle(team1Color);
-        const team2Style = row.team2 === 'TBD' && row.stage !== 'group' ? teamPillStyle(team2Color, false, true) : teamPillStyle(team2Color);
-        const umpireStyle = row.umpireTeam === 'TBD' && row.stage !== 'group' ? teamPillStyle(umpireColor, true, true) : teamPillStyle(umpireColor, true);
-        const team1CellStyle = row.team1 === 'TBD' && row.stage !== 'group' ? 'background-color: rgba(255, 69, 0, 0.2);' : '';
-        const team2CellStyle = row.team2 === 'TBD' && row.stage !== 'group' ? 'background-color: rgba(255, 69, 0, 0.2);' : '';
-        const umpireCellStyle = row.umpireTeam === 'TBD' && row.stage !== 'group' ? 'background-color: rgba(255, 69, 0, 0.2);' : '';
-        html += `<tr style="${rowStyle}" onmouseover="this.querySelector('.play-btn').style.display='block';" onmouseout="this.querySelector('.play-btn').style.display='none';">`;
-        html += `<td style="position: relative; background-color: #808080; color: white;"><button class="play-btn" style="${playButtonStyle}" onclick="playNextNMatches(${index + 1}, '${data.tournamentId}')">▶</button>${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
-        html += `<td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>`;
-        html += `<td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>`;
-        html += `<td>${processStage(row.stage)}</td>`;
-        html += `<td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>`;
-        html += `<td>${row.scheduledTime || 'N/A'}</td>`;
-        html += `<td style="${team1CellStyle}"><team-name name="${row.team1}" maxchars="25"></team-name></td>`;
-        html += `<td style="${team2CellStyle}"><team-name name="${row.team2}" maxchars="25"></team-name></td>`;
-        html += `<td style="${umpireCellStyle}"><team-name name="${row.umpireTeam}" maxchars="25"></team-name></td>`;
-        html += '</tr>';
-    });
-    if (upcomingMatches.length > 10) {
-        upcomingMatches.slice(10).forEach((row, index) => {
-            const isNext = isNextMatch(row, upcomingMatches);
-            const rowStyle = isNext ? `${rowStyleBase} background-color: lightblue; display: none;` : `${rowStyleBase} background-color: ${(index + 10) % 2 === 0 ? '#f1f1f1' : '#e1e1e1'}; display: none;`;
-            const categoryColor = getRandomColor(row.category);
-            const pitchColor = getRandomColor(row.pitch);
-            const team1Color = row.team1 === 'TBD' && row.stage !== 'group' ? '#ff4500' : getRandomColor(row.team1, true);
-            const team2Color = row.team2 === 'TBD' && row.stage !== 'group' ? '#ff4500' : getRandomColor(row.team2, true);
-            const umpireColor = row.umpireTeam === 'TBD' && row.stage !== 'group' ? '#ff4500' : getRandomColor(row.umpireTeam, true);
-            const team1Style = row.team1 === 'TBD' && row.stage !== 'group' ? teamPillStyle(team1Color, false, true) : teamPillStyle(team1Color);
-            const team2Style = row.team2 === 'TBD' && row.stage !== 'group' ? teamPillStyle(team2Color, false, true) : teamPillStyle(team2Color);
-            const umpireStyle = row.umpireTeam === 'TBD' && row.stage !== 'group' ? teamPillStyle(umpireColor, true, true) : teamPillStyle(umpireColor, true);
-            const team1CellStyle = row.team1 === 'TBD' && row.stage !== 'group' ? 'background-color: rgba(255, 69, 0, 0.2);' : '';
-            const team2CellStyle = row.team2 === 'TBD' && row.stage !== 'group' ? 'background-color: rgba(255, 69, 0, 0.2);' : '';
-            const umpireCellStyle = row.umpireTeam === 'TBD' && row.stage !== 'group' ? 'background-color: rgba(255, 69, 0, 0.2);' : '';
-            html += `<tr style="${rowStyle}" class="upcoming-hidden-row" onmouseover="this.querySelector('.play-btn').style.display='block';" onmouseout="this.querySelector('.play-btn').style.display='none';">`;
-            html += `<td style="position: relative; background-color: #808080; color: white;"><button class="play-btn" style="${playButtonStyle}" onclick="playNextNMatches(${index + 11}, '${data.tournamentId}')">▶</button>${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
-            html += `<td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>`;
-            html += `<td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>`;
-            html += `<td>${processStage(row.stage)}</td>`;
-            html += `<td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>`;
-            html += `<td>${row.scheduledTime || 'N/A'}</td>`;
-            html += `<td style="${team1CellStyle}"><team-name name="${row.team1}" maxchars="25"></team-name></td>`;
-            html += `<td style="${team2CellStyle}"><team-name name="${row.team2}" maxchars="25"></team-name></td>`;
-            html += `<td style="${umpireCellStyle}"><team-name name="${row.umpireTeam}" maxchars="25"></team-name></td>`;
-            html += '</tr>';
-        });
-        html += '</table>';
-        const moreCount = upcomingMatches.length - 10;
-        html += `<div style="margin-top: 10px; text-align: center;">`;
-        html += `<a id="show-more-upcoming" href="#" style="color: #3498db; text-decoration: underline;" onclick="document.querySelectorAll('#upcoming-table .upcoming-hidden-row').forEach(row => row.style.display = ''); document.getElementById('show-more-upcoming').style.display = 'none'; document.getElementById('show-less-upcoming').style.display = 'inline-block'; return false;">Show ${moreCount} More</a>`;
-        html += `<a id="show-less-upcoming" href="#" style="color: #3498db; text-decoration: underline; display: none;" onclick="document.querySelectorAll('#upcoming-table .upcoming-hidden-row').forEach(row => row.style.display = 'none'); document.getElementById('show-more-upcoming').style.display = 'inline-block'; this.style.display = 'none'; return false;">Show Less</a>`;
-        html += `</div>`;
-    } else {
-        html += '</table>';
-    }
-
-    // Finished Games table
-    html += `<h3 style="font-size: 1.25em; margin-top: 30px;">FINISHED GAMES (${finishedMatches.length}/${totalMatches})</h3>`;
-    html += '<table id="finished-table" style="margin-top: 20px;">';
     const finishedHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Score', 'Team 2'];
-    html += `<tr>${finishedHeaders.map(h => `<th style="background-color: transparent">${h.toUpperCase()}</th>`).join('')}</tr>`;
-    finishedMatches.slice(0, 10).forEach((row, index) => {
-        const rowStyle = `background-color: ${index % 2 === 0 ? '#f1f1f1' : '#e1e1e1'};`;
-        const categoryColor = getRandomColor(row.category);
-        const pitchColor = getRandomColor(row.pitch);
-        const team1Color = getRandomColor(row.team1, true);
-        const team2Color = getRandomColor(row.team2, true);
-        const showTime = row.scheduledTime ? row.scheduledTime.substring(10) : 'N/A'
-        html += `<tr style="${rowStyle}">`;
-        html += `<td style="background-color: #808080; color: white;">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
-        html += `<td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>`;
-        html += `<td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>`;
-        html += `<td>${processStage(row.stage)}</td>`;
-        html += `<td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>`;
-        html += `<td>${showTime}</td>`;
-        const team1Score = formatScore(row.goals1, row.points1);
-        const team2Score = formatScore(row.goals2, row.points2);
-        const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
-        const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
-        html += `<td><team-name direction="r2l" name="${row.team1}" maxchars="25"></team-name></td>`;
-        html += `<td style="${score1Style}">${team1Score}</td>`;
-        html += `<td style="${score2Style}">${team2Score}</td>`;
-        html += `<td><team-name name="${row.team2}" maxchars="25"></team-name></td>`;
-        html += '</tr>';
-    });
-    if (finishedMatches.length > 10) {
-        finishedMatches.slice(10).forEach((row, index) => {
-            const rowStyle = `background-color: ${(index + 10) % 2 === 0 ? '#f1f1f1' : '#e1e1e1'}; display: none;`;
-            const categoryColor = getRandomColor(row.category);
-            const pitchColor = getRandomColor(row.pitch);
-            const team1Color = getRandomColor(row.team1, true);
-            const team2Color = getRandomColor(row.team2, true);
-            html += `<tr style="${rowStyle}" class="finished-hidden-row">`;
-            html += `<td style="background-color: #808080; color: white;">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>`;
-            html += `<td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>`;
-            html += `<td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>`;
-            html += `<td>${processStage(row.stage)}</td>`;
-            html += `<td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>`;
-            html += `<td>${row.scheduledTime || 'N/A'}</td>`;
-            const team1Score = formatScore(row.goals1, row.points1);
-            const team2Score = formatScore(row.goals2, row.points2);
-            const score1Style = team1Score === 'N/A' ? 'color:grey;' : '';
-            const score2Style = team2Score === 'N/A' ? 'color:grey;' : '';
-            html += `<td><team-name name="${row.team2}" maxchars="25"></team-name></td>`;
-            html += `<td style="${score2Style}">${team2Score}</td>`;
-            html += '</tr>';
-        });
-        html += '</table>';
-        const moreCount = finishedMatches.length - 10;
-        html += `<div style="margin-top: 10px; text-align: center;">`;
-        html += `<a id="show-more-finished" href="#" style="color: #3498db; text-decoration: underline;" onclick="document.querySelectorAll('#finished-table .finished-hidden-row').forEach(row => row.style.display = ''); document.getElementById('show-more-finished').style.display = 'none'; document.getElementById('show-less-finished').style.display = 'inline-block'; return false;">Show ${moreCount} More</a>`;
-        html += `<a id="show-less-finished" href="#" style="color: #3498db; text-decoration: underline; display: none;" onclick="document.querySelectorAll('#finished-table .finished-hidden-row').forEach(row => row.style.display = 'none'); document.getElementById('show-more-finished').style.display = 'inline-block'; this.style.display = 'none'; return false;">Show Less</a>`;
-        html += `</div>`;
-    } else {
-        html += '</table>';
-    }
+
+    // Generate tables
+    const upcomingTable = generateTable(upcomingHeaders, upcomingMatches, upcomingRowTemplate, 'upcoming-table', 'upcoming-hidden-row', data.tournamentId, true);
+    const finishedTable = generateTable(finishedHeaders, finishedMatches, finishedRowTemplate, 'finished-table', 'finished-hidden-row', data.tournamentId, false);
+
+    // Build HTML
+    let html = '<div id="planning-matches">';
+    html += '<h2>Simulate running tournament</h2>';
+    html += '<p>Simulate tournament scenarios by playing upcoming matches or import fixtures from a CSV.</p>';
+    html += '<div style="margin-bottom: 20px; overflow: hidden;">';
+    html += `<button style="background-color: #e74c3c; color: white;" hx-get="/planning/${data.tournamentId}/reset" hx-target="#planning-matches" hx-swap="outerHTML" hx-trigger="click" hx-on::after-request="htmx.ajax('GET', '/planning/${data.tournamentId}', '#planning-matches')">Reset Tournament</button> `;
+    html += `<button hx-post="/planning/${data.tournamentId}/simulate/1" hx-target="#planning-matches" hx-swap="outerHTML">Play Next Match</button> `;
+    html += `<input type="number" id="play-n-matches-input" min="1" style="width: 80px; margin-left: 10px; padding: 8px;" placeholder="N"> `;
+    html += `<button onclick="playNextNMatches(document.getElementById('play-n-matches-input').value, '${data.tournamentId}')" style="margin-left: 5px;">Play Next N Matches</button>`;
+    html += `<button hx-get="/planning/${data.tournamentId}/import-fixtures" hx-target="body" hx-swap="outerHTML" style="background-color: #e67e22; color: white; margin-left: 10px; float: right;">Import Fixtures</button>`;
+    html += '</div>';
+
+    html += `<h3 style="font-size: 1.25em; margin-top: 30px;">UPCOMING GAMES (${upcomingMatches.length}/${totalMatches})</h3>`;
+    html += upcomingTable;
+
+    html += `<h3 style="font-size: 1.25em; margin-top: 30px;">FINISHED GAMES (${finishedMatches.length}/${totalMatches})</h3>`;
+    html += finishedTable;
 
     html += '</div>';
 
-    // Inline JavaScript for play functions
+    // Add script
     html += `
         <script>
             async function playNextNMatches(n, tournamentId) {
@@ -263,6 +235,4 @@ module.exports = function generateMatchesPlanning(data) {
 
     return html;
 };
-
-
 
