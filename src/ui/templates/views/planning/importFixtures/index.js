@@ -1,4 +1,8 @@
-module.exports = function generateImportFixtures(tournamentId, csvData = null, validationResult = null) {
+module.exports = function generateImportFixtures(
+  tournamentId,
+  csvData = null, 
+  validationResult = null
+) {
   let html = `
     <div id="import-fixtures" class="p-4 max-w-5xl mx-auto">
       <h2 class="text-2xl font-bold mb-2">Import Fixtures for Tournament ${tournamentId}</h2>
@@ -14,22 +18,82 @@ module.exports = function generateImportFixtures(tournamentId, csvData = null, v
   `;
 
   if (csvData) {
+    // Only show validate button if we don't already have valid data
+    if (!validationResult || validationResult.warnings?.length > 0) {
+      html += `
+        <form hx-post="/planning/${tournamentId}/validate-fixtures" hx-target="#import-fixtures" hx-swap="outerHTML" class="mb-4">
+          <input type="hidden" name="csvData" value="${encodeURIComponent(JSON.stringify(csvData))}">
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Validate</button>
+        </form>
+      `;
+    }
+
+    // Validation results will be displayed first if available
+    if (validationResult) {
+      const { warnings, props, isValid } = validationResult;
+
+      // Show Confirm Import button first if data is valid
+      if (isValid && (!warnings || warnings.length === 0)) {
+        html += `
+          <form hx-post="/planning/${tournamentId}/confirm-import" hx-target="body" hx-swap="outerHTML" class="mt-4">
+            <input type="hidden" name="csvData" value="${encodeURIComponent(JSON.stringify(csvData))}">
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Confirm Import</button>
+          </form>
+          <p class="text-green-600 mt-4">No warnings found. Data looks valid.</p>
+        `;
+      }
+
+      html += `
+        <div class="mt-4">
+          <h3 class="text-xl font-semibold mb-2">Summary</h3>
+          <table class="w-full border-collapse mb-4">
+            <tbody>
+              <tr class="bg-gray-50"><td class="p-2 border font-semibold w-1/4">Categories</td><td class="p-2 border">${props.categories.join(', ')}</td></tr>
+              <tr><td class="p-2 border font-semibold w-1/4">Pitches</td><td class="p-2 border">${props.pitches.join(', ')}</td></tr>
+              <tr class="bg-gray-50"><td class="p-2 border font-semibold w-1/4">Groups</td><td class="p-2 border">${Object.keys(props.groups.byCategory).map(cat => `<strong>${cat}:</strong> ${props.groups.byCategory[cat].join(', ')}`).join('<br>')}</td></tr>
+              <tr><td class="p-2 border font-semibold w-1/4">Teams</td><td class="p-2 border">${Object.keys(props.teams.byCategory).map(cat => `<strong>${cat}:</strong> ${props.teams.byCategory[cat].join(', ')}`).join('<br>')}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      if (warnings && warnings.length > 0) {
+        html += `
+          <div class="mt-4">
+            <h3 class="text-xl font-semibold mb-2">Validation Warnings (${warnings.length})</h3>
+            <table class="w-full border-collapse">
+              <tbody>
+        `;
+        warnings.forEach((warning, index) => {
+          const rowClass = index % 2 === 0 ? 'bg-red-50' : 'bg-red-100';
+          html += `<tr class="${rowClass}"><td class="p-2 border border-red-200 text-red-700">${warning}</td></tr>`;
+        });
+        html += `
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+    }
+
+    // Now add the table structure and headers directly to html
     html += `
-      <h3 class="text-xl font-semibold mb-2">Uploaded CSV Data</h3>
-      <form hx-post="/planning/${tournamentId}/validate-fixtures" hx-target="#import-fixtures" hx-swap="outerHTML" class="mb-4">
-        <input type="hidden" name="csvData" value="${encodeURIComponent(JSON.stringify(csvData))}">
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Validate</button>
-      </form>
-      <table class="w-full border-collapse mt-4">
-        <tr class="bg-gray-200">
-          <th class="p-2">Match ID</th><th class="p-2">Start Time</th><th class="p-2">Pitch</th><th class="p-2">Stage</th><th class="p-2">Category</th><th class="p-2">Group</th>
-          <th class="p-2">Team 1</th><th class="p-2">Team 2</th><th class="p-2">Umpire Team</th><th class="p-2">Duration</th>
-        </tr>
+      <div class="mt-8">
+        <h3 class="text-xl font-semibold mb-2">Uploaded CSV Data</h3>
+        <table class="w-full border-collapse">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="p-2 text-left">Match ID</th><th class="p-2 text-left">Start Time</th><th class="p-2 text-left">Pitch</th><th class="p-2 text-left">Stage</th><th class="p-2 text-left">Category</th><th class="p-2 text-left">Group</th>
+              <th class="p-2 text-left">Team 1</th><th class="p-2 text-left">Team 2</th><th class="p-2 text-left">Umpire Team</th><th class="p-2 text-left">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
     `;
+    // Append rows
     csvData.forEach(row => {
       html += `
         <tr>
-          <td class="p-2">${row.matchId || ''}</td>
+          <td class="p-2 border">${row.matchId || ''}</td>
           <td class="p-2">${row.startTime || ''}</td>
           <td class="p-2">${row.pitch || ''}</td>
           <td class="p-2">${row.stage || ''}</td>
@@ -37,46 +101,18 @@ module.exports = function generateImportFixtures(tournamentId, csvData = null, v
           <td class="p-2">${row.group || ''}</td>
           <td class="p-2">${row.team1 || ''}</td>
           <td class="p-2">${row.team2 || ''}</td>
-          <td class="p-2">${row.umpireTeam || ''}</td>
-          <td class="p-2">${row.duration || ''}</td>
+          <td class="p-2 border">${row.umpireTeam || ''}</td>
+          <td class="p-2 border">${row.duration || ''}</td>
         </tr>
       `;
     });
-    html += '</table>';
-
-    if (validationResult) {
-      const { warnings, props, isValid } = validationResult;
-      if (warnings && warnings.length > 0) {
-        html += `
-          <h3 class="text-xl font-semibold mt-4">Warnings</h3>
-          <table class="w-full border-collapse mt-4 bg-red-100">
-            <tr><th class="p-2">Warning</th></tr>
-        `;
-        warnings.forEach(warning => {
-          html += `<tr><td class="p-2">${warning}</td></tr>`;
-        });
-        html += '</table>';
-      } else {
-        html += '<p class="text-green-600 mt-4">No warnings found. Data looks valid.</p>';
-        if (isValid) {
-          html += `
-            <form hx-post="/planning/${tournamentId}/confirm-import" hx-target="body" hx-swap="outerHTML" class="mt-4">
-              <input type="hidden" name="csvData" value="${encodeURIComponent(JSON.stringify(csvData))}">
-              <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Confirm Import</button>
-            </form>
-          `;
-        }
-      }
-
-      html += `
-        <h3 class="text-xl font-semibold mt-4">Summary</h3>
-        <p><strong>Categories:</strong> ${props.categories.join(', ')}</p>
-        <p><strong>Pitches:</strong> ${props.pitches.join(', ')}</p>
-        <p><strong>Groups:</strong> ${Object.keys(props.groups.byCategory).map(cat => `${cat}: ${props.groups.byCategory[cat].join(', ')}`).join('; ')}</p>
-        <p><strong>Teams:</strong> ${Object.keys(props.teams.byCategory).map(cat => `${cat}: ${props.teams.byCategory[cat].join(', ')}`).join('; ')}</p>
-      `;
-    }
-  }
+    // Close table body and div
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+  } // End of if (csvData)
 
   html += '</div>';
   return html;

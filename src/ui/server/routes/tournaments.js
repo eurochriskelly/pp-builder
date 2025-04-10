@@ -30,6 +30,19 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Route to get just the form fragment for the modal
+router.get('/create-tournament-form', (req, res) => {
+    const isLoggedIn = !!req.session.user;
+    if (!isLoggedIn) {
+        // Send an empty response or an error message if accessed directly without login
+        return res.status(403).send('<p class="text-red-500 p-4">Access Denied. Please log in.</p>');
+    }
+    // Return only the form HTML, no header/footer
+    res.send(generateCreateTournament());
+});
+
+
+// Original route for potentially accessing the create form directly (though now modal is preferred)
 router.get('/create-tournament', (req, res) => {
     const isLoggedIn = !!req.session.user;
     if (!isLoggedIn) {
@@ -60,13 +73,31 @@ router.post('/create-tournament', async (req, res) => {
             ...(lat && { lat: parseFloat(lat) }),
             ...(lon && { lon: parseFloat(lon) }),
         };
-        const response = await createTournament(tournamentData);
-        const tournaments = await getTournaments();
-        const content = generateTournamentSelection(tournaments, true, `${req.protocol}://${req.get('host')}`);
-        const html = `${generateHeader('Tournament Selection', null, null, null, true)}${content}${generateFooter()}`;
-        res.send(html);
+        await createTournament(tournamentData);
+
+        // Check if the request came from HTMX
+        if (req.headers['hx-request']) {
+            // If yes, trigger a full page refresh on the client side
+            res.set('HX-Refresh', 'true');
+            res.status(200).send(); // Send an empty response as the refresh handles the update
+        } else {
+            // Fallback for non-HTMX requests (e.g., direct form submission if JS fails)
+            const tournaments = await getTournaments();
+            const content = generateTournamentSelection(tournaments, true, `${req.protocol}://${req.get('host')}`);
+            const html = `${generateHeader('Tournament Selection', null, null, null, true)}${content}${generateFooter()}`;
+            res.send(html);
+        }
     } catch (error) {
         console.error('Error creating tournament:', error.message);
+        // Handle error response for both HTMX and regular requests
+        const errorHtml = `<p class="text-red-500 p-4">Failed to create tournament: ${error.message}</p><button type="button" onclick="document.getElementById('create-tournament-modal').style.display='none'; document.getElementById('create-tournament-modal-content').innerHTML='';">Close</button>`;
+        if (req.headers['hx-request']) {
+             // Send error message back to the modal
+            res.status(500).send(errorHtml);
+        } else {
+            const html = `${generateHeader('Error', null, null, null, true)}${errorHtml}<a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
+            res.status(500).send(html);
+        }
         const html = `${generateHeader('Error', null, null, null, true)}<p>Failed to create tournament: ${error.message}</p><a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML">Back to Home</a>${generateFooter()}`;
         res.send(html);
     }

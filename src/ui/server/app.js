@@ -7,6 +7,7 @@ const { setup } = require('./index.js');
 const authRoutes = require('./routes/auth');
 const tournamentRoutes = require('./routes/tournaments');
 const planningRoutes = require('./routes/planning');
+const importRoutes = require('./routes/planning-import');
 const executionRoutes = require('./routes/execution');
 const eventRoutes = require('./routes/events');
 
@@ -40,6 +41,7 @@ function startServer(port, restPort, restHost, bypassAuth) {
     app.use(authRoutes);
     app.use(tournamentRoutes);
     app.use(planningRoutes);
+    app.use(importRoutes);
     app.use(executionRoutes);
     app.use(eventRoutes);
 

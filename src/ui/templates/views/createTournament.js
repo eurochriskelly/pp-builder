@@ -25,7 +25,13 @@ module.exports = function generateCreateTournament() {
         </div>
         <div class="flex gap-2">
           <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Create</button>
-          <a href="/" hx-get="/" hx-target="body" hx-swap="outerHTML" class="text-blue-600 underline">Cancel</a>
+          <button 
+            type="button" 
+            class="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+            onclick="document.getElementById('create-tournament-modal').style.display='none'; document.getElementById('create-tournament-modal-content').innerHTML='';"
+          >
+            Cancel
+          </button>
         </div>
       </form>
     </div>
