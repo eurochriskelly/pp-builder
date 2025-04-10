@@ -41,8 +41,7 @@ function generateMatchRow(row, index, tournamentId, isUpcoming, isNext = false) 
   html += `<td class="${team1CellClass}"><span class="bg-white bg-opacity-50 px-2.5 py-0.5 rounded-lg font-bold uppercase whitespace-nowrap ${team1Color}">${truncateTeamName(team1Name.toUpperCase()) || 'N/A'}</span></td>`;
   if (isUpcoming) {
     html += `<td class="${team2CellClass}"><span class="bg-white bg-opacity-50 px-2.5 py-0.5 rounded-lg font-bold uppercase whitespace-nowrap ${team2Color}">${truncateTeamName(team2Name.toUpperCase()) || 'N/A'}</span></td>`;
-    const { teamName: umpireTeamName } = processTeamName(row.umpireTeam);
-    html += `<td class="${umpireCellClass}"><span class="uppercase whitespace-nowrap ${umpireColor}">${truncateTeamName(umpireTeamName.toUpperCase()) || 'N/A'}</span></td>`;
+    html += `<td class="${umpireCellClass}"><logo-box size="30px" title="${row.umpireTeam}"></logo-box></td>`;
   } else {
     const team1Score = formatScore(row.goals1, row.points1);
     const team2Score = formatScore(row.goals2, row.points2);

@@ -87,9 +87,9 @@ class TeamName extends HTMLElement {
                         <logo-box size="${logoSize}" title="${name}"></logo-box>
                     </span>
                 ` : ''}
-                <span class="name-container" style="flex: 1; min-width: 0; max-width: 170px; overflow: hidden; text-overflow: ellipsis; ${isR2L ? 'justify-content: flex-end;' : ''}">
+                ${this.hasAttribute('icon-only') ? '' : `<span class="name-container" style="flex: 1; min-width: 0; max-width: 170px; overflow: hidden; text-overflow: ellipsis; ${isR2L ? 'justify-content: flex-end;' : ''}">
                     ${this.renderNameParts(name)}
-                </span>
+                </span>`}
             </span>
         `;
 
