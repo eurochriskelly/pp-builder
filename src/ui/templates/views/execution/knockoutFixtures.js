@@ -47,54 +47,54 @@ function createKnockoutTable(categoryData) {
         const team2Won = row.outcome === 'played' && 
             new ScoreData(row.goals2, row.points2).total > new ScoreData(row.goals1, row.points1).total;
 
-        // Determine winner and loser
-        let winner, loser, winnerScore, loserScore;
-        if (row.outcome === 'played') {
-            if (new ScoreData(row.goals1, row.points1).total > new ScoreData(row.goals2, row.points2).total) {
-                winner = row.team1;
-                winnerScore = new ScoreData(row.goals1, row.points1);
-                loser = row.team2;
-                loserScore = new ScoreData(row.goals2, row.points2);
-            } else {
-                winner = row.team2;
-                winnerScore = new ScoreData(row.goals2, row.points2);
-                loser = row.team1;
-                loserScore = new ScoreData(row.goals1, row.points1);
-            }
+        // For knockout fixtures, we keep original team order but show winner on left
+        let team1 = row.team1;
+        let team2 = row.team2;
+        let score1 = new ScoreData(row.goals1, row.points1);
+        let score2 = new ScoreData(row.goals2, row.points2);
+        
+        // Only swap display order if team2 won and it's a played match
+        if (row.outcome === 'played' && team2Won) {
+            [team1, team2] = [team2, team1];
+            [score1, score2] = [score2, score1];
         } else {
-            // For non-played matches (walkovers, etc), keep original order
-            winner = row.team1;
-            winnerScore = new ScoreData(row.goals1, row.points1);
-            loser = row.team2;
-            loserScore = new ScoreData(row.goals2, row.points2);
+            // Ensure we use the original scores for styling
+            score1 = new ScoreData(row.goals1, row.points1);
+            score2 = new ScoreData(row.goals2, row.points2);
         }
+
+        // Get styles based on original team order (not swapped display order)
+        const originalStyles = getMatchOutcomeStyles(
+            new ScoreData(row.goals1, row.points1, row.outcome),
+            new ScoreData(row.goals2, row.points2, row.outcome)
+        );
 
         const utilRow = new UtilRow()
             .setFields({
-                team1: `<team-name name="${winner}" direction="r2l" />`,
-                score1: winnerScore,
+                team1: `<team-name name="${team1}" direction="r2l" />`,
+                score1: score1,
                 rank1: 'R',
                 stage: row.stage ? abbreviateStage(row.stage) : 'N/A',
                 rank2: 'R',
-                score2: loserScore,
-                team2: `<team-name name="${loser}" />`
+                score2: score2,
+                team2: `<team-name name="${team2}" />`
             })
             .setStyle('team1', {
-                'font-weight': styles.team1.fontWeight,
-                'color': styles.team1.textColor,
+                'font-weight': 'bold',
+                'color': originalStyles.team1.textColor,
                 ...team1Style
             })
             .setStyle('team2', {
-                'font-weight': styles.team2.fontWeight,
-                'color': styles.team2.textColor,
+                'font-weight': 'normal',
+                'color': originalStyles.team2.textColor,
                 ...team2Style
             })
             .setStyle('score1', {
-                'font-weight': styles.team1.fontWeight,
+                'font-weight': 'bold',
                 'color': score1ExtraClass
             })
             .setStyle('score2', {
-                'font-weight': styles.team2.fontWeight,
+                'font-weight': 'normal',
                 'color': score2ExtraClass
             })
             .setStyle('rank1', {
