@@ -50,12 +50,12 @@ module.exports = function generateGroupFixtures(data) {
             
             const utilRow = new UtilRow()
                 .setFields({
-                    team1: `<team-name name="${row.team1}" direction="r2l" />`,
-                    score1: team1Score,
+                    team1: `<team-name name="${team1Won ? row.team1 : row.team2}" direction="r2l" />`,
+                    score1: team1Won ? team1Score : team2Score,
                     winner1: team1Won ? '◄' : '',
                     winner2: team2Won ? '►' : '',
-                    score2: team2Score,
-                    team2: `<team-name name="${row.team2}" />`, 
+                    score2: team1Won ? team2Score : team1Score,
+                    team2: `<team-name name="${team1Won ? row.team2 : row.team1}" />`, 
                 })
                 .setStyle('team1', {
                     'font-weight': styles.team1.fontWeight,

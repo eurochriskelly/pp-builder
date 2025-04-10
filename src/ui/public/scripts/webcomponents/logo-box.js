@@ -237,6 +237,22 @@ class LogoBox extends HTMLElement {
 
     getInitials(title) {
         if (!title) return '?';
+        
+        // Handle names with slashes differently
+        if (title.includes('/')) {
+            const parts = title.split('/');
+            let initials = '';
+            for (const part of parts) {
+                const trimmed = part.trim();
+                if (trimmed.length > 0) {
+                    initials += trimmed[0].toUpperCase();
+                    if (initials.length >= 3) break;
+                }
+            }
+            return initials || '?';
+        }
+        
+        // Original behavior for non-slash names
         const validChars = title.match(/[A-Z0-9]/g);
         return validChars ? validChars.join('').slice(0, 3) : '?';
     }
