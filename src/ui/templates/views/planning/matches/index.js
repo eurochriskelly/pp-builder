@@ -18,9 +18,9 @@ function processStage(stage) {
 
 // Improved hash function for better distribution
 function hashString(str) {
-    let hash = 17; // Start with a prime number seed
+    let hash = 17;
     for (let i = 0; i < str.length; i++) {
-        hash = (hash * 23 + str.charCodeAt(i)) & 0xFFFFFFFF; // Use 23 for better spread
+        hash = (hash * 23 + str.charCodeAt(i)) & 0xFFFFFFFF;
     }
     return hash;
 }
@@ -28,8 +28,8 @@ function hashString(str) {
 // Function to generate a consistent pastel color for categories/pitches or dark color for teams
 function getRandomColor(name, isTeam = false) {
     const hash = hashString(name || 'unknown');
-    const hue = hash % 360; // Keep hue in 0-359 range
-    return isTeam ? `hsl(${hue}, 50%, 30%)` : `hsl(${hue}, 40%, 75%)`; // Dark for teams, pastel for others
+    const hue = hash % 360;
+    return isTeam ? `hsl(${hue}, 50%, 30%)` : `hsl(${hue}, 40%, 75%)`;
 }
 
 // Style for pill-like display for categories and pitches
@@ -126,7 +126,7 @@ function generateUpcomingRow(row, index, tournamentId, isHidden, firstMatchId) {
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
       <td>${processStage(row.stage)}</td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
-      <td>${row.scheduledTime ? row.scheduledTime.substring(11).trim() : 'N/A'}</td>
+      <td>${row.scheduledTime || 'N/A'}</td>
       <td style="${team1CellStyle}"><team-name name="${row.team1}" maxchars="25"></team-name></td>
       <td style="${team2CellStyle}"><team-name name="${row.team2}" maxchars="25"></team-name></td>
       <td style="${umpireCellStyle}"><team-name name="${row.umpireTeam}" icon-only="true" showLogo="true"></team-name></td>
@@ -139,7 +139,6 @@ function generateFinishedRow(row, index, isHidden) {
     const rowStyle = `background-color: ${backgroundColor}; ${displayStyle}`;
     const categoryColor = getRandomColor(row.category);
     const pitchColor = getRandomColor(row.pitch);
-    const showTime = row.scheduledTime ? row.scheduledTime.substring(11).trim() : 'N/A';
     const rawTeam1Score = formatScore(row.goals1, row.points1);
     const rawTeam2Score = formatScore(row.goals2, row.points2);
     let team1Score = rawTeam1Score.replace('</span> <span>', '</span><br/><span>');
@@ -161,7 +160,7 @@ function generateFinishedRow(row, index, isHidden) {
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
       <td>${processStage(row.stage)}</td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
-      <td>${showTime}</td>
+      <td>${row.scheduledTime || 'N/A'}</td>
       <td><team-name direction="r2l" name="${row.team1}" maxchars="25"></team-name></td>
       <td style="${score1Style}">${team1Score}</td>
       <td style="${score2Style}">${team2Score}</td>
@@ -171,17 +170,15 @@ function generateFinishedRow(row, index, isHidden) {
 
 // ----- Main Exported Function -----
 module.exports = function generateMatchesPlanning(data) {
-    // Extract unique categories
     const categories = [...new Set(data.matches.map(match => match.category || 'Uncategorized'))].sort();
 
     let html = '<div id="planning-matches">';
     html += '<h2>Simulate running tournament</h2>';
     html += '<p>Simulate tournament scenarios by playing upcoming matches or import fixtures from a CSV.</p>';
 
-    // Add Category Filter Dropdown
     html += '<div class="mb-4">';
     html += '<label for="category-filter" class="mr-2 font-semibold">Filter by Category:</label>';
-    html += '<select id="category-filter" class="p-2 border border-gray-300 rounded" onchange="filterByCategory(this.value)">';
+    html += '<select id="category-filter" class="p-2 border border-gray-300 rounded" onchange="window.selectedCategory = this.value; filterByCategory(this.value)">';
     html += '<option value="">-- Select a Category --</option>';
     html += categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
     html += '</select>';
@@ -189,66 +186,52 @@ module.exports = function generateMatchesPlanning(data) {
 
     html += '<div class="mb-5 overflow-hidden">';
     html += '<button class="bg-red-500 text-white rounded px-3 py-2" hx-get="/planning/' + data.tournamentId + '/reset" hx-target="#planning-matches" hx-swap="outerHTML" hx-trigger="click" hx-on::after-request="htmx.ajax(\'GET\', \'/planning/' + data.tournamentId + '\', \'#planning-matches\')">Reset Tournament</button> ';
-    html += '<button class="bg-blue-500 text-white rounded px-3 py-2 ml-2" hx-post="/planning/' + data.tournamentId + '/simulate/1" hx-target="#planning-matches" hx-swap="outerHTML">Play Next Match</button> ';
+    html += '<button id="play-next-match-btn" class="bg-blue-500 text instantiation-white rounded px-3 py-2 ml-2" hx-post="/planning/' + data.tournamentId + '/simulate/1" hx-target="#planning-matches" hx-swap="outerHTML">Play Next Match</button> ';
     html += `<input type="number" id="play-n-matches-input" min="1" class="w-20 ml-2 p-2 bg-white border border-gray-300 rounded" placeholder="N"> `;
     html += `<button class="bg-green-500 text-white rounded px-3 py-2 ml-2" onclick="playNextNMatches(document.getElementById('play-n-matches-input').value, '${data.tournamentId}')">Play Next N Matches</button>`;
     html += '<button class="bg-orange-500 text-white rounded px-3 py-2 ml-2 float-right" hx-get="/planning/' + data.tournamentId + '/import-fixtures" hx-target="body" hx-swap="outerHTML">Import Fixtures</button>';
     html += '</div>';
 
-    // Split matches into upcoming and finished with deterministic sorting
     const upcomingMatches = data.matches
         .filter(match => match.started === 'false')
         .sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime) || a.id - b.id);
     const finishedMatches = data.matches
         .filter(match => match.started === 'true')
         .sort((a, b) => b.scheduledTime.localeCompare(a.scheduledTime) || b.id - a.id);
-    const totalMatches = data.matches.length; // Keep total count for reference if needed
 
-    // Upcoming Games table
-    html += `<h3 id="upcoming-header" style="font-size: 1.25em; margin-top: 30px;">UPCOMING GAMES (0)</h3>`; // Initial count 0
+    html += `<h3 id="upcoming-header" style="font-size: 1.25em; margin-top: 30px;">UPCOMING GAMES (0)</h3>`;
     html += '<table id="upcoming-table" style="width: 100%; border-collapse: collapse;">';
     const upcomingHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Team 2', 'Umpire'];
     html += `<thead><tr>${upcomingHeaders.map(h => `<th style="background-color: transparent; padding: 8px; text-align: left; border-bottom: 1px solid #ccc;">${h.toUpperCase()}</th>`).join('')}</tr></thead>`;
-    html += '<tbody>'; // Add tbody
+    html += '<tbody>';
     const firstUpcomingId = upcomingMatches[0] ? upcomingMatches[0].id : null;
     upcomingMatches.forEach((row, index) => {
-        // Generate all rows, but they will be hidden initially by filterByCategory('')
         html += generateUpcomingRow(row, index, data.tournamentId, true, firstUpcomingId);
     });
-    html += '</tbody></table>'; // Close tbody and table
-    // Show More/Less container for Upcoming
-    html += `<div id="show-more-container-upcoming" style="margin-top: 10px; text-align: center; display: none;">`; // Initially hidden
+    html += '</tbody></table>';
+    html += `<div id="show-more-container-upcoming" style="margin-top: 10px; text-align: center; display: none;">`;
     html += `<a id="show-more-upcoming" href="#" style="color: #3498db; text-decoration: underline;">Show More</a>`;
     html += `<a id="show-less-upcoming" href="#" style="color: #3498db; text-decoration: underline; display: none;">Show Less</a>`;
     html += `</div>`;
 
-
-    // Finished Games table
-    html += `<h3 id="finished-header" style="font-size: 1.25em; margin-top: 30px;">FINISHED GAMES (0)</h3>`; // Initial count 0
+    html += `<h3 id="finished-header" style="font-size: 1.25em; margin-top: 30px;">FINISHED GAMES (0)</h3>`;
     html += '<table id="finished-table" style="margin-top: 10px; width: 100%; border-collapse: collapse;">';
     const finishedHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Score', 'Team 2'];
     html += `<thead><tr>${finishedHeaders.map(h => `<th style="background-color: transparent; padding: 8px; text-align: left; border-bottom: 1px solid #ccc;">${h.toUpperCase()}</th>`).join('')}</tr></thead>`;
-    html += '<tbody>'; // Add tbody
+    html += '<tbody>';
     finishedMatches.forEach((row, index) => {
-        // Generate all rows, but they will be hidden initially by filterByCategory('')
         html += generateFinishedRow(row, index, true);
     });
-    html += '</tbody></table>'; // Close tbody and table
-    // Show More/Less container for Finished
-    html += `<div id="show-more-container-finished" style="margin-top: 10px; text-align: center; display: none;">`; // Initially hidden
+    html += '</tbody></table>';
+    html += `<div id="show-more-container-finished" style="margin-top: 10px; text-align: center; display: none;">`;
     html += `<a id="show-more-finished" href="#" style="color: #3498db; text-decoration: underline;">Show More</a>`;
     html += `<a id="show-less-finished" href="#" style="color: #3498db; text-decoration: underline; display: none;">Show Less</a>`;
     html += `</div>`;
 
-    html += '</div>'; // Close planning-matches div
+    html += '</div>';
 
-    // --- Inline JavaScript ---
     html += `
         <script>
-            // Store original matches data if needed elsewhere, or assume filterByCategory has access
-            // const allMatches = ${JSON.stringify(data.matches)}; // Optional: if needed
-
-            // Play N Matches function (existing)
             async function playNextNMatches(n, tournamentId) {
                 for (let i = 0; i < n; i++) {
                     await htmx.ajax('POST', '/planning/' + tournamentId + '/simulate/1', {
@@ -258,7 +241,13 @@ module.exports = function generateMatchesPlanning(data) {
                 }
             }
 
-            // --- Category Filtering Logic ---
+            function updatePlayNextEndpoint(category) {
+                const playNextButton = document.getElementById('play-next-match-btn');
+                const basePath = '/planning/${data.tournamentId}/simulate/1';
+                const newPath = category ? \`\${basePath}/\${encodeURIComponent(category)}\` : basePath;
+                playNextButton.setAttribute('hx-post', newPath);
+            }
+
             function filterByCategory(selectedCategory) {
                 const upcomingTableBody = document.querySelector('#upcoming-table tbody');
                 const finishedTableBody = document.querySelector('#finished-table tbody');
@@ -278,55 +267,39 @@ module.exports = function generateMatchesPlanning(data) {
                 let visibleFinishedCount = 0;
                 let totalFinishedInCategory = 0;
 
-                // Hide all rows initially within their respective tbodies
                 allUpcomingRows.forEach(row => row.style.display = 'none');
                 allFinishedRows.forEach(row => row.style.display = 'none');
 
                 if (selectedCategory) {
-                    // Filter and show upcoming rows
                     allUpcomingRows.forEach(row => {
                         if (row.dataset.category === selectedCategory) {
                             totalUpcomingInCategory++;
                             if (visibleUpcomingCount < 10) {
-                                row.style.display = ''; // Show row (default display)
+                                row.style.display = '';
                                 visibleUpcomingCount++;
-                            } else {
-                                row.style.display = 'none'; // Ensure it's hidden if beyond limit
                             }
                         }
                     });
-
-                    // Filter and show finished rows
                     allFinishedRows.forEach(row => {
                         if (row.dataset.category === selectedCategory) {
                             totalFinishedInCategory++;
                             if (visibleFinishedCount < 10) {
-                                row.style.display = ''; // Show row
+                                row.style.display = '';
                                 visibleFinishedCount++;
-                            } else {
-                                row.style.display = 'none'; // Ensure it's hidden if beyond limit
                             }
                         }
                     });
                 }
 
-                // Update headers
-                if (upcomingHeader) {
-                    upcomingHeader.textContent = \`UPCOMING GAMES (\${totalUpcomingInCategory})\`;
-                }
-                if (finishedHeader) {
-                    finishedHeader.textContent = \`FINISHED GAMES (\${totalFinishedInCategory})\`;
-                }
+                if (upcomingHeader) upcomingHeader.textContent = \`UPCOMING GAMES (\${totalUpcomingInCategory})\`;
+                if (finishedHeader) finishedHeader.textContent = \`FINISHED GAMES (\${totalFinishedInCategory})\`;
 
-                // Update Show More/Less for Upcoming
                 if (upcomingShowMoreContainer) {
                     if (totalUpcomingInCategory > 10) {
                         upcomingShowMoreContainer.style.display = 'block';
-                        const moreCount = totalUpcomingInCategory - 10;
-                        showMoreUpcomingLink.textContent = \`Show \${moreCount} More\`;
+                        showMoreUpcomingLink.textContent = \`Show \${totalUpcomingInCategory - 10} More\`;
                         showMoreUpcomingLink.style.display = 'inline-block';
                         showLessUpcomingLink.style.display = 'none';
-                        // Assign onclick handlers dynamically
                         showMoreUpcomingLink.onclick = (e) => { e.preventDefault(); showMoreRows('upcoming', selectedCategory); };
                         showLessUpcomingLink.onclick = (e) => { e.preventDefault(); showLessRows('upcoming', selectedCategory); };
                     } else {
@@ -334,53 +307,62 @@ module.exports = function generateMatchesPlanning(data) {
                     }
                 }
 
-                // Update Show More/Less for Finished
                 if (finishedShowMoreContainer) {
                     if (totalFinishedInCategory > 10) {
                         finishedShowMoreContainer.style.display = 'block';
-                        const moreCount = totalFinishedInCategory - 10;
-                        showMoreFinishedLink.textContent = \`Show \${moreCount} More\`;
+                        showMoreFinishedLink.textContent = \`Show \${totalFinishedInCategory - 10} More\`;
                         showMoreFinishedLink.style.display = 'inline-block';
                         showLessFinishedLink.style.display = 'none';
-                         // Assign onclick handlers dynamically
                         showMoreFinishedLink.onclick = (e) => { e.preventDefault(); showMoreRows('finished', selectedCategory); };
                         showLessFinishedLink.onclick = (e) => { e.preventDefault(); showLessRows('finished', selectedCategory); };
                     } else {
                         finishedShowMoreContainer.style.display = 'none';
                     }
                 }
+
+                updatePlayNextEndpoint(selectedCategory);
             }
 
             function showMoreRows(tableType, category) {
                 const tableBody = document.querySelector(\`#\${tableType}-table tbody\`);
                 const rows = tableBody ? tableBody.querySelectorAll(\`tr[data-category="\${category}"]\`) : [];
-                rows.forEach(row => row.style.display = ''); // Show all matching rows
+                rows.forEach(row => row.style.display = '');
                 document.getElementById(\`show-more-\${tableType}\`).style.display = 'none';
                 document.getElementById(\`show-less-\${tableType}\`).style.display = 'inline-block';
-                return false; // Prevent default link behavior
+                return false;
             }
 
             function showLessRows(tableType, category) {
                 const tableBody = document.querySelector(\`#\${tableType}-table tbody\`);
                 const rows = tableBody ? tableBody.querySelectorAll(\`tr[data-category="\${category}"]\`) : [];
                 rows.forEach((row, index) => {
-                    if (index >= 10) {
-                        row.style.display = 'none';
-                    } else {
-                         row.style.display = ''; // Ensure first 10 are visible
-                    }
+                    if (index >= 10) row.style.display = 'none';
+                    else row.style.display = '';
                 });
                 document.getElementById(\`show-more-\${tableType}\`).style.display = 'inline-block';
                 document.getElementById(\`show-less-\${tableType}\`).style.display = 'none';
-                return false; // Prevent default link behavior
+                return false;
             }
 
-            // Initial call to hide everything after the DOM is ready
-            // Using setTimeout to ensure DOM elements are available after initial render
-            setTimeout(() => {
-                 filterByCategory(''); // Hide all on load by default
-            }, 0);
+            // Initialize category on load
+            window.addEventListener('load', () => {
+                const categoryFilter = document.getElementById('category-filter');
+                if (window.selectedCategory && categoryFilter) {
+                    categoryFilter.value = window.selectedCategory;
+                    filterByCategory(window.selectedCategory);
+                } else {
+                    filterByCategory('');
+                }
+            });
 
+            // Reapply after HTMX swap
+            document.body.addEventListener('htmx:afterSwap', () => {
+                const categoryFilter = document.getElementById('category-filter');
+                if (window.selectedCategory && categoryFilter) {
+                    categoryFilter.value = window.selectedCategory;
+                    filterByCategory(window.selectedCategory);
+                }
+            });
         </script>
     `;
 

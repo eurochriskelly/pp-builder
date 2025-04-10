@@ -13,7 +13,7 @@ export const play = async (
     if (nextMatch.length) {
       const match = nextMatch[0]
       console.log(`Playing match [${match.matchId}]`)
-      await playMatch(match, '0-01/0-03');
+      await playMatch(match, '0-01/0-03', category);
       if (n < count) {
         await play(n + 1)
       }

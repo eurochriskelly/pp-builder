@@ -10,7 +10,7 @@ async function getSchedule(id, category) {
     }
 }
 
-async function playMatch(fixture, score) {
+async function playMatch(fixture, score, category) {
     const generateTeamData = (name1, name2) => {
         const getRandomInt = max => Math.floor(Math.random() * max);
         const safeName1 = name1 && typeof name1 === 'string' ? name1 : 'Team1';
@@ -26,7 +26,7 @@ async function playMatch(fixture, score) {
         return;
     }
     try {
-        const res = await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/start`);
+        const res = await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/start?category=category`);
         const data = generateTeamData(team1, team2);
         await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/score`, data);
     } catch (error) {

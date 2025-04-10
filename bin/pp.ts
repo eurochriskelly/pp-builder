@@ -52,7 +52,6 @@ const main = async () => {
             const restHost = options.restHost || '192.168.1.147';
             process.env['PP_DB_HOST'] = restHost
             process.env['PP_DB_PORT'] = restPort
-            process.env['PP_DB_PORT3'] = restPort
             const bypassAuth = !!options.bypassAuth;
             console.log(`Starting web server on port ${port} with REST API at ${restHost}:${restPort}${bypassAuth ? ' with authentication bypassed' : ''}`);
             // Run server directly

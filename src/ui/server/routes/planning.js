@@ -46,7 +46,6 @@ router.get('/planning/:id/matches', async (req, res) => {
         // Get the official nextup order from API
         const nextupResponse = await apiRequest('get', `/tournaments/${tournamentId}/fixtures/nextup`);
         const nextupOrder = nextupResponse.data.map(m => m.id);
-
         const isLoggedIn = !!req.session.user;
         const content = generateMatchesPlanning({ 
             tournamentId, 
@@ -59,7 +58,7 @@ router.get('/planning/:id/matches', async (req, res) => {
           ${generateFooter()}`;
         res.send(html);
     } catch (error) {
-        console.error('Error in /planning/:id:', error.message);
+        console.error('Error in /planning/:id/matches:', error.message);
         res.status(500).send('Server Error');
     }
 });
@@ -78,13 +77,13 @@ router.get('/planning/:id/reset', async (req, res) => {
         res.status(500).send('Reset Error');
     }
 });
-
-router.post('/planning/:id/simulate/:count', async (req, res) => {
+const fnSimulate = async (req, res) => {
     const tournamentId = parseInt(req.params.id, 10);
     const count = parseInt(req.params.count, 10);
+    const { category } = req.params
     try {
         console.log(`Simulating ${count} matches for tournament ${tournamentId}...`);
-        await play(tournamentId, null, count);
+        await play(tournamentId, category, count);
         const matches = await getAllMatches(tournamentId);
         console.log(`Post-simulation matches: ${matches.length} found`);
         const content = generateMatchesPlanning({ tournamentId, matches });
@@ -93,8 +92,9 @@ router.post('/planning/:id/simulate/:count', async (req, res) => {
         console.error('Error simulating matches:', error.message);
         res.status(500).send('Simulation Error');
     }
-});
-
+}
+router.post('/planning/:id/simulate/:count/', fnSimulate);
+router.post('/planning/:id/simulate/:count/:category', fnSimulate);
 
 router.get('/planning/create-tournament', (req, res) => {
     const isLoggedIn = !!req.session.user;
