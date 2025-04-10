@@ -3,6 +3,7 @@ module.exports = function generateImportFixtures(
   csvData = null, 
   validationResult = null
 ) {
+    console.log(csvData)
   let html = `
     <div id="import-fixtures" class="p-4 max-w-5xl mx-auto">
       <h2 class="text-2xl font-bold mb-2">Import Fixtures for Tournament ${tournamentId}</h2>

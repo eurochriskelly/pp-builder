@@ -18,4 +18,6 @@ function createTournamentRow({ id, title, date, location, eventUuid, isLoggedIn 
   `;
 }
 
-module.exports = { createTournamentRow };
+module.exports = {
+  createTournamentRow
+}
