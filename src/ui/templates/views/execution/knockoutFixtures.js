@@ -17,9 +17,9 @@ function createKnockoutTable(categoryData) {
     table.addHeaders({
         team1: { label: 'Team 1', align: 'left', width: '35%' },
         score1: { label: 'Score 1', align: 'center', width: '10%' },
-        winner1: { label: '', align: 'left', width: '3%' },
+        rank1: { label: 'R', align: 'left', width: '3%' },
         stage: { label: 'Stage', align: 'center', width: '4%' },
-        winner2: { label: '', align: 'right', width: '3%' },
+        rank2: { label: 'R', align: 'right', width: '3%' },
         score2: { label: 'Score 2', align: 'center', width: '10%' },
         team2: { label: 'Team 2', align: 'left', width: '35%' }
     })
@@ -49,13 +49,13 @@ function createKnockoutTable(categoryData) {
 
         const utilRow = new UtilRow()
             .setFields({
-                team1: `<team-name name="${row.team1}" direction="r2l" />`,
-                score1: new ScoreData(row.goals1, row.points1),
-                winner1: team1Won ? '◄' : '',
+                team1: `<team-name name="${team1Won ? row.team1 : row.team2}" direction="r2l" />`,
+                score1: new ScoreData(team1Won ? row.goals1 : row.goals2, team1Won ? row.points1 : row.points2),
+                rank1: 'R',
                 stage: row.stage ? abbreviateStage(row.stage) : 'N/A',
-                winner2: team2Won ? '►' : '',
-                score2: new ScoreData(row.goals2, row.points2),
-                team2: `<team-name name="${row.team2}" />`
+                rank2: 'R',
+                score2: new ScoreData(team1Won ? row.goals2 : row.goals1, team1Won ? row.points2 : row.points1),
+                team2: `<team-name name="${team1Won ? row.team2 : row.team1}" />`
             })
             .setStyle('team1', {
                 'font-weight': styles.team1.fontWeight,
@@ -75,14 +75,14 @@ function createKnockoutTable(categoryData) {
                 'font-weight': styles.team2.fontWeight,
                 'color': score2ExtraClass
             })
-            .setStyle('winner1', {
+            .setStyle('rank1', {
                 'padding': '0',
                 'margin': '0',
                 'font-size': '1em',
                 'vertical-align': 'middle',
                 'line-height': '1.2'
             })
-            .setStyle('winner2', {
+            .setStyle('rank2', {
                 'padding': '0',
                 'margin': '0',
                 'font-size': '1em',

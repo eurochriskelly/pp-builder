@@ -56,12 +56,12 @@ WithSlash.storyName = 'With Slash';
 export const MultipleTeamsOrder1 = MultiTemplate.bind({});
 MultipleTeamsOrder1.args = {
     teams: [
-        { name: 'Wolverhampton Wanderers F.C.', showLogo: true, height: '30px' },
+        { name: 'Wolverhampton Wanderers F.C.', showLogo: true, height: '30px', maxchars: '20' },
         { name: 'Manchester United', showLogo: true, height: '30px' },
-        { name: 'Chelsea/London F.C.', showLogo: true, height: '30px' },
+        { name: 'Chelsea/London F.C.', showLogo: true, height: '30px', maxchars: '15' },
         { name: 'Arsenal F.C.', showLogo: true, height: '30px' },
         { name: 'Arsenal F.C.', direction: 'r2l', showLogo: true, height: '30px' },
-        { name: 'Foo/Bar United', showLogo: true, height: '30px' },
+        { name: 'Foo/Bar United', showLogo: true, height: '30px', maxchars: '10' },
     ],
 };
 MultipleTeamsOrder1.storyName = 'Multiple Teams (Order 1)';

@@ -5,7 +5,7 @@ class TeamName extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['name', 'showLogo', 'height', 'direction'];
+        return ['name', 'showLogo', 'height', 'direction', 'maxchars'];
     }
 
     connectedCallback() {
@@ -19,13 +19,24 @@ class TeamName extends HTMLElement {
     renderNameParts(name) {
         if (!name) return '<span>?</span>';
 
-        const parts = name.split('/');
-        if (parts.length === 1) return `<span>${name}</span>`;
+        const maxChars = parseInt(this.getAttribute('maxchars')) || 0;
+        let displayName = name;
+        let isTruncated = false;
+        
+        if (maxChars > 0 && name.length > maxChars) {
+            displayName = name.substring(0, maxChars);
+            isTruncated = true;
+        }
+
+        const parts = displayName.split('/');
+        if (parts.length === 1) {
+            return `<span title="${isTruncated ? name : ''}">${displayName}${isTruncated ? '<span style="color:pink">→</span>' : ''}</span>`;
+        }
 
         return parts.map((part, index) =>
             index === 0
-                ? `<span>${part}</span>`
-                : `<span style="color:pink;margin:0.3rem">/</span><span>${part}</span>`
+                ? `<span title="${isTruncated ? name : ''}">${part}</span>`
+                : `<span style="color:pink;margin:0.3rem">/</span><span title="${isTruncated ? name : ''}">${part}${isTruncated && index === parts.length - 1 ? '<span style="color:pink">→</span>' : ''}</span>`
         ).join('');
     }
 
