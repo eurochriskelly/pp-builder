@@ -26,7 +26,8 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
     const loginItems = isLoggedIn
       ? [{ label: 'Log Out', href: '/logout', hxAttrs: 'hx-get="/logout" hx-target="body" hx-swap="outerHTML"' }]
       : [
-          { label: 'Log In', href: '#', hxAttrs: 'hx-post="/login" hx-target="body" hx-swap="outerHTML"' }, // Simplified; add form logic in component if needed
+          // Changed hx-post to hx-get to fetch the login form first
+          { label: 'Log In', href: '/login', hxAttrs: 'hx-get="/login" hx-target="body" hx-swap="outerHTML"' },
           { label: 'Request Access', href: '/request-access', hxAttrs: 'hx-get="/request-access" hx-target="body" hx-swap="outerHTML"' }
         ];
 
@@ -38,7 +39,11 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
             <nav-dropdown title="${area === 'planning' ? 'Planning' : 'Execution'}" items='${JSON.stringify(areaItems)}'></nav-dropdown>
           ` : ''}
         </div>
-        <nav-dropdown title="${isLoggedIn ? 'Log Out' : 'Log In'}" items='${JSON.stringify(loginItems)}'></nav-dropdown>
+        ${isLoggedIn ? `
+          <a href="/logout" hx-get="/logout" hx-target="body" hx-swap="outerHTML" class="navbar-link px-3 py-2 rounded-md text-sm font-medium text-white hover:text-gray-300 hover:bg-gray-700">Log Out</a>
+        ` : `
+          <nav-dropdown title="Account" items='${JSON.stringify(loginItems)}'></nav-dropdown> 
+        `}
       </nav>
       <hr/>
     `;

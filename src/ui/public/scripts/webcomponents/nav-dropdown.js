@@ -44,7 +44,15 @@ class NavDropdown extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         .dropdown { position: relative; display: inline-block; }
-        .dropdown-toggle { cursor: pointer; }
+        /* Make the dropdown title link white */
+        .dropdown-toggle { 
+          cursor: pointer; 
+          color: white !important; /* Added !important */
+          text-decoration: none; /* Added for consistency */
+        }
+        .dropdown-toggle:hover {
+          color: lightgray; /* Added hover effect */
+        }
         .dropdown-content {
           display: ${this.isOpen ? 'block' : 'none'};
           position: absolute;
