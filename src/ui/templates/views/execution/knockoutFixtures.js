@@ -47,15 +47,37 @@ function createKnockoutTable(categoryData) {
         const team2Won = row.outcome === 'played' && 
             new ScoreData(row.goals2, row.points2).total > new ScoreData(row.goals1, row.points1).total;
 
+        // Determine winner and loser
+        let winner, loser, winnerScore, loserScore;
+        if (row.outcome === 'played') {
+            if (new ScoreData(row.goals1, row.points1).total > new ScoreData(row.goals2, row.points2).total) {
+                winner = row.team1;
+                winnerScore = new ScoreData(row.goals1, row.points1);
+                loser = row.team2;
+                loserScore = new ScoreData(row.goals2, row.points2);
+            } else {
+                winner = row.team2;
+                winnerScore = new ScoreData(row.goals2, row.points2);
+                loser = row.team1;
+                loserScore = new ScoreData(row.goals1, row.points1);
+            }
+        } else {
+            // For non-played matches (walkovers, etc), keep original order
+            winner = row.team1;
+            winnerScore = new ScoreData(row.goals1, row.points1);
+            loser = row.team2;
+            loserScore = new ScoreData(row.goals2, row.points2);
+        }
+
         const utilRow = new UtilRow()
             .setFields({
-                team1: `<team-name name="${team1Won ? row.team1 : row.team2}" direction="r2l" />`,
-                score1: new ScoreData(team1Won ? row.goals1 : row.goals2, team1Won ? row.points1 : row.points2),
+                team1: `<team-name name="${winner}" direction="r2l" />`,
+                score1: winnerScore,
                 rank1: 'R',
                 stage: row.stage ? abbreviateStage(row.stage) : 'N/A',
                 rank2: 'R',
-                score2: new ScoreData(team1Won ? row.goals2 : row.goals1, team1Won ? row.points2 : row.points1),
-                team2: `<team-name name="${team1Won ? row.team2 : row.team1}" />`
+                score2: loserScore,
+                team2: `<team-name name="${loser}" />`
             })
             .setStyle('team1', {
                 'font-weight': styles.team1.fontWeight,
