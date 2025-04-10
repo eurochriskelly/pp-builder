@@ -111,3 +111,154 @@ CompareRTL.args = {
   layout: 'compare-rtl',
 };
 CompareRTL.storyName = 'Compare RTL';
+
+export const UnplayedScenarios = {
+  render: () => {
+    const container = document.createElement('div');
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    container.style.gap = '20px';
+    container.style.padding = '20px';
+    container.style.backgroundColor = '#f5f5f5';
+    container.style.borderRadius = '8px';
+
+    // Walkover scenarios
+    const walkoverWinner = document.createElement('gaelic-score');
+    walkoverWinner.setAttribute('goals', '0');
+    walkoverWinner.setAttribute('points', '1');
+    walkoverWinner.setAttribute('goalsagainst', '0');
+    walkoverWinner.setAttribute('pointsagainst', '0');
+    walkoverWinner.setAttribute('played', 'false');
+    walkoverWinner.setAttribute('layout', 'compare');
+    container.appendChild(walkoverWinner);
+
+    const walkoverLoser = document.createElement('gaelic-score');
+    walkoverLoser.setAttribute('goals', '0');
+    walkoverLoser.setAttribute('points', '0');
+    walkoverLoser.setAttribute('goalsagainst', '0');
+    walkoverLoser.setAttribute('pointsagainst', '1');
+    walkoverLoser.setAttribute('played', 'false');
+    walkoverLoser.setAttribute('layout', 'compare');
+    container.appendChild(walkoverLoser);
+
+    // SCR scenarios
+    const scrWinner = document.createElement('gaelic-score');
+    scrWinner.setAttribute('goals', '0');
+    scrWinner.setAttribute('points', '1');
+    scrWinner.setAttribute('goalsagainst', '0');
+    scrWinner.setAttribute('pointsagainst', '0');
+    scrWinner.setAttribute('played', 'false');
+    scrWinner.setAttribute('layout', 'compare');
+    container.appendChild(scrWinner);
+
+    const scrLoser = document.createElement('gaelic-score');
+    scrLoser.setAttribute('goals', '0');
+    scrLoser.setAttribute('points', '0');
+    scrLoser.setAttribute('goalsagainst', '0');
+    scrLoser.setAttribute('pointsagainst', '1');
+    scrLoser.setAttribute('played', 'false');
+    scrLoser.setAttribute('layout', 'compare');
+    container.appendChild(scrLoser);
+
+    // Share scenarios
+    const share1 = document.createElement('gaelic-score');
+    share1.setAttribute('goals', '0');
+    share1.setAttribute('points', '0');
+    share1.setAttribute('goalsagainst', '0');
+    share1.setAttribute('pointsagainst', '0');
+    share1.setAttribute('played', 'false');
+    share1.setAttribute('layout', 'compare');
+    container.appendChild(share1);
+
+    const share2 = document.createElement('gaelic-score');
+    share2.setAttribute('goals', '0');
+    share2.setAttribute('points', '0');
+    share2.setAttribute('goalsagainst', '0');
+    share2.setAttribute('pointsagainst', '0');
+    share2.setAttribute('played', 'false');
+    share2.setAttribute('layout', 'compare');
+    container.appendChild(share2);
+
+    return container;
+  },
+};
+UnplayedScenarios.storyName = 'Unplayed Scenarios';
+
+export const UnplayedLayouts = {
+  render: () => {
+    const container = document.createElement('div');
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    container.style.gap = '20px';
+    container.style.padding = '20px';
+    container.style.backgroundColor = '#f5f5f5';
+    container.style.borderRadius = '8px';
+
+    // Show different layouts for unplayed matches
+    const defaultLayout = document.createElement('gaelic-score');
+    defaultLayout.setAttribute('goals', '0');
+    defaultLayout.setAttribute('points', '0');
+    defaultLayout.setAttribute('goalsagainst', '0');
+    defaultLayout.setAttribute('pointsagainst', '0');
+    defaultLayout.setAttribute('played', 'false');
+    container.appendChild(defaultLayout);
+
+    const overLayout = document.createElement('gaelic-score');
+    overLayout.setAttribute('goals', '0');
+    overLayout.setAttribute('points', '0');
+    overLayout.setAttribute('goalsagainst', '0');
+    overLayout.setAttribute('pointsagainst', '0');
+    overLayout.setAttribute('played', 'false');
+    overLayout.setAttribute('layout', 'over');
+    container.appendChild(overLayout);
+
+    const rtlLayout = document.createElement('gaelic-score');
+    rtlLayout.setAttribute('goals', '0');
+    rtlLayout.setAttribute('points', '0');
+    rtlLayout.setAttribute('goalsagainst', '0');
+    rtlLayout.setAttribute('pointsagainst', '0');
+    rtlLayout.setAttribute('played', 'false');
+    rtlLayout.setAttribute('layout', 'r2l');
+    container.appendChild(rtlLayout);
+
+    return container;
+  },
+};
+UnplayedLayouts.storyName = 'Unplayed Layouts';
+
+export const TransparencyMatrix = {
+  render: () => {
+    const container = document.createElement('div');
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = 'repeat(6, 1fr)';
+    container.style.gap = '10px';
+    container.style.padding = '20px';
+    container.style.backgroundColor = '#f5f5f5';
+    container.style.borderRadius = '8px';
+
+    // Create positive difference matrix (0 to +50 in 5 steps)
+    for (let diff = 0; diff <= 50; diff += 5) {
+      const el = document.createElement('gaelic-score');
+      el.setAttribute('goals', '3');
+      el.setAttribute('points', '4');
+      el.setAttribute('goalsagainst', '3');
+      el.setAttribute('pointsagainst', (4 - diff).toString());
+      el.setAttribute('layout', 'compare');
+      container.appendChild(el);
+    }
+
+    // Create negative difference matrix (0 to -50 in 5 steps)
+    for (let diff = 0; diff <= 50; diff += 5) {
+      const el = document.createElement('gaelic-score');
+      el.setAttribute('goals', '3');
+      el.setAttribute('points', '4');
+      el.setAttribute('goalsagainst', '3');
+      el.setAttribute('pointsagainst', (4 + diff).toString());
+      el.setAttribute('layout', 'compare');
+      container.appendChild(el);
+    }
+
+    return container;
+  },
+};
+TransparencyMatrix.storyName = 'Transparency Matrix';

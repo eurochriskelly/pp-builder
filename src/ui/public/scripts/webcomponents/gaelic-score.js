@@ -1,6 +1,6 @@
 class GaelicScore extends HTMLElement {
   static get observedAttributes() {
-    return ['goals', 'points', 'layout', 'scale', 'goalsagainst', 'pointsagainst'];
+    return ['goals', 'points', 'layout', 'scale', 'goalsagainst', 'pointsagainst', 'played'];
   }
 
   constructor() {
@@ -24,8 +24,25 @@ class GaelicScore extends HTMLElement {
 
     const goalsAgainst = parseInt(this.getAttribute('goalsagainst') || '0', 10);
     const pointsAgainst = parseInt(this.getAttribute('pointsagainst') || '0', 10);
+    const played = this.getAttribute('played') !== 'false';
 
-    console.log('goalsagainst', goalsAgainst)
+    // Handle unplayed matches
+    if (!played) {
+      // Check for walkover scenario (0-1 vs 0-0)
+      if (goals === 0 && points === 1 && goalsAgainst === 0 && pointsAgainst === 0) {
+        this.shadowRoot.innerHTML = '<div class="unplayed">WALK OVER</div>';
+        return;
+      }
+      if (goals === 0 && points === 0 && goalsAgainst === 0 && pointsAgainst === 1) {
+        this.shadowRoot.innerHTML = '<div class="unplayed">SCR</div>';
+        return;
+      }
+      // Check for shared points scenario (0-0 vs 0-0)
+      if (goals === 0 && points === 0 && goalsAgainst === 0 && pointsAgainst === 0) {
+        this.shadowRoot.innerHTML = '<div class="unplayed">SHARE</div>';
+        return;
+      }
+    }
 
     const total = goals * 3 + points;
     const totalAgainst = goalsAgainst * 3 + pointsAgainst;
@@ -56,7 +73,7 @@ class GaelicScore extends HTMLElement {
         let diffText = '';
         let diffClass = '';
         const absDiff = Math.abs(diff);
-        const opacity = Math.min(50, Math.max(10, Math.floor(absDiff / 2) * 10));
+        let opacity = Math.min(75, Math.max(25, Math.floor(absDiff) * 5));
         
         if (diff > 0) {
           diffText = `+${diff}`;
@@ -67,12 +84,11 @@ class GaelicScore extends HTMLElement {
         } else {
           diffText = `=`;
           diffClass = 'blue';
+          opacity = 50; // Force 50% opacity for draws
         }
 
-        const textColor = opacity < 70 ? 'black' : 'white';
         this.classList.add(diffClass);
         this.style.setProperty('--opacity', opacity);
-        this.style.setProperty('--text-color', textColor);
         
         const topRow = `<div class="compare-top">${goalStr} - ${pointStr}</div>`;
         const bottomRow = `<div class="compare-bottom"><span class="difference">${diffText}</span></div>`;
@@ -141,11 +157,15 @@ class GaelicScore extends HTMLElement {
             background: rgba(33, 150, 243, calc(var(--opacity) / 100));
           }
 
+          .compare-top {
+            color: white;
+          }
+          
           .difference {
             display: inline-block;
-            color: var(--text-color, white);
+            color: black;
             font-weight: normal;
-            font-size: 1em; /* Adjusted to match new base size */
+            font-size: 1em;
             min-width: 2em;
             text-align: center;
             padding: 0.7rem;
@@ -157,6 +177,14 @@ class GaelicScore extends HTMLElement {
             color: hotpink;
             padding: 0 0.2em;
             font-weight: bold;
+          }
+
+          .unplayed {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #666;
+            padding: 0.5em;
           }
         </style>
       ${content}
