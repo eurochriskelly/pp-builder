@@ -50,7 +50,7 @@ class TeamName extends HTMLElement {
 
         const marginSide = `calc(${height} / 2)`;
         const logoSize = `calc(${height} * 1.4)`;
-        const spacerWidth = `calc(${logoSize} * ${completion - 1})`;
+        const spacerWidth = `calc(${logoSize} * ${completion - 1} * 1.3)`;
 
         const containerStyle = `
             display: flex;
@@ -60,7 +60,7 @@ class TeamName extends HTMLElement {
             text-align: ${isR2L ? 'right' : 'left'};
             white-space: nowrap;
             overflow: hidden;
-            max-width: 100%;
+            width: 100%;
         `;
 
         const logoMarginStyle = `margin-${isR2L ? 'left' : 'right'}: ${marginSide}; flex-shrink: 0;`;
@@ -76,19 +76,21 @@ class TeamName extends HTMLElement {
                 }
             </style>
             <span class="container" style="${containerStyle}">
-                ${isR2L ? '' : `
-                    <span class="spacer" style="width: ${spacerWidth}; flex-shrink: 0;"></span>
-                `}
+                ${completion > 1 ? `
+                    <span class="spacer" style="width: ${spacerWidth}; flex-shrink: 0; display: flex; align-items: center; justify-content: center;"></span>
+                ` : ''}
                 ${showLogo ? `
-                    <span class="logo-container" style="${logoMarginStyle}">
+                    <span class="logo-container" style="${logoMarginStyle}; flex-shrink: 0;">
                         <logo-box size="${logoSize}" title="${name}"></logo-box>
                     </span>
                 ` : ''}
-                <span class="name-container">
-                    ${this.renderNameParts(name)}
+                <span class="name-container" style="flex-grow: 1; min-width: 0; display: flex; justify-content: ${isR2L ? 'flex-end' : 'flex-start'};">
+                    <span style="text-align: left;">
+                        ${this.renderNameParts(name)}
+                    </span>
                 </span>
-                ${isR2L ? `
-                    <span class="spacer" style="width: ${spacerWidth}; flex-shrink: 0;"></span>
+                ${!isR2L ? `
+                    <span class="expandable" style="width: ${spacerWidth}; flex-shrink: 0; background: blue;"></span>
                 ` : ''}
             </span>
         `;

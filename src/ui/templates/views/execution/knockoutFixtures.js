@@ -34,13 +34,13 @@ function createKnockoutTable(categoryData) {
     const teamLastFixtures = getTeamLastFixtures(categoryData);
     
     table.addHeaders({
-        team1: { label: 'Team 1', align: 'left', width: '35%' },
-        score1: { label: 'Score 1', align: 'center', width: '10%' },
+        team1: { label: 'Team 1', align: 'left', width: 'auto' },
+        score1: { label: 'Score 1', align: 'center', width: '80px' },
         rank1: { label: 'X', align: 'left', width: '3%' },
         stage: { label: 'Stage', align: 'center', width: '4%' },
         rank2: { label: 'X', align: 'right', width: '3%' },
-        score2: { label: 'Score 2', align: 'center', width: '10%' },
-        team2: { label: 'Team 2', align: 'left', width: '35%' }
+        score2: { label: 'Score 2', align: 'center', width: '80px' },
+        team2: { label: 'Team 2', align: 'left', width: 'auto' }
     })
     .noHeader();
 
@@ -108,21 +108,21 @@ function createKnockoutTable(categoryData) {
  
         // Calculate indent width for staggered display (earlier rounds = more indent)
         // progression: 1=final, 2=semi/3rd4th, 3=quarter
-        // indent: 0rem for final, 1.5rem for semi, 3rem for quarter
-        const indentMultiplier = 1.5; 
-        const indentWidth = progression > 0 ? (progression - 1) * indentMultiplier : 0;
-        const spacerHtml = `<span style="display: inline-block; width: ${indentWidth}rem;"></span>`;
+        // indent: 0rem for final, 1.5rem for semi, 3rem for quarter (Handled by team-name component now)
+        // Removed spacerHtml calculation
  
         const utilRow = new UtilRow()
             .setFields({
-                team1: `<team-name name="${team1}" direction="r2l"></team-name>`,
+                // Add completion attribute based on progression
+                team1: `<team-name name="${team1}" direction="r2l" completion="${progression}"></team-name>`,
                 score1: score1,
                 rank1: isTeam1Last ? 'X' : '',
                 stage: row.stage ? abbreviateStage(row.stage) : 'N/A',
                 rank2: isTeam2Last ? 'X' : '',
                 score2: score2,
-                team2: `<team-name name="${team2}"></team-name>`,
-                spacer: spacerHtml // Add spacer as a separate field
+                // Add completion attribute based on progression
+                team2: `<team-name name="${team2}" completion="${progression}"></team-name>`,
+                // Removed spacer field
             })
             .setStyle('team1', {
                 'font-weight': 'bold',
@@ -160,7 +160,8 @@ function createKnockoutTable(categoryData) {
                 'font-size': '0.9em',
                 'font-weight': 'bold',
                 'color': '#666'
-            });
+            })
+            .setRawData(row); // Store the original row data
 
         table.addRow(utilRow);
     });
@@ -202,6 +203,29 @@ module.exports = function generateKnockoutFixtures(data) {
         html += '<p>No knockout fixtures found.</p>';
     }
 
-    html += '</div>';
+    html += `
+    </div>
+    <script>
+        (function() {
+            const tables = document.querySelectorAll('#knockout-fixtures .fixtures-table');
+            tables.forEach(table => {
+                table.addEventListener('click', function(event) {
+                    const clickedRow = event.target.closest('tr.clickable-row');
+                    if (clickedRow) {
+                        const fixtureDataString = clickedRow.getAttribute('data-fixture');
+                        if (fixtureDataString) {
+                            try {
+                                const fixtureData = JSON.parse(fixtureDataString);
+                                console.log('Clicked Fixture Data:', fixtureData);
+                            } catch (e) {
+                                console.error('Error parsing fixture data from row:', e, fixtureDataString);
+                            }
+                        }
+                    }
+                });
+            });
+        })();
+    </script>
+    `;
     return html;
 };

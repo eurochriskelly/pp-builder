@@ -12,6 +12,14 @@ export default {
             control: { type: 'radio' },
             options: ['l2r', 'r2l'],
             description: 'Direction of layout: left-to-right or right-to-left',
+        },
+        completion: {
+            control: { type: 'number', min: 1, max: 3, step: 1 },
+            description: 'Spacing level (1-3)',
+        },
+        maxchars: {
+            control: { type: 'number' },
+            description: 'Max characters before truncation',
         }
     },
 };
@@ -30,12 +38,14 @@ const MultiTemplate = ({ teams }) => {
     container.style.flexDirection = 'column';
     container.style.gap = '10px';
     container.style.width = '300px';
-    teams.forEach(({ name, showLogo, height, direction }) => {
+    teams.forEach(({ name, showLogo, height, direction, completion, maxchars }) => {
         const element = document.createElement('team-name');
         element.setAttribute('name', name);
         element.setAttribute('showLogo', showLogo.toString());
         if (height) element.setAttribute('height', height);
         if (direction) element.setAttribute('direction', direction);
+        if (completion) element.setAttribute('completion', completion);
+        if (maxchars) element.setAttribute('maxchars', maxchars);
         container.appendChild(element);
     });
     return container;
@@ -78,18 +88,18 @@ MultipleTeamsOrder2.args = {
 };
 MultipleTeamsOrder2.storyName = 'Multiple Teams (Order 2 - Shuffled)';
 
-export const CompletionExamples = MultiTemplate.bind({});
-CompletionExamples.args = {
+export const SpacingDebug = MultiTemplate.bind({});
+SpacingDebug.args = {
     teams: [
-        { name: 'Team A (completion=1)', showLogo: true, height: '30px', completion: 1 },
-        { name: 'Team B (completion=2)', showLogo: true, height: '30px', completion: 2 },
-        { name: 'Team C (completion=3)', showLogo: true, height: '30px', completion: 3 },
-        { name: 'Team D (r2l completion=1)', showLogo: true, height: '30px', direction: 'r2l', completion: 1 },
-        { name: 'Team E (r2l completion=2)', showLogo: true, height: '30px', direction: 'r2l', completion: 2 },
-        { name: 'Team F (r2l completion=3)', showLogo: true, height: '30px', direction: 'r2l', completion: 3 },
+        { name: 'Team 1', showLogo: true, height: '30px', completion: 1 },
+        { name: 'Team 2', showLogo: true, height: '30px', completion: 2 },
+        { name: 'Team 3', showLogo: true, height: '30px', completion: 3 },
+        { name: 'Team 4', showLogo: true, height: '30px', direction: 'r2l', completion: 1 },
+        { name: 'Team 5', showLogo: true, height: '30px', direction: 'r2l', completion: 2 },
+        { name: 'Team 6', showLogo: true, height: '30px', direction: 'r2l', completion: 3 },
     ],
 };
-CompletionExamples.storyName = 'Completion Attribute Examples';
+SpacingDebug.storyName = 'Spacing Debug (Visible Spacers)';
 
 export const EdgeCases = MultiTemplate.bind({});
 EdgeCases.args = {

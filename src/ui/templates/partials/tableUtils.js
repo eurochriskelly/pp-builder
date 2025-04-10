@@ -59,6 +59,16 @@ class UtilRow {
     getStyle(key) {
         return this.styles.get(key) || {};
     }
+
+    // Add methods for raw data
+    setRawData(data) {
+        this.rawData = data;
+        return this;
+    }
+
+    getRawData() {
+        return this.rawData;
+    }
 }
 
 // Main table utility class
@@ -96,16 +106,11 @@ class UtilTable {
         return this;
     }
 
-    // Modified to accept the row object
-    generateCell(content, headerKey, row) {
+    // Reverted: Does not accept row object anymore
+    generateCell(content, headerKey) {
         const header = this.headers.get(headerKey) || {};
         const style = {};
-        let spacerHtml = ''; // Initialize spacer HTML
-
-        // Check if this cell needs a spacer and retrieve it from the row
-        if ((headerKey === 'team1' || headerKey === 'team2') && row) {
-            spacerHtml = row.getField('spacer') || '';
-        }
+        // Removed spacerHtml logic
         let className = header.className || '';
         let cellContent = (content === null || content === undefined) ? 'N/A' : content;
 
@@ -169,8 +174,8 @@ class UtilTable {
         // Only remove borders if they're not explicitly set
         const borderLeft = style['border-left'] ? '' : 'border-left: none;';
         const borderRight = style['border-right'] ? '' : 'border-right: none;';
-        // Append spacer HTML if it exists
-        return `<td class="${className.trim()}" style="${styleStr}; ${borderLeft} ${borderRight}">${cellContent}${spacerHtml}</td>`;
+        // Reverted: Removed spacerHtml
+        return `<td class="${className.trim()}" style="${styleStr}; ${borderLeft} ${borderRight}">${cellContent}</td>`;
     }
 
     toHTML() {
@@ -200,12 +205,28 @@ class UtilTable {
             html += `<tr><td colspan="${this.headers.size}" class="empty-data-message">${this.emptyMessage}</td></tr>`;
         } else {
             for (const row of this.rows) {
-                html += '<tr>';
+                const rawData = row.getRawData();
+                let dataAttribute = '';
+                let rowClass = '';
+
+                if (rawData) {
+                    try {
+                        // Stringify and escape for HTML attribute
+                        const jsonString = JSON.stringify(rawData);
+                        const escapedJson = jsonString.replace(/"/g, '&quot;');
+                        dataAttribute = ` data-fixture="${escapedJson}"`;
+                        rowClass = ' clickable-row'; // Add class for clickable rows
+                    } catch (e) {
+                        console.error("Error stringifying row data:", e, rawData);
+                    }
+                }
+
+                html += `<tr class="${rowClass}" ${dataAttribute}>`; // Add class and data attribute
                 for (const headerKey of this.headers.keys()) {
                     const content = row.getField(headerKey);
                     const cellStyle = row.getStyle(headerKey);
-                    // Pass the row object to generateCell
-                    const baseCell = this.generateCell(content, headerKey, row);
+                    // Reverted: Pass only content and headerKey
+                    const baseCell = this.generateCell(content, headerKey);
 
                     // Apply custom styles if they exist
                     if (Object.keys(cellStyle).length > 0) {
