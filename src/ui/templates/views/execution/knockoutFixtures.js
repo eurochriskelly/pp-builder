@@ -102,12 +102,24 @@ function createKnockoutTable(categoryData) {
         else if (roundName === 'shield') round = 3;
         else if (roundName === 'plate') round = 6;
         
-        if (stageParts[1]?.includes('quarter')) progression = 3;
-        else if (stageParts[1]?.includes('semi') || stageParts[1]?.includes('3rd4th')) progression = 2;
-        else if (stageParts[1]?.includes('final')) progression = 1;
+        const hierarchyPart = stageParts[1]?.toLowerCase() || '';
+        if (hierarchyPart.includes('final')) {
+            progression = 1;
+        } else if (hierarchyPart.includes('semi')) {
+            progression = 2;
+        } else if (hierarchyPart.includes('quarter') || 
+                   hierarchyPart.includes('3rd4th') || 
+                   hierarchyPart.includes('4th5th') || 
+                   hierarchyPart.includes('5th6th') || 
+                   hierarchyPart.includes('6th7th') || 
+                   hierarchyPart.includes('7th8th')) {
+            progression = 3; // Quarter-finals and all playoffs are level 3
+        } else {
+            progression = 0; // Default for unknown stages
+        }
  
         // Calculate indent width for staggered display (earlier rounds = more indent)
-        // progression: 1=final, 2=semi/3rd4th, 3=quarter
+        // progression: 1=final, 2=semi, 3=quarter/playoffs
         // indent: 0rem for final, 1.5rem for semi, 3rem for quarter (Handled by team-name component now)
         // Removed spacerHtml calculation
  

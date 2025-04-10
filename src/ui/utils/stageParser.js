@@ -55,26 +55,28 @@ function abbreviateStage(stage) {
         default: prefix = '';
     }
 
-    // Determine hierarchy suffix
+    // Determine hierarchy suffix (handle specific playoffs first)
     let suffix = '';
     const lowerHierarchy = hierarchyPart.toLowerCase();
+
     if (lowerHierarchy.includes('final')) {
         suffix = 'F';
-    } else if (lowerHierarchy.includes('3rd') || lowerHierarchy.includes('4th')) {
-        suffix = '4';
     } else if (lowerHierarchy.includes('semi')) {
         suffix = 'S';
-    } else if (lowerHierarchy.includes('7th') || lowerHierarchy.includes('8th')) {
-        suffix = '8';
-    } else if (lowerHierarchy.includes('6th') || lowerHierarchy.includes('7th')) {
-        suffix = '7';
-    } else if (lowerHierarchy.includes('5th') || lowerHierarchy.includes('6th')) {
-        suffix = '6';
-    } else if (lowerHierarchy.includes('4th') || lowerHierarchy.includes('5th')) {
-        suffix = '5';
     } else if (lowerHierarchy.includes('quarter')) {
         suffix = 'Q';
+    } else if (lowerHierarchy.includes('3rd4th')) { // Simplified suffix
+        suffix = '4';
+    } else if (lowerHierarchy.includes('4th5th')) { // Added check
+        suffix = '5';
+    } else if (lowerHierarchy.includes('5th6th')) { // Simplified suffix
+        suffix = '6';
+    } else if (lowerHierarchy.includes('6th7th')) { // Added check (just in case)
+        suffix = '7';
+    } else if (lowerHierarchy.includes('7th8th')) { // Simplified suffix
+        suffix = '8';
     }
+    // Removed unreliable fallback logic
 
     return prefix + suffix;
 }
