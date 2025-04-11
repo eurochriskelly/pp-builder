@@ -1,7 +1,8 @@
 const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
 const { processTeamName } = require('../../../utils');
 const { formatCategory } = require('../../../utils/categoryFormatter');
-const { parseStageToLevel, abbreviateStage } = require('../../../utils/stageParser');
+// abbreviateStage might still be used elsewhere, but removed from the stage field generation
+const { parseStageToLevel, abbreviateStage } = require('../../../utils/stageParser'); 
 const {
   getScoreComparisonClasses,
   getFinalScoreDisplay,
@@ -173,7 +174,13 @@ function createKnockoutTable(categoryData) {
                 team1: `<team-name name="${team1}" direction="r2l" completion="${progression}" ></team-name>`,
                 score1: score1,
                 rank1: isTeam1Last ? 'X' : '',
-                stage: row.stage ? abbreviateStage(row.stage) : 'N/A',
+                // Use the knockout-level web component for the stage display
+                stage: `<knockout-level 
+                            match-id="${row.id || ''}" 
+                            stage="${row.stage || ''}" 
+                            stage-level="${row.stageLevel || ''}" 
+                            category="${row.category || ''}">
+                         </knockout-level>`,
                 rank2: isTeam2Last ? 'X' : '',
                 score2: score2,
                 // Add completion attribute based on progression and width
@@ -212,11 +219,8 @@ function createKnockoutTable(categoryData) {
                 'vertical-align': 'middle',
                 'line-height': '1.2'
             })
-            .setStyle('stage', {
-                'font-size': '0.9em',
-                'font-weight': 'bold',
-                'color': '#666'
-            })
+            // Remove specific styling for stage cell; component handles its own style
+            // .setStyle('stage', { ... }) 
             .setRawData(row); // Store the original row data
 
         table.addRow(utilRow);
