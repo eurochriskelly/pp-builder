@@ -16,9 +16,41 @@ class TeamName extends HTMLElement {
         this.render();
     }
 
+    getOrdinalSuffix(n) {
+        const s = ['th', 'st', 'nd', 'rd'];
+        const v = n % 100;
+        return s[(v - 20) % 10] || s[v] || s[0];
+    }
+
     renderNameParts(name) {
         if (!name) return '<span>?</span>';
 
+        // Handle special ~ names
+        if (name.startsWith('~')) {
+            const groupMatch = name.match(/^~group:(\d+)\/p:(\d+)$/);
+            if (groupMatch) {
+                const N = groupMatch[1];
+                const M = parseInt(groupMatch[2], 10);
+                if (M >= 1 && M <= 9) {
+                    return `<span>${M}${this.getOrdinalSuffix(M)} Gp.${N}</span>`;
+                }
+            }
+
+            const matchMatch = name.match(/^~match:(\d+)\/p:([12])$/);
+            if (matchMatch) {
+                const N = matchMatch[1];
+                const M = parseInt(matchMatch[2], 10);
+                const type = M === 1 ? 'Winner' : 'Loser';
+                // Pad N to 3 digits if needed (assuming N is always numeric)
+                const paddedN = N.padStart(3, '0');
+                return `<span>${type} #${paddedN}</span>`;
+            }
+
+            // Fallback for unrecognised ~ format
+            return `<span>${name}</span>`;
+        }
+
+        // Original logic for regular names
         const maxChars = parseInt(this.getAttribute('maxchars')) || 0;
         let displayName = name;
         let isTruncated = false;
@@ -84,7 +116,7 @@ class TeamName extends HTMLElement {
                 ` : ''}
                 ${showLogo ? `
                     <span class="logo-container" style="${logoMarginStyle}; flex-shrink: 0;">
-                        <logo-box size="${logoSize}" title="${name}"></logo-box>
+                        <logo-box size="${logoSize}" title="${name}" ${name.startsWith('~') ? 'border-color="red"' : ''}></logo-box>
                     </span>
                 ` : ''}
                 ${this.hasAttribute('icon-only') ? '' : `<span class="name-container" style="flex: 1; min-width: 0; max-width: 170px; overflow: hidden; text-overflow: ellipsis; ${isR2L ? 'justify-content: flex-end;' : ''}">

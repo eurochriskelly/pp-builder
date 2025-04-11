@@ -140,3 +140,21 @@ NameMaxWidthDemo.args = {
     ],
 };
 NameMaxWidthDemo.storyName = 'Name Container Max Width (200px)';
+
+export const SpecialNames = MultiTemplate.bind({});
+SpecialNames.args = {
+    teams: [
+        { name: '~group:1/p:1', showLogo: true, height: '30px' }, // 1st Gp.1
+        { name: '~group:2/p:2', showLogo: true, height: '30px' }, // 2nd Gp.2
+        { name: '~group:3/p:3', showLogo: true, height: '30px' }, // 3rd Gp.3
+        { name: '~group:4/p:4', showLogo: true, height: '30px' }, // 4th Gp.4
+        { name: '~group:11/p:5', showLogo: true, height: '30px' }, // 5th Gp.11
+        { name: '~match:123/p:1', showLogo: true, height: '30px' }, // Winner #123
+        { name: '~match:456/p:2', showLogo: true, height: '30px' }, // Loser #456
+        { name: '~match:007/p:1', showLogo: true, height: '30px' }, // Winner #007
+        { name: '~invalid:format', showLogo: true, height: '30px' }, // Should display raw
+        { name: '~group:1/p:10', showLogo: true, height: '30px' }, // Invalid M, should display raw
+        { name: '~match:123/p:3', showLogo: true, height: '30px' }, // Invalid M, should display raw
+    ],
+};
+SpecialNames.storyName = 'Special Tilde (~) Names';

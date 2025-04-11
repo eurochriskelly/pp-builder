@@ -22,16 +22,24 @@ export default {
       control: 'text',
       description: 'URL to an image (optional)',
     },
+    borderColor: {
+      control: 'color',
+      description: 'Custom border color',
+      table: {
+        category: 'Customization',
+      },
+    },
   },
 };
 
 // Template function to render the component with argsn
-const Template = ({ title, index, size, image }) => {
+const Template = ({ title, index, size, image, borderColor }) => {
   const element = document.createElement('logo-box');
   element.setAttribute('title', title);
-  element.setAttribute('index', index.toString());
+  if (index !== undefined) element.setAttribute('index', index.toString());
   if (size) element.setAttribute('size', size);
   if (image) element.setAttribute('image', image);
+  if (borderColor) element.setAttribute('border-color', borderColor);
   return element;
 };
 
@@ -89,3 +97,12 @@ SpecialTeam.args = {
   image: '',
 };
 SpecialTeam.storyName = 'Special Team (Starts with ~)';
+
+export const CustomBorder = Template.bind({});
+CustomBorder.args = {
+  title: 'Team With Custom Border',
+  size: '40px',
+  borderColor: '#ff0000',
+  image: '',
+};
+CustomBorder.storyName = 'Custom Border Color';

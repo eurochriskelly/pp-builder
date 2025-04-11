@@ -153,7 +153,7 @@ class LogoBox extends HTMLElement {
       return (WordToHex(a) + WordToHex(b) + WordToHex(c) + WordToHex(d)).toLowerCase();
     }
     static get observedAttributes() {
-        return ['title', 'size', 'image'];
+        return ['title', 'size', 'image', 'border-color'];
     }
 
     connectedCallback() {
@@ -270,10 +270,10 @@ class LogoBox extends HTMLElement {
         let style, overlayColor, initials;
         if (title.startsWith('~')) {
             style = {
-                bg: '#999',
+                bg: '#ccc',  // Changed from #999 to #ccc (50% lighter)
                 color: '#000'
             };
-            overlayColor = 'rgba(0,0,0,0.2)';
+            overlayColor = 'rgba(0,0,0,0.1)';  // Made overlay more transparent too
             initials = '?';
         } else {
             style = this.getColors();
@@ -294,7 +294,7 @@ class LogoBox extends HTMLElement {
                     align-items: center;
                     justify-content: center;
                     overflow: hidden;
-                    border: 3px solid #333;
+                    border: 3px solid ${this.getAttribute('border-color') || '#333'};
                     border-radius: 5px;
                     box-sizing: border-box;
                 }
