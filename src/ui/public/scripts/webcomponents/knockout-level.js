@@ -78,6 +78,24 @@ class KnockoutLevel extends HTMLElement {
       abbrev = mappings[level] || level.toUpperCase();
     }
 
+    // Determine content for the stage display area
+    let stageContent = abbrev; // Default to text abbreviation
+    if (abbrev === 'FIN') {
+      const tournamentPart = round.toUpperCase(); // Get 'CUP', 'SHIELD', etc.
+      const svgString = svgs[tournamentPart];
+      if (svgString) {
+        // Wrap the SVG group in an SVG element with viewBox and styling
+        // Adjust viewBox as needed based on actual SVG dimensions
+        stageContent = `
+          <svg viewBox="0 0 50 50" width="24" height="24" preserveAspectRatio="xMidYMid meet">
+            ${svgString}
+          </svg>
+        `;
+      }
+      // If no matching SVG, stageContent remains 'FIN'
+    }
+
+
     this.shadowRoot.innerHTML = `
       <style>
         :host {
@@ -95,13 +113,22 @@ class KnockoutLevel extends HTMLElement {
           color: #666;
         }
         .stage-abbrev {
-          font-size: 1.2em;
+          font-size: 1.2em; /* Base size */
           font-weight: bold;
+          line-height: 1; /* Adjust for icon alignment */
+          margin-top: 2px; /* Add some space above */
+        }
+        .stage-abbrev svg {
+          display: block; /* Ensure SVG behaves like a block */
+          margin: 0 auto; /* Center SVG if needed */
+          width: 24px; /* Control icon size */
+          height: 24px; /* Control icon size */
+          fill: currentColor; /* Use text color for SVG fill */
         }
       </style>
       <div class="container">
         <div class="match-num">#${matchNum}</div>
-        <div class="stage-abbrev">${abbrev}</div>
+        <div class="stage-abbrev">${stageContent}</div>
       </div>
     `;
   }
