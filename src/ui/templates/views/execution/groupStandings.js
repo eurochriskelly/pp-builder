@@ -8,14 +8,30 @@ const { processTeamName } = require('../../../utils'); // Removed generateTeamLa
  */
 function generateGroupMatrixHeaders(groupRows) {
     const vsHeaders = {};
-    // Iterate in reverse order to add headers from right to left
-    for (let i = groupRows.length - 1; i >= 0; i--) {
-        const row = groupRows[i];
-        vsHeaders[`vs${i}`] = {
-            label: `<logo-box size="calc(30px * 1.3)" title="${row.team}" />`,
-            align: 'center',
-            width: '5%'
-        };
+    const numTeams = groupRows.length;
+    const totalVsColumns = 5;
+    const placeholderStyle = { 'background-color': '#888' }; // Updated background color
+
+    // Iterate in reverse order to add headers from right to left, up to totalVsColumns
+    for (let i = totalVsColumns - 1; i >= 0; i--) {
+        const fieldName = `vs${i}`;
+        if (i < numTeams) {
+            // Actual team header
+            const row = groupRows[i];
+            vsHeaders[fieldName] = {
+                label: `<logo-box size="calc(30px * 1.3)" title="${row.team}" />`,
+                align: 'center',
+                width: '60px' // Set fixed width
+            };
+        } else {
+            // Placeholder header
+            vsHeaders[fieldName] = {
+                label: '&nbsp;', // Empty label
+                align: 'center',
+                width: '60px', // Set fixed width
+                style: placeholderStyle // Apply light grey background
+            };
+        }
     }
     return vsHeaders;
 }
@@ -28,12 +44,21 @@ function generateGroupMatrixHeaders(groupRows) {
  * @param {Array} fixtures - The list of fixtures for the category.
  */
 function generateGroupMatrixRow(utilRow, groupRows, rowIndex, fixtures) {
-    // Iterate columns in reverse order to match the reversed header order
-    for (let colIndex = groupRows.length - 1; colIndex >= 0; colIndex--) {
+    const numTeams = groupRows.length;
+    const totalVsColumns = 5;
+    const placeholderStyle = { 'background-color': '#888' }; // Updated background color
+
+    // Iterate columns in reverse order to match the reversed header order, up to totalVsColumns
+    for (let colIndex = totalVsColumns - 1; colIndex >= 0; colIndex--) {
         const fieldName = `vs${colIndex}`;
-        if (colIndex === rowIndex) {
-            // Apply a diagonal stripe pattern for the cell where a team intersects itself
+
+        if (colIndex >= numTeams) {
+            // This is a placeholder column
             utilRow.setField(fieldName, '&nbsp;')
+                   .setStyle(fieldName, placeholderStyle);
+        } else if (colIndex === rowIndex) {
+            // This is an actual team column intersecting itself
+            utilRow.setField(fieldName, '&nbsp;') // Keep content empty
                 .setStyle(fieldName, {
                     'background': `repeating-linear-gradient(
                         45deg,
@@ -42,10 +67,10 @@ function generateGroupMatrixRow(utilRow, groupRows, rowIndex, fixtures) {
                         #ccc 5px, /* Light grey */
                         #ccc 10px /* Light grey stripe width */
                     )`,
-                    'padding': '0'
+                    'padding': '0' // Keep padding 0 for the stripe
                 });
         } else {
-            // Access original team names directly using indices from the loops
+            // This is an actual team column comparing against another actual team
             const currentRowTeamName = groupRows[rowIndex].team; // Original name from the data row
             const currentColTeamName = groupRows[colIndex].team; // Original name from the corresponding column's data row
 

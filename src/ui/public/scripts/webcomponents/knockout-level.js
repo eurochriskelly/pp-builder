@@ -104,6 +104,7 @@ class KnockoutLevel extends HTMLElement {
           display: inline-block;
           font-family: sans-serif;
           text-align: center;
+          min-width: 60px; /* Ensure the component itself has a minimum width */
         }
         .container {
           display: flex;

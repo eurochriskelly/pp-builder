@@ -41,7 +41,7 @@ function createKnockoutTable(categoryData) {
         team1: { label: 'Team 1', align: 'left', width: `auto` },
         score1: { label: 'Score 1', align: 'center', width: '80px' },
         rank1: { label: 'X', align: 'left', width: '3%' },
-        stage: { label: 'Stage', align: 'center', width: '4%' },
+        stage: { label: 'Stage', align: 'center', width: '80px' }, // Increase width to match score columns
         rank2: { label: 'X', align: 'right', width: '3%' },
         score2: { label: 'Score 2', align: 'center', width: '80px' },
         team2: { label: 'Team 2', align: 'left', width: `auto` }
