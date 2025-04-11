@@ -86,10 +86,9 @@ class KnockoutLevel extends HTMLElement {
       const svgString = svgs[tournamentPart];
       if (svgString) {
         // Wrap the SVG group in an SVG element with viewBox and styling
-        // Adjust viewBox and size. Let's try a smaller size first.
-        // Keep viewBox="0 0 50 50" for now, but reduce rendered size.
+        // Adjust viewBox and size. Try a standard viewBox and a larger display size.
         stageContent = `
-          <svg viewBox="0 0 50 80" width="38" height="48" preserveAspectRatio="xMidYMid meet">
+          <svg viewBox="0 0 50 50" width="30" height="30" preserveAspectRatio="xMidYMid meet">
             ${svgString}
           </svg>
         `;
