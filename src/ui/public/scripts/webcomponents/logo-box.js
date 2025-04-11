@@ -238,6 +238,11 @@ class LogoBox extends HTMLElement {
     getInitials(title) {
         if (!title) return '?';
         
+        // Handle special case for names starting with ~
+        if (title.startsWith('~')) {
+            return '?';
+        }
+        
         // Handle names with slashes differently
         if (title.includes('/')) {
             const parts = title.split('/');
@@ -261,8 +266,20 @@ class LogoBox extends HTMLElement {
         const title = this.getAttribute('title') || '';
         const size = this.getAttribute('size') || '30px';
         const image = this.getAttribute('image');
-        const style = this.getColors();
-        const overlayColor = style.color === '#000000' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+        
+        let style, overlayColor, initials;
+        if (title.startsWith('~')) {
+            style = {
+                bg: '#999',
+                color: '#000'
+            };
+            overlayColor = 'rgba(0,0,0,0.2)';
+            initials = '?';
+        } else {
+            style = this.getColors();
+            overlayColor = style.color === '#000000' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+            initials = this.getInitials(title);
+        }
 
         const template = document.createElement('template');
         template.innerHTML = `
@@ -308,9 +325,9 @@ class LogoBox extends HTMLElement {
             </style>
             <div class="logo-box">
                 ${image 
-                    ? `<img src="${image}" alt="${this.getInitials(title)}">`
+                    ? `<img src="${image}" alt="${initials}">`
                     : `<div class="overlay"></div>
-                       ${this.hasAttribute('icon-only') ? '' : `<span class="text">${this.getInitials(title)}</span>`}`
+                       ${this.hasAttribute('icon-only') ? '' : `<span class="text">${initials}</span>`}`
                 }
             </div>
         `;

@@ -81,3 +81,11 @@ HighIndex.args = {
   image: '',
 };
 HighIndex.storyName = 'High Index (Cycles)';
+
+export const SpecialTeam = Template.bind({});
+SpecialTeam.args = {
+  title: '~Match / P1',
+  size: '40px',
+  image: '',
+};
+SpecialTeam.storyName = 'Special Team (Starts with ~)';
