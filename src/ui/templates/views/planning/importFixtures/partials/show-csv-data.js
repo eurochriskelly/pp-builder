@@ -1,7 +1,8 @@
 const showValidationResult = require('./show-validation-result.js');
 
-module.exports = function(csvData) {
+module.exports = function(csvData, validationResult, tournamentId) {
 
+    let html = ''
     // Only show validate button if we don't already have valid data
     if (!validationResult || validationResult.warnings?.length > 0) {
       html += `
@@ -14,7 +15,7 @@ module.exports = function(csvData) {
 
     // Validation results will be displayed first if available
     if (validationResult) {
-      showValidationResult(validationResult, csvData);
+      html += showValidationResult(validationResult, csvData, tournamentId);
     }
 
     // Now add the table structure and headers directly to html
@@ -53,4 +54,5 @@ module.exports = function(csvData) {
         </table>
       </div>
     `;
+    return html
 }

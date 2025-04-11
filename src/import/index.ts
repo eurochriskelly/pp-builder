@@ -86,7 +86,7 @@ export const generateFixturesImport = async (data: any): Promise<any> => {
             const useTeam2 = concatIfTilda(team2, 'pool2', 'pool2Id', 'position2', null, fixture, tOffset);
             const useUmpireTeam = concatIfTilda(umpireTeam, 'poolUmp', 'poolUmpId', 'positionUmp', 'categoryUmp', fixture, tOffset);
             const fullMatchId = offset + parseInt(matchId);
-            const validTime = time => time.padStart(5, '0');
+            const validTime = (time: string) => time.padStart(5, '0');
             return {
                 id: fullMatchId,
                 tournamentId,
@@ -111,13 +111,17 @@ export const generateFixturesImport = async (data: any): Promise<any> => {
         await axios.post(`${API_BASE_URL}/tournaments/${tournamentId}/fixtures`, fixtureData);
         return { properties: { pitches, categories, teams, groups }, fixtures: dataRows };
     } catch (error) {
-        console.error('Error importing fixtures:', error.message);
+        console.error(
+          'Error importing fixtures:',
+          error instanceof Error ? error.message : error
+        );
         throw error;
     }
 };
 
 export const importFixturesCsv = async (csv: string, tournamentId: string, startDate: string, title: string, location: string, pinCode: string) => {
     const rows = csvRows(csv);
+    const wrapRows = (rows: string[][]): any[] => rows;
     const dataRows = wrapRows(rows
         .filter((row: any) => row[0] !== 'matchId')
         .filter((row: any) => !!(row[0]).trim())
@@ -159,3 +163,5 @@ export const importFixturesCsv = async (csv: string, tournamentId: string, start
 
     return { properties: { pitches, categories, teams, groups }, fixtures: dataRows, sql: rowsOut.join('\n') };
 };
+
+

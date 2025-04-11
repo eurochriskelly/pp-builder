@@ -1,4 +1,5 @@
-module.exports = function(validationResult, csvData='') {
+module.exports = function(validationResult, csvData='', tournamentId) {
+      let html = '';
 
       const { warnings, props, isValid } = validationResult;
 
@@ -44,4 +45,5 @@ module.exports = function(validationResult, csvData='') {
           </div>
         `;
       }
+      return html;
 }
