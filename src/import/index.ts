@@ -80,8 +80,7 @@ export const generateFixturesImport = async (data: any): Promise<any> => {
 
         const fixtureData = dataRows.map((fixture: any) => {
             const { matchId, startTime, pitch, stage, category, group, team1, team2, umpireTeam } = fixture;
-            const cOffset = categories.indexOf(category) * 1000;
-            const offset = tOffset + cOffset;
+            const offset = tOffset;
             const useTeam1 = concatIfTilda(team1, 'pool1', 'pool1Id', 'position1', null, fixture, tOffset);
             const useTeam2 = concatIfTilda(team2, 'pool2', 'pool2Id', 'position2', null, fixture, tOffset);
             const useUmpireTeam = concatIfTilda(umpireTeam, 'poolUmp', 'poolUmpId', 'positionUmp', 'categoryUmp', fixture, tOffset);
@@ -145,8 +144,7 @@ export const importFixturesCsv = async (csv: string, tournamentId: string, start
 
     dataRows.forEach((fixture: any) => {
         const { matchId, time, pitch, stage, category, group, team1, team2, umpireTeam } = fixture;
-        const cOffset = categories.indexOf(category) * 1000;
-        const offset = tOffset + cOffset;
+        const offset = tOffset;
         const useTeam1 = fixMatchIds(concatIfTilda(team1, 'pool1', 'pool1Id', 'position1', null, fixture), offset);
         const useTeam2 = fixMatchIds(concatIfTilda(team2, 'pool2', 'pool2Id', 'position2', null, fixture), offset);
         const useUmpireTeam = fixMatchIds(concatIfTilda(umpireTeam, 'poolUmp', 'poolUmpId', 'positionUmp', 'categoryUmp', fixture), offset);

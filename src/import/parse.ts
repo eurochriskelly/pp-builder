@@ -131,7 +131,7 @@ const toCSV = (data: FixtureData, headers: string[]): string => {
 
 export const processPastedFixtures = (tsvData: string) => {
   const lines = tsvData.split('\n').filter(line => line.trim());
-  const headers = lines.shift()!.split('\t');
+  const headers = lines.shift()!.split('\t').map(x => x.trim());
 
   const data: FixtureData = headers.reduce((acc, header) => {
     acc[header] = [];
@@ -141,7 +141,7 @@ export const processPastedFixtures = (tsvData: string) => {
   lines.forEach(line => {
     const values = line.split('\t');
     headers.forEach((header, i) => {
-      data[header].push(values[i] || '');
+      data[header].push(values[i].trim() || '');
     });
   });
 
@@ -160,6 +160,7 @@ export const processPastedFixtures = (tsvData: string) => {
   });
   data["duration"] = normalizeDurationColumn(data["DURATION"]);
   data["category"] = populateCategoryColumn(data, categories);
+
   // Normalize time and pitch (just alias with lowercase keys)
   data["time"] = data["TIME"];
   data["pitch"] = data["PITCH"];
