@@ -2,29 +2,28 @@ const { processTeamName } = require('../../../utils');
 const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
 const { getMatchOutcomeStyles } = require('../../partials/scoreUtils');
 
-module.exports = function generateGroupFixtures(data) {
-    let html = '<div id="group-fixtures" class="text-center w-full mx-auto">';
-    
-    // Group data by category
-    const groupedData = data.reduce((acc, row) => {
-        const category = row.category || 'Uncategorized';
-        if (!acc[category]) {
-            acc[category] = [];
-        }
-        acc[category].push(row);
-        return acc;
-    }, {});
+/**
+ * Generates HTML for a single group's fixtures table.
+ * @param {Array} groupFixtures - Array of fixture objects for the specific group.
+ * @param {string} groupName - The name of the group (used for empty message).
+ * @returns {string} HTML string for the group fixtures table, or an error message.
+ */
+function generateSingleGroupFixtures(groupFixtures, groupName) {
+    console.log(`generateSingleGroupFixtures called for Group ${groupName} with ${groupFixtures?.length ?? 0} fixtures.`);
 
-    // Generate a table for each category
-    for (const category in groupedData) {
-        const categoryData = groupedData[category];
-        
-        // Create table with headers
-        const table = new UtilTable({
-            tableClassName: 'fixtures-table',
-            emptyMessage: `No group fixtures found for ${category}.`
-          })
-          .addHeaders({
+    // Handle case where data is undefined or empty
+    if (!groupFixtures || groupFixtures.length === 0) {
+        console.log(`--> No fixtures found for Group ${groupName}, returning empty message.`);
+        // Return just the paragraph, the caller will handle wrapping divs/headers
+        return `<p>No group fixtures found for Group ${groupName}.</p>`;
+    }
+
+    // Create table with headers
+    const table = new UtilTable({
+        tableClassName: 'fixtures-table',
+        emptyMessage: `No group fixtures found for Group ${groupName}.` // Use groupName
+      })
+      .addHeaders({
             team1: { label: 'Team 1', align: 'left', width: '30%' },
             score1: { label: 'Score 1', align: 'center', width: '8%' },
             winner1: { label: '', align: 'left', width: '4%' },
@@ -32,13 +31,13 @@ module.exports = function generateGroupFixtures(data) {
             score2: { label: 'Score 2', align: 'center', width: '8%' },
             team2: { label: 'Team 2', align: 'left', width: '30%' },
           })
-          .noHeader()
+          .noHeader(); // Keep headers for structure but don't render them
 
-        // Add rows
-        categoryData.forEach(row => {
-            const { teamName: team1Name } = processTeamName(row.team1);
-            const { teamName: team2Name } = processTeamName(row.team2);
-            
+        // Add rows using the passed groupFixtures directly
+        groupFixtures.forEach(row => {
+            // processTeamName is not strictly needed here as we use team-name component
+            // const { teamName: team1Name } = processTeamName(row.team1);
+            // const { teamName: team2Name } = processTeamName(row.team2);
             const team1Score = new ScoreData(row.goals1, row.points1);
             const team2Score = new ScoreData(row.goals2, row.points2);
             
@@ -91,13 +90,10 @@ module.exports = function generateGroupFixtures(data) {
             table.addRow(utilRow);
         });
 
-        html += table.toHTML();
-    }
+        // Return the table HTML directly. The caller handles wrapping divs.
+        return table.toHTML();
 
-    if (Object.keys(groupedData).length === 0) {
-        html += '<p>No group fixtures found.</p>';
-    }
-
-    html += '</div>';
-    return html;
 };
+
+// Export the new function name
+module.exports = generateSingleGroupFixtures;

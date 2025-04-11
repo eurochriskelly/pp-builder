@@ -153,11 +153,18 @@ function generateGroupMatrixRow(utilRow, groupRows, rowIndex, fixtures) {
     }
 }
 
-
-function createStandingsTable(groupData, fixtures) {
+/**
+ * Creates the UtilTable instance for group standings.
+ * Assumes groupData.rows is already sorted.
+ * @param {object} groupData - Data for the group (including rows and groupName).
+ * @param {Array} categoryFixtures - Processed fixtures for the category.
+ * @returns {UtilTable} The configured UtilTable instance.
+ */
+function createStandingsTable(groupData, categoryFixtures) { // Renamed fixtures -> categoryFixtures for clarity
+    const groupName = groupData?.groupName || 'Unknown'; // Safely access groupName
     const table = new UtilTable({
         tableClassName: 'standings-table table-layout-fixed',
-        emptyMessage: `No standings available for Group ${groupData.groupName}.`
+        emptyMessage: `No standings available for Group ${groupName}.` // Use safe groupName
     });
 
     // Generate and add group matrix headers first
@@ -194,14 +201,15 @@ function createStandingsTable(groupData, fixtures) {
 
         const utilRow = new UtilRow()
             .setFields(fields)
-            .setStyle('team', { 
+            .setStyle('team', {
                 'font-weight': 'bold',
                 'text-transform': 'uppercase',
                 ...teamStyle
             });
 
         // Populate the group matrix cells for this row using the new function
-        generateGroupMatrixRow(utilRow, groupData.rows, rowIndex, fixtures);
+        // Pass categoryFixtures instead of just fixtures
+        generateGroupMatrixRow(utilRow, groupData.rows, rowIndex, categoryFixtures);
 
         // Apply specific styles after all fields are set for the row
         utilRow.setStyle('TotalPoints', { 'font-weight': 'bold' }) // Keep bold style
@@ -214,71 +222,35 @@ function createStandingsTable(groupData, fixtures) {
     return table;
 }
 
-module.exports = function generateGroupStandings(data, groupFixtures) {
-    let html = '<div id="group-standings" class="text-center w-full mx-auto">';
+/**
+ * Generates HTML for a single group's standings table.
+ * Assumes groupData.rows is already sorted by the caller.
+ * Assumes categoryFixtures are already processed (diff1, diff2 calculated) by the caller.
+ * @param {object} groupData - Data for the specific group (must include groupName and sorted rows).
+ * @param {Array} categoryFixtures - All *processed* fixtures for the category this group belongs to.
+ * @returns {string} HTML string for the group standings table, or an error message.
+ */
+function generateSingleGroupStandings(groupData, categoryFixtures) {
+    const groupName = groupData?.groupName; // Use optional chaining
 
-    // Handle case where data is undefined or empty
-    if (!data || Object.keys(data).length === 0) {
-        return '<div id="group-standings"><p>No group standings data available.</p></div>';
+    // Validate input
+    if (!groupData || !groupData.rows || !groupData.rows.length || !groupName || !categoryFixtures) {
+        const displayGroupName = groupName || 'Unknown';
+        console.error(`Invalid data passed to generateSingleGroupStandings for group: ${displayGroupName}`, { groupData: !!groupData, rows: groupData?.rows?.length, groupName, categoryFixtures: !!categoryFixtures });
+        // Return just the paragraph, the caller will handle wrapping divs/headers
+        return `<p>No standings data available for Group ${displayGroupName}</p>`;
     }
 
+    // Note: Sorting is assumed to be done by the caller before passing groupData.
+    // Note: Filtering and mapping fixtures is assumed to be done by the caller.
 
-    for (const cat of Object.keys(data)) {
-        const fixtures = groupFixtures
-           .filter(x => x.category === cat)
-           .map(x => {
-              const { goals1, points1, goals2, points2 } = x;
-              const score1 = goals1 * 3 + points1;
-              const score2 = goals2 * 3 + points2;
-              return {
-                 ...x,
-                 diff1: score1 - score2,
-                 diff2: score2 - score1,
-              }
-           })
-        for (const groupData of data[cat]) {
-            // Sort rows (keep sorting logic here)
-            groupData.rows.sort((a, b) => {
-                if (b.TotalPoints !== a.TotalPoints) return b.TotalPoints - a.TotalPoints;
-                if (b.PointsDifference !== a.PointsDifference) return b.PointsDifference - a.PointsDifference;
-                if (b.PointsFrom !== a.PointsFrom) return b.PointsFrom - a.PointsFrom;
-                return 0;
-            });
+    // Generate and return table HTML directly.
+    // The caller is responsible for adding group headers (e.g., <h3>GROUP A</h3>).
+    const table = createStandingsTable(groupData, categoryFixtures); // Pass processed fixtures
+    return table.toHTML();
 
-            // Skip if no rows data
-            if (!groupData.rows || !groupData.rows.length) {
-                html += `<p>No standings data available for Group ${groupData.groupName}</p>`;
-                continue;
-            }
-
-            // Add group header
-            html += `<h3 class="group-header uppercase text-center font-bold text-xl my-4">GROUP ${groupData.groupName.toUpperCase()}</h3>`;
-            
-            // Generate and add table
-            const table = createStandingsTable(groupData, fixtures);
-            html += table.toHTML();
-        }
-    }
-
-    if (Object.keys(data).length === 0) {
-        html += '<p>No group standings available.</p>';
-    }
-
-    html += `
-        <style>
-            .logo-cell {
-                padding: 2px !important;
-                width: 40px;
-                height: 40px;
-                min-width: 40px;
-                min-height: 40px;
-            }
-            .logo-cell logo-box {
-                display: block;
-                width: 100%;
-                height: 100%;
-            }
-        </style>
-    </div>`;
-    return html;
+    // Note: The <style> block was removed. It should be included globally or once by the caller.
 };
+
+// Export the new function name
+module.exports = generateSingleGroupStandings;
