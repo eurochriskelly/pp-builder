@@ -41,8 +41,9 @@ class TeamName extends HTMLElement {
                 const N = matchMatch[1];
                 const M = parseInt(matchMatch[2], 10);
                 const type = M === 1 ? 'Winner' : 'Loser';
-                // Pad N to 3 digits if needed (assuming N is always numeric)
-                const paddedN = N.padStart(3, '0');
+                // Take last 3 digits and pad with leading zeros if necessary
+                const lastThreeDigits = N.slice(-3);
+                const paddedN = lastThreeDigits.padStart(3, '0');
                 return `<span>${type} #${paddedN}</span>`;
             }
 

@@ -155,6 +155,7 @@ SpecialNames.args = {
         { name: '~invalid:format', showLogo: true, height: '30px' }, // Should display raw
         { name: '~group:1/p:10', showLogo: true, height: '30px' }, // Invalid M, should display raw
         { name: '~match:123/p:3', showLogo: true, height: '30px' }, // Invalid M, should display raw
+        { name: '~match:120056/p:1', showLogo: true, height: '30px' }, // Winner #056 (Truncated)
     ],
 };
 SpecialNames.storyName = 'Special Tilde (~) Names';
