@@ -13,6 +13,7 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
       <script src="/scripts/webcomponents/nav-dropdown.js" defer></script>
       <script src="/scripts/webcomponents/tournament-row.js" defer></script>
       <script src="/scripts/webcomponents/match-row.js" defer></script>
+      <script src="/scripts/webcomponents/knockout-level.js" defer></script>
     </head>
     <body>
       <article class="execution">

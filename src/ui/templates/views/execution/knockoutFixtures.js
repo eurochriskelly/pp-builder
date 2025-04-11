@@ -48,11 +48,10 @@ function createKnockoutTable(categoryData) {
     .noHeader();
 
     // First group fixtures by tournament part (CUP, SHD, etc)
-    // First group fixtures by tournament part (CUP, SHD, etc)
     const fixturesByTournamentPart = {};
     categoryData.forEach(row => {
         const stageParts = row.stage?.split('_') || [];
-        const tournamentPart = stageParts[0]?.toLowerCase() || 'unknown'; // Use lowercase for keys
+        const tournamentPart = stageParts[0]?.trim().toLowerCase() || 'unknown';
         if (!fixturesByTournamentPart[tournamentPart]) {
             fixturesByTournamentPart[tournamentPart] = [];
         }
@@ -80,6 +79,8 @@ function createKnockoutTable(categoryData) {
 
     // Process each tournament part's fixtures together in the sorted order
     let rowIndex = 0;
+
+
     for (const tournamentPart of sortedTournamentParts) { // Iterate using sorted keys
         const fixtures = fixturesByTournamentPart[tournamentPart];
         if (!fixtures || fixtures.length === 0) continue; // Skip empty parts
