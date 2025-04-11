@@ -1,8 +1,24 @@
 const { allowedViews } = require('../../config/allowedViews');
 
 function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false) {
+    // Check if tournament.categories is a non-empty array
+    const competitions = Array.isArray(tournament.categories) ? tournament.categories : [];
+    let initialLoadAttributes = '';
+    if (competitions.length > 0) {
+        const firstCompName = competitions[0];
+        const encodedFirstCompName = encodeURIComponent(firstCompName);
+        const initialLoadUrl = `/event/${uuid}/competition-update?competition=${encodedFirstCompName}`;
+        initialLoadAttributes = `
+            hx-get="${initialLoadUrl}"
+            hx-trigger="load"
+            hx-target="#content"
+            hx-swap="innerHTML"
+        `;
+    }
+
     // Use CSS classes instead of inline styles
-    let html = '<div id="event-manager" class="event-manager-container">'; 
+    // Add initial load attributes if competitions exist
+    let html = `<div id="event-manager" class="event-manager-container"${initialLoadAttributes}>`;
     // Restore mx-auto for centering (assuming Tailwind is active)
     html += `<div class="event-manager-header">
                 <h2 class="mx-auto">${tournament.Title || tournament.title || 'Event'}</h2>
@@ -13,13 +29,12 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
     html += '<span class="mr-4 font-semibold">Competitions:</span>';
 
     // Generate links for Competitions
-    console.log('Tournament data:', tournament); // Debug logging
+   console.log('Tournament data:', tournament); // Debug logging
 
-    // Check if tournament.categories is a non-empty array
-    const competitions = Array.isArray(tournament.categories) ? tournament.categories : [];
-    if (competitions.length > 0) {
-        competitions.forEach(compName => { // Iterate directly over the array elements (names)
-            const encodedCompName = encodeURIComponent(compName); // Encode the actual name
+   // Competitions array is already defined above
+   if (competitions.length > 0) {
+       competitions.forEach(compName => { // Iterate directly over the array elements (names)
+           const encodedCompName = encodeURIComponent(compName); // Encode the actual name
             // Target the new competition-update endpoint directly
             const updateUrl = `/event/${uuid}/competition-update?competition=${encodedCompName}`;
             html += `
