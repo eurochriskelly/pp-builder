@@ -8,6 +8,9 @@ const {
   getMatchOutcomeStyles,
 } = require('../../partials/scoreUtils');
 
+// Define the desired order for tournament parts
+const tournamentPartOrder = ['cup', 'shield', 'plate'];
+
 function getTeamLastFixtures(categoryData) {
     const teamLastFixtures = {};
     
@@ -33,7 +36,6 @@ function createKnockoutTable(categoryData) {
     // Get each team's last match
     const teamLastFixtures = getTeamLastFixtures(categoryData);
     
-    const wid  = 300;
     table.addHeaders({
         team1: { label: 'Team 1', align: 'left', width: `auto` },
         score1: { label: 'Score 1', align: 'center', width: '80px' },
@@ -45,23 +47,51 @@ function createKnockoutTable(categoryData) {
     })
     .noHeader();
 
-    let currentTournamentPart = null; // Track the current tournament part
-
-    categoryData.forEach((row, index) => {
-        const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
-        const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
-
-        // Determine the current tournament part (e.g., 'cup', 'shield')
+    // First group fixtures by tournament part (CUP, SHD, etc)
+    // First group fixtures by tournament part (CUP, SHD, etc)
+    const fixturesByTournamentPart = {};
+    categoryData.forEach(row => {
         const stageParts = row.stage?.split('_') || [];
-        const tournamentPart = stageParts[0] || 'unknown';
-        const tournamentPartDisplay = tournamentPart.toUpperCase();
-
-        // Add a full header if the tournament part changes
-        if (tournamentPart !== currentTournamentPart) {
-            table.fullHeader(tournamentPartDisplay, { position: 'before', rowIndex: index });
-            currentTournamentPart = tournamentPart;
+        const tournamentPart = stageParts[0]?.toLowerCase() || 'unknown'; // Use lowercase for keys
+        if (!fixturesByTournamentPart[tournamentPart]) {
+            fixturesByTournamentPart[tournamentPart] = [];
         }
-        
+        fixturesByTournamentPart[tournamentPart].push({
+            ...row,
+            stageLevel: parseStageToLevel(row.stage)
+        });
+    });
+
+    // Sort each tournament part's fixtures by stage level
+    for (const tournamentPart in fixturesByTournamentPart) {
+        fixturesByTournamentPart[tournamentPart].sort((a, b) => a.stageLevel - b.stageLevel);
+    }
+
+    // Get sorted tournament part keys based on predefined order
+    const sortedTournamentParts = Object.keys(fixturesByTournamentPart).sort((a, b) => {
+        const indexA = tournamentPartOrder.indexOf(a.toLowerCase()); // Ensure lowercase comparison for keys
+        const indexB = tournamentPartOrder.indexOf(b.toLowerCase()); // Ensure lowercase comparison for keys
+
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB; // Both in predefined order
+        if (indexA !== -1) return -1; // Only A is predefined, comes first
+        if (indexB !== -1) return 1;  // Only B is predefined, comes first
+        return a.localeCompare(b); // Neither predefined, sort alphabetically
+    });
+
+    // Process each tournament part's fixtures together in the sorted order
+    let rowIndex = 0;
+    for (const tournamentPart of sortedTournamentParts) { // Iterate using sorted keys
+        const fixtures = fixturesByTournamentPart[tournamentPart];
+        if (!fixtures || fixtures.length === 0) continue; // Skip empty parts
+
+        const tournamentPartDisplay = tournamentPart.toUpperCase();
+        table.fullHeader(tournamentPartDisplay, { position: 'before', rowIndex });
+
+        fixtures.forEach(row => {
+            const stageParts = row.stage?.split('_') || []; // Define stageParts based on current row
+            const { teamName: team1Name, teamStyle: team1Style } = processTeamName(row.team1);
+            const { teamName: team2Name, teamStyle: team2Style } = processTeamName(row.team2);
+
         const { team1ScoreFinal, team2ScoreFinal } = getFinalScoreDisplay(
             row.goals1, row.points1, row.goals2, row.points2, row.outcome
         );
@@ -107,8 +137,8 @@ function createKnockoutTable(categoryData) {
         const isTeam2Last = teamLastFixtures.some(f => f.team === team2 && f.lastFixture === row);
 
         // Determine round and progression based on stage
-        // Use the existing stageParts variable declared earlier in the loop
-        const roundName = stageParts[0] || '';
+        // Use stageParts defined within this loop scope
+        const roundName = stageParts[0]?.toLowerCase() || ''; // Ensure lowercase for comparison
         let round = 0;
         let progression = 0;
         
@@ -189,7 +219,10 @@ function createKnockoutTable(categoryData) {
             .setRawData(row); // Store the original row data
 
         table.addRow(utilRow);
-    });
+        }); // end fixtures.forEach
+
+        rowIndex += fixtures.length;
+    } // end for..of sortedTournamentParts
 
     return table;
 }
