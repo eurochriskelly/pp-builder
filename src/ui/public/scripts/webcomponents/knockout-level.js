@@ -85,9 +85,10 @@ class KnockoutLevel extends HTMLElement {
       const svgString = svgs[tournamentPart];
       if (svgString) {
         // Wrap the SVG group in an SVG element with viewBox and styling
-        // Adjust viewBox as needed based on actual SVG dimensions
+        // Adjust viewBox and size. Let's try a smaller size first.
+        // Keep viewBox="0 0 50 50" for now, but reduce rendered size.
         stageContent = `
-          <svg viewBox="0 0 50 50" width="24" height="24" preserveAspectRatio="xMidYMid meet">
+          <svg viewBox="0 0 50 50" width="18" height="18" preserveAspectRatio="xMidYMid meet">
             ${svgString}
           </svg>
         `;
@@ -107,23 +108,31 @@ class KnockoutLevel extends HTMLElement {
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center; /* Center items vertically if container has height */
+          min-height: 3em; /* Ensure container has some height for alignment */
         }
         .match-num {
           font-size: 0.75em;
           color: #666;
+          line-height: 1; /* Prevent extra spacing */
         }
         .stage-abbrev {
-          font-size: 1.2em; /* Base size */
+          font-size: 1.1em; /* Slightly smaller base size */
           font-weight: bold;
-          line-height: 1; /* Adjust for icon alignment */
-          margin-top: 2px; /* Add some space above */
+          line-height: 1; /* Keep tight */
+          margin-top: 2px;
+          display: flex; /* Use flex to center content */
+          align-items: center; /* Center vertically */
+          justify-content: center; /* Center horizontally */
+          width: 100%; /* Take full width */
+          min-height: 20px; /* Ensure space for the icon */
         }
         .stage-abbrev svg {
-          display: block; /* Ensure SVG behaves like a block */
-          margin: 0 auto; /* Center SVG if needed */
-          width: 24px; /* Control icon size */
-          height: 24px; /* Control icon size */
-          fill: currentColor; /* Use text color for SVG fill */
+          display: block; /* Keep as block */
+          /* width/height are set on the svg tag itself */
+          /* width: 18px; */ /* Controlled by attribute */
+          /* height: 18px; */ /* Controlled by attribute */
+          fill: currentColor;
         }
       </style>
       <div class="container">
