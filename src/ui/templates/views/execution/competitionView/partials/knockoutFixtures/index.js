@@ -1,13 +1,13 @@
-const { UtilTable, UtilRow, ScoreData } = require('../../../../partials/tableUtils');
-const { processTeamName } = require('../../../../../utils');
-const { formatCategory } = require('../../../../../utils/categoryFormatter');
+const { UtilTable, UtilRow, ScoreData } = require('../../../../../partials/tableUtils');
+const { processTeamName } = require('../../../../../../utils');
+const { formatCategory } = require('../../../../../../utils/categoryFormatter');
 // abbreviateStage might still be used elsewhere, but removed from the stage field generation
-const { parseStageToLevel, abbreviateStage } = require('../../../../../utils/stageParser'); 
+const { parseStageToLevel, abbreviateStage } = require('../../../../../../utils/stageParser'); 
 const {
   getScoreComparisonClasses,
   getFinalScoreDisplay,
   getMatchOutcomeStyles,
-} = require('../../../../partials/scoreUtils');
+} = require('../../../../../partials/scoreUtils');
 
 // Define the desired order for tournament parts
 const tournamentPartOrder = ['cup', 'shield', 'plate'];
@@ -268,27 +268,7 @@ module.exports = function generateKnockoutFixtures(data) {
 
     html += `
     </div>
-    <script>
-        (function() {
-            const tables = document.querySelectorAll('#knockout-fixtures .fixtures-table');
-            tables.forEach(table => {
-                table.addEventListener('click', function(event) {
-                    const clickedRow = event.target.closest('tr.clickable-row');
-                    if (clickedRow) {
-                        const fixtureDataString = clickedRow.getAttribute('data-fixture');
-                        if (fixtureDataString) {
-                            try {
-                                const fixtureData = JSON.parse(fixtureDataString);
-                                console.log('Clicked Fixture Data:', fixtureData);
-                            } catch (e) {
-                                console.error('Error parsing fixture data from row:', e, fixtureDataString);
-                            }
-                        }
-                    }
-                });
-            });
-        })();
-    </script>
+    <script src="/scripts/knockoutFixtures.public.js"></script>
     `;
     return html;
 };
