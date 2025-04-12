@@ -67,7 +67,7 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
     html += '</div>'; // Close event-manager-container
 
     if (isLoggedIn) {
-        html += `<script src="/scripts/tournamentSelectionScripts.js"></script>`;
+        html += `<script src="/scripts/tournamentSelection.public.js"></script>`;
     }
 
     return html;

@@ -1,4 +1,4 @@
-const { createTournamentRow } = require('../../public/scripts/webcomponents/tournament-row.js');
+const { createTournamentRow } = require('../../../public/scripts/webcomponents/tournament-row.js');
 
 module.exports = function generateTournamentSelection(tournaments, isLoggedIn = false) {
   // Basic modal styles (can be moved to CSS)
@@ -81,7 +81,7 @@ module.exports = function generateTournamentSelection(tournaments, isLoggedIn = 
         </table>
       </div>
     </div>
-    <script src="/scripts/tournamentSelectionScripts.js"></script>
+    <script src="/scripts/tournamentSelection.public.js"></script>
   `;
   return html;
 };
