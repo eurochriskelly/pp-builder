@@ -104,9 +104,7 @@ function showLessRows(tableType, category) {
 
 // Initialize category on load
 window.addEventListener('load', () => {
-    console.log('xxx Page loaded');
     const categoryFilter = document.getElementById('category-filter');
-    console.log('xxx Page loaded, initializing category filter');
     if (window.selectedCategory && categoryFilter) {
         categoryFilter.value = window.selectedCategory;
         filterByCategory(window.selectedCategory);

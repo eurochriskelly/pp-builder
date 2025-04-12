@@ -16,6 +16,7 @@ module.exports = function generateMatchesPlanning(data) {
         .sort((a, b) => b.scheduledTime.localeCompare(a.scheduledTime) || b.id - a.id);
 
     html += `<h3 id="upcoming-header" style="font-size: 1.25em; margin-top: 30px;">UPCOMING GAMES (0)</h3>`;
+
     html += '<table id="upcoming-table" style="width: 100%; border-collapse: collapse;">';
     const upcomingHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Team 2', 'Umpire'];
     html += `<thead><tr>${upcomingHeaders.map(h => `<th style="background-color: transparent; padding: 8px; text-align: left; border-bottom: 1px solid #ccc;">${h.toUpperCase()}</th>`).join('')}</tr></thead>`;
@@ -24,7 +25,9 @@ module.exports = function generateMatchesPlanning(data) {
     upcomingMatches.forEach((row, index) => {
         html += generateUpcomingRow(row, index, data.tournamentId, true, firstUpcomingId);
     });
+
     html += '</tbody></table>';
+
     html += `<div id="show-more-container-upcoming" style="margin-top: 10px; text-align: center; display: none;">`;
     html += `<a id="show-more-upcoming" href="#" style="color: #3498db; text-decoration: underline;">Show More</a>`;
     html += `<a id="show-less-upcoming" href="#" style="color: #3498db; text-decoration: underline; display: none;">Show Less</a>`;

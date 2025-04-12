@@ -101,7 +101,6 @@ export default {
             <script>
                 // Mock functions if needed, e.g., playNextNMatches
                 function playNextNMatches(n, tournamentId) {
-                    console.log(\`Simulate playing next \${n} matches for tournament \${tournamentId}\`);
                     alert(\`Simulate playing next \${n} matches for tournament \${tournamentId}\`);
                 }
                 // Mock htmx if its absence causes errors

@@ -20,7 +20,6 @@ module.exports = function generateCompetitionView(data) {
         groupFixtures,
         groupStandings,
         knockoutFixtures,
-        finalsResults
     } = data;
 
     // Use a container div for the whole competition view
@@ -93,7 +92,7 @@ module.exports = function generateCompetitionView(data) {
                     return (a.team || '').localeCompare(b.team || '');
                 });
             } else {
-                 groupData.rows = []; // Ensure rows is an array even if empty
+                groupData.rows = []; // Ensure rows is an array even if empty
             }
 
 
@@ -123,49 +122,8 @@ module.exports = function generateCompetitionView(data) {
     }
 
     html += '</section>'; // Close comp-groups section
-
     // Add the styles previously removed from groupStandings.js
-    html += `
-        <style>
-            .logo-cell {
-                padding: 2px !important;
-                width: 40px; /* Match vs header width */
-                height: 40px;
-                min-width: 40px;
-                min-height: 40px;
-                vertical-align: middle; /* Align logo vertically */
-            }
-            .logo-cell logo-box {
-                display: block; /* Changed to block */
-                width: 100%;
-                height: 100%;
-            }
-            /* Ensure team-name component aligns well */
-             td[style*="text-transform: uppercase"] team-name {
-                 vertical-align: middle;
-             }
-             /* Style for the vs matrix headers */
-             .standings-table th[style*="width: 60px"] {
-                 padding: 2px !important; /* Reduce padding */
-                 vertical-align: middle; /* Center vertically */
-             }
-             .standings-table th[style*="width: 60px"] logo-box {
-                 display: block; /* Ensure logo takes space */
-                 margin: auto; /* Center horizontally */
-             }
-             /* Style for vs matrix cells */
-             .standings-table td[style*="background: repeating-linear-gradient"],
-             .standings-table td[style*="background-color: rgb(136, 136, 136)"] { /* #888 */
-                 padding: 0 !important; /* Remove padding for background cells */
-                 vertical-align: middle;
-             }
-             .standings-table td gaelic-score {
-                 display: block; /* Make score component take full cell */
-                 padding: 4px 2px; /* Add some padding inside the score component */
-             }
-        </style>
-    `;
-
+    html += `<link rel="text/css" href="/styles/competitionView.style.css" /> `;
     html += '</div>'; // Close competition-view container
 
     return html;

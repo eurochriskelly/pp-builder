@@ -27,9 +27,14 @@ module.exports = {
 }
 
 // ----- Helper Functions for Modular HTML Generation -----
-function generateUpcomingRow(row, index, tournamentId, isHidden, firstMatchId) {
-    console.log('row', row,' at index ', index);
-
+function generateUpcomingRow(
+    row,
+    index,
+    tournamentId,
+    isHidden,
+    firstMatchId
+) 
+{
     const isNext = row.id === firstMatchId;
     const backgroundColor = isNext
         ? 'lightblue'
