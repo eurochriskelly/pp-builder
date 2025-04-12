@@ -1,5 +1,5 @@
 const { formatScore } = require('../../../../../utils');
-require('../../../../../public/scripts/webcomponents/knockout-level.js'); // Import the component
+// Note: The <knockout-level> component script should be loaded in the browser, not required here.
 
 // Inline CSS for row and play button
 const rowStyleBase = ` position: relative; transition: background-color 0.2s; `;

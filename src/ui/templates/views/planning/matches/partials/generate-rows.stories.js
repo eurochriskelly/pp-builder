@@ -1,6 +1,6 @@
 import '../../../../../public/scripts/webcomponents/team-name.js';
 import '../../../../../public/scripts/webcomponents/logo-box.js';
-import '../../../../../public/scripts/webcomponents/knockout-level.js'; // Import knockout-level
+// Note: knockout-level.js is loaded via script tag in the decorator below
 const { generateUpcomingRow, generateFinishedRow } = require('./generate-rows');
 
 // Sample data for upcoming matches
@@ -94,6 +94,7 @@ export default {
                     ${Story()}
                 </tbody>
             </table>
+            <script src="/scripts/webcomponents/knockout-level.js"></script> 
             <script>
                 // Mock functions if needed, e.g., playNextNMatches
                 function playNextNMatches(n, tournamentId) {
