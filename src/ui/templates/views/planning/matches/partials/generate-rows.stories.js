@@ -5,7 +5,6 @@ const { generateUpcomingRow, generateFinishedRow } = require('./generate-rows');
 // Sample data for upcoming matches
 const upcomingRowSample1 = {
     id: 'm123',
-    grp: 'A',
     category: 'Senior Hurling',
     stage: 'group',
     pitch: 'Pitch 1',
@@ -18,7 +17,6 @@ const upcomingRowSample1 = {
 
 const upcomingRowSample2 = {
     id: 'm456',
-    grp: 'B',
     category: 'Junior Football',
     stage: 'semi_final',
     pitch: 'Pitch 2',
@@ -32,7 +30,6 @@ const upcomingRowSample2 = {
 // Sample data for finished matches
 const finishedRowSample1 = {
     id: 'm789',
-    grp: 'C',
     category: 'Camogie',
     stage: 'final',
     pitch: 'Pitch 1',
@@ -49,7 +46,6 @@ const finishedRowSample1 = {
 
 const finishedRowSample2 = {
     id: 'm012',
-    grp: 'D',
     category: 'Ladies Football',
     stage: 'group',
     pitch: 'Pitch 3',
@@ -66,7 +62,6 @@ const finishedRowSample2 = {
 
 const finishedRowSampleNA = {
     id: 'm345',
-    grp: 'E',
     category: 'U12 Hurling',
     stage: 'quarter_final',
     pitch: 'Pitch 4',
@@ -118,7 +113,7 @@ export const UpcomingRowEven = {
         (Story) => `
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Group</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
+                    <tr><th>ID</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
                 </thead>
                 <tbody>${Story()}</tbody>
             </table>
@@ -132,7 +127,7 @@ export const UpcomingRowOdd = {
         (Story) => `
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Group</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
+                    <tr><th>ID</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
                 </thead>
                 <tbody>${Story()}</tbody>
             </table>
@@ -146,7 +141,7 @@ export const UpcomingRowNextMatch = {
         (Story) => `
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Group</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
+                    <tr><th>ID</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
                 </thead>
                 <tbody>${Story()}</tbody>
             </table>
@@ -160,7 +155,7 @@ export const UpcomingRowTBDTeams = {
         (Story) => `
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Group</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
+                    <tr><th>ID</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
                 </thead>
                 <tbody>${Story()}</tbody>
             </table>
@@ -174,7 +169,7 @@ export const UpcomingRowHidden = {
         (Story) => `
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Group</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
+                    <tr><th>ID</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Team 2</th><th>Umpire</th></tr>
                 </thead>
                 <tbody>${Story()}</tbody>
             </table>
@@ -191,7 +186,7 @@ export const FinishedRowEven = {
         (Story) => `
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Group</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Score</th><th>Score</th><th>Team 2</th></tr>
+                    <tr><th>ID</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Score</th><th>Score</th><th>Team 2</th></tr>
                 </thead>
                 <tbody>${Story()}</tbody>
             </table>
@@ -205,7 +200,7 @@ export const FinishedRowOddTeam2Wins = {
         (Story) => `
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Group</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Score</th><th>Score</th><th>Team 2</th></tr>
+                    <tr><th>ID</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Score</th><th>Score</th><th>Team 2</th></tr>
                 </thead>
                 <tbody>${Story()}</tbody>
             </table>
@@ -219,7 +214,7 @@ export const FinishedRowNAScore = {
         (Story) => `
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Group</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Score</th><th>Score</th><th>Team 2</th></tr>
+                    <tr><th>ID</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Score</th><th>Score</th><th>Team 2</th></tr>
                 </thead>
                 <tbody>${Story()}</tbody>
             </table>
@@ -233,7 +228,7 @@ export const FinishedRowHidden = {
         (Story) => `
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Group</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Score</th><th>Score</th><th>Team 2</th></tr>
+                    <tr><th>ID</th><th>Category</th><th>Stage</th><th>Pitch</th><th>Time</th><th>Team 1</th><th>Score</th><th>Score</th><th>Team 2</th></tr>
                 </thead>
                 <tbody>${Story()}</tbody>
             </table>
