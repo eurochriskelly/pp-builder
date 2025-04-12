@@ -7,12 +7,31 @@ async function playNextNMatches(n, tournamentId) {
     }
 }
 function filterByCategory(selectedCategory) {
+    const matchesTablesContainer = document.getElementById('matches-tables-container');
+    const noCategoryMessage = document.getElementById('no-category-message');
+
+    if (!selectedCategory) {
+        if (matchesTablesContainer) matchesTablesContainer.style.display = 'none';
+        if (noCategoryMessage) noCategoryMessage.style.display = 'block';
+        // Hide play controls if no category is selected
+        const playControls = document.getElementById('play-controls');
+        if (playControls) playControls.style.display = 'none';
+        updatePlayNextEndpoint(''); // Clear endpoint if no category
+        return; // Stop further processing
+    }
+
+    // Category is selected, show tables and hide message
+    if (matchesTablesContainer) matchesTablesContainer.style.display = 'block';
+    if (noCategoryMessage) noCategoryMessage.style.display = 'none';
+    // Show play controls
+    const playControls = document.getElementById('play-controls');
+    if (playControls) playControls.style.display = 'block';
+
+
     const upcomingTableBody = document.querySelector('#upcoming-table tbody');
     const finishedTableBody = document.querySelector('#finished-table tbody');
     const allUpcomingRows = upcomingTableBody ? upcomingTableBody.querySelectorAll('tr') : [];
     const allFinishedRows = finishedTableBody ? finishedTableBody.querySelectorAll('tr') : [];
-    const upcomingHeader = document.getElementById('upcoming-header');
-    const finishedHeader = document.getElementById('finished-header');
     const showMoreUpcomingLink = document.getElementById('show-more-upcoming');
     const showLessUpcomingLink = document.getElementById('show-less-upcoming');
     const showMoreFinishedLink = document.getElementById('show-more-finished');
@@ -105,25 +124,30 @@ function showLessRows(tableType, category) {
 // Initialize category on load
 window.addEventListener('load', () => {
     const categoryFilter = document.getElementById('category-filter');
-    if (window.selectedCategory && categoryFilter) {
-        categoryFilter.value = window.selectedCategory;
-        filterByCategory(window.selectedCategory);
-    } else {
-        filterByCategory('');
-    }
+    // Use the value from the filter element itself as the source of truth on load
+    const initialCategory = categoryFilter ? categoryFilter.value : '';
+    window.selectedCategory = initialCategory; // Store globally if needed
+    filterByCategory(initialCategory); // Apply filter based on initial value
 });
 
 // Reapply after HTMX swap
-document.body.addEventListener('htmx:afterSwap', () => {
-    const categoryFilter = document.getElementById('category-filter');
-    if (window.selectedCategory && categoryFilter) {
-        categoryFilter.value = window.selectedCategory;
-        filterByCategory(window.selectedCategory);
+document.body.addEventListener('htmx:afterSwap', (event) => {
+    // Check if the swapped element contains our category filter or tables
+    if (event.detail.target.id === 'planning-matches' || event.detail.target.querySelector('#category-filter')) {
+        const categoryFilter = document.getElementById('category-filter');
+        const currentCategory = categoryFilter ? categoryFilter.value : '';
+        window.selectedCategory = currentCategory; // Update global state
+        filterByCategory(currentCategory); // Re-apply filter
     }
 });
-document.getElementById('category-filter').addEventListener('change', (event) => {
-    const selectedCategory = event.target.value;
-    window.selectedCategory = selectedCategory;
-    filterByCategory(selectedCategory);
-        document.getElementById('play-controls').style.display = 'block';
+
+// Ensure the event listener is attached correctly after load/swap
+// This might need adjustment depending on how/when the filter element is added to the DOM
+// Using event delegation on a parent element is often more robust.
+document.addEventListener('change', function (event) {
+    if (event.target && event.target.id === 'category-filter') {
+        const selectedCategory = event.target.value;
+        window.selectedCategory = selectedCategory; // Store globally
+        filterByCategory(selectedCategory);
+    }
 });

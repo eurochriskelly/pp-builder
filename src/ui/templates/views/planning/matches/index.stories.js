@@ -5,6 +5,7 @@ import generateMatchesPlanning from './index.js';
 
 const sampleData = {
   tournamentId: 'test-tournament',
+  selectedCategory: '', // No category selected initially
   matches: [
     {
       id: 'm1',

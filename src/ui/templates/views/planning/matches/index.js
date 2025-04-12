@@ -8,6 +8,12 @@ module.exports = function generateMatchesPlanning(data) {
 
     let html = simulateHeader(data.tournamentId, categories);
 
+    // Add message div, initially hidden or shown based on selectedCategory
+    html += `<div id="no-category-message" style="text-align: center; margin-top: 20px; ${data.selectedCategory ? 'display: none;' : ''}">Please select a category to continue.</div>`;
+
+    // Wrap tables in a container, initially hidden or shown based on selectedCategory
+    html += `<div id="matches-tables-container" style="${!data.selectedCategory ? 'display: none;' : ''}">`;
+
     const upcomingMatches = data.matches
         .filter(match => match.started === 'false')
         .sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime) || a.id - b.id);
@@ -18,7 +24,7 @@ module.exports = function generateMatchesPlanning(data) {
     html += `<h3 id="upcoming-header" style="font-size: 1.25em; margin-top: 30px;">UPCOMING GAMES (0)</h3>`;
 
     html += '<table id="upcoming-table" style="width: 100%; border-collapse: collapse;">';
-    const upcomingHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Team 2', 'Umpire'];
+    const upcomingHeaders = ['ID', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Team 2', 'Umpire'];
     html += `<thead><tr>${upcomingHeaders.map(h => `<th style="background-color: transparent; padding: 8px; text-align: left; border-bottom: 1px solid #ccc;">${h.toUpperCase()}</th>`).join('')}</tr></thead>`;
     html += '<tbody>';
     const firstUpcomingId = upcomingMatches[0] ? upcomingMatches[0].id : null;
@@ -35,7 +41,7 @@ module.exports = function generateMatchesPlanning(data) {
 
     html += `<h3 id="finished-header" style="font-size: 1.25em; margin-top: 30px;">FINISHED GAMES (0)</h3>`;
     html += '<table id="finished-table" style="margin-top: 10px; width: 100%; border-collapse: collapse;">';
-    const finishedHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Score', 'Team 2'];
+    const finishedHeaders = ['ID', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Score', 'Team 2'];
     html += `<thead><tr>${finishedHeaders.map(h => `<th style="background-color: transparent; padding: 8px; text-align: left; border-bottom: 1px solid #ccc;">${h.toUpperCase()}</th>`).join('')}</tr></thead>`;
     html += '<tbody>';
     finishedMatches.forEach((row, index) => {
@@ -46,7 +52,7 @@ module.exports = function generateMatchesPlanning(data) {
     html += `<a id="show-more-finished" href="#" style="color: #3498db; text-decoration: underline;">Show More</a>`;
     html += `<a id="show-less-finished" href="#" style="color: #3498db; text-decoration: underline; display: none;">Show Less</a>`;
     html += `</div>`;
-    html += '</div>';
+    html += '</div>'; // Close matches-tables-container
 
     html += `
         <script src="/scripts/matches.public.js"></script>

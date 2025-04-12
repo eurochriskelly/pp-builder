@@ -5,7 +5,7 @@ async function getAllMatches(tournamentId) {
     return data.map(fixture => ({
         id: fixture.id,
         category: fixture.category || 'N/A',
-        grp: fixture.g || 'N/A',
+        grp: fixture.grp || 'N/A',
         stage: fixture.stage || 'N/A',
         pitch: fixture.pitch || 'N/A',
         scheduledTime: fixture.scheduledTime || 'N/A',
