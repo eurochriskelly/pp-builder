@@ -9,7 +9,6 @@ const sampleData = {
   matches: [
     {
       id: 'm1',
-      grp: 'A',
       category: 'Group',
       stage: 'group',
       pitch: 'Pitch 1',
@@ -25,7 +24,6 @@ const sampleData = {
     },
     {
       id: 'm2',
-      grp: 'B',
       category: 'Knockout',
       stage: 'knockout',
       pitch: 'Pitch 2',
