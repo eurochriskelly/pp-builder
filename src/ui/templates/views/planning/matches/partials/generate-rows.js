@@ -59,7 +59,6 @@ function generateUpcomingRow(
         <button class="play-btn" style="${playButtonStyle}" onclick="playNextNMatches(${index + 1}, '${tournamentId}')">▶</button>
         ${row.id ? row.id.toString().slice(-3) : 'N/A'}
       </td>
-      <td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
       <td>${processStage(row.stage)}</td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
@@ -93,7 +92,6 @@ function generateFinishedRow(row, index, isHidden) {
 
     return `<tr style="${rowStyle}" data-category="${category}">
       <td style="background-color: #808080; color: white;">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>
-      <td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
       <td>${processStage(row.stage)}</td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
@@ -154,13 +152,6 @@ const teamPillStyle = (color, isUmpire = false, isTBDNonGroup = false) => `
 // Function to truncate team names longer than 25 characters
 function truncateTeamName(name) {
     return name.length > 25 ? `${name.substring(0, 22)}...` : name;
-}
-
-// Function to determine group column background color with 30% transparency
-function getGroupBackground(stage) {
-    return stage === 'group'
-        ? 'background-color: rgba(255, 235, 204, 0.8);'
-        : 'background-color: rgba(230, 255, 230, 0.8);';
 }
 
 // Improved hash function for better distribution

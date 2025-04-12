@@ -24,7 +24,7 @@ module.exports = function generateMatchesPlanning(data) {
     html += `<h3 id="upcoming-header" style="font-size: 1.25em; margin-top: 30px;">UPCOMING GAMES (0)</h3>`;
 
     html += '<table id="upcoming-table" style="width: 100%; border-collapse: collapse;">';
-    const upcomingHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Team 2', 'Umpire'];
+    const upcomingHeaders = ['ID', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Team 2', 'Umpire'];
     html += `<thead><tr>${upcomingHeaders.map(h => `<th style="background-color: transparent; padding: 8px; text-align: left; border-bottom: 1px solid #ccc;">${h.toUpperCase()}</th>`).join('')}</tr></thead>`;
     html += '<tbody>';
     const firstUpcomingId = upcomingMatches[0] ? upcomingMatches[0].id : null;
@@ -41,7 +41,7 @@ module.exports = function generateMatchesPlanning(data) {
 
     html += `<h3 id="finished-header" style="font-size: 1.25em; margin-top: 30px;">FINISHED GAMES (0)</h3>`;
     html += '<table id="finished-table" style="margin-top: 10px; width: 100%; border-collapse: collapse;">';
-    const finishedHeaders = ['ID', 'Group', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Score', 'Team 2'];
+    const finishedHeaders = ['ID', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Score', 'Team 2'];
     html += `<thead><tr>${finishedHeaders.map(h => `<th style="background-color: transparent; padding: 8px; text-align: left; border-bottom: 1px solid #ccc;">${h.toUpperCase()}</th>`).join('')}</tr></thead>`;
     html += '<tbody>';
     finishedMatches.forEach((row, index) => {
