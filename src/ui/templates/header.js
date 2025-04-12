@@ -10,6 +10,7 @@ module.exports = function generateHeader(title, tournamentId = null, area = null
       <script src="/scripts/webcomponents/logo-box.js" defer></script>
       <script src="/scripts/webcomponents/gaelic-score.js" defer></script>
       <script src="/scripts/webcomponents/team-name.js" defer></script>
+      <script src="/scripts/webcomponents/cup-icon.js" defer></script>
       <script src="/scripts/webcomponents/nav-dropdown.js" defer></script>
       <script src="/scripts/webcomponents/tournament-row.js" defer></script>
       <script src="/scripts/webcomponents/match-row.js" defer></script>

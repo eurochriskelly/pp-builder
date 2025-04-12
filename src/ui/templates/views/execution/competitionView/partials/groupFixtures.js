@@ -21,17 +21,18 @@ function generateSingleGroupFixtures(groupFixtures, groupName) {
     // Create table with headers
     const table = new UtilTable({
         tableClassName: 'fixtures-table',
-        emptyMessage: `No group fixtures found for Group ${groupName}.` // Use groupName
+        emptyMessage: `No group fixtures found for Group ${groupName}.`
       })
       .addHeaders({
-            team1: { label: 'Team 1', align: 'left', width: '30%' },
+          team1: { label: 'Team 1', align: 'left', width: '28%' },
             score1: { label: 'Score 1', align: 'center', width: '8%' },
             winner1: { label: '', align: 'left', width: '4%' },
+          level: { label: 'Level', align: 'center', width: '12%' },
             winner2: { label: '', align: 'right', width: '4%' },
             score2: { label: 'Score 2', align: 'center', width: '8%' },
-            team2: { label: 'Team 2', align: 'left', width: '30%' },
+          team2: { label: 'Team 2', align: 'left', width: '28%' },
           })
-          .noHeader(); // Keep headers for structure but don't render them
+        .noHeader();
 
         // Add rows using the passed groupFixtures directly
         groupFixtures.forEach(row => {
@@ -52,6 +53,7 @@ function generateSingleGroupFixtures(groupFixtures, groupName) {
                     team1: `<team-name name="${team1Won ? row.team1 : row.team2}" direction="r2l" />`,
                     score1: team1Won ? team1Score : team2Score,
                     winner1: team1Won ? '◄' : '',
+                    level: `<knockout-level stage="group" group="${groupName}" match-id="${row.id || ''}" />`,
                     winner2: team2Won ? '►' : '',
                     score2: team1Won ? team2Score : team1Score,
                     team2: `<team-name name="${team1Won ? row.team2 : row.team1}" />`, 

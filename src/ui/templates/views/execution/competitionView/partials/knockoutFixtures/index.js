@@ -98,6 +98,7 @@ function createKnockoutTable(categoryData) {
             row.goals1, row.points1, row.goals2, row.points2, row.outcome
         );
 
+
         const styles = getMatchOutcomeStyles(
             new ScoreData(row.goals1, row.points1, row.outcome),
             new ScoreData(row.goals2, row.points2, row.outcome)
@@ -140,8 +141,7 @@ function createKnockoutTable(categoryData) {
 
         // Determine round and progression based on stage
         // Use stageParts defined within this loop scope
-        const roundName = stageParts[0]?.toLowerCase() || ''; // Ensure lowercase for comparison
-        let round = 0;
+            const roundName = stageParts[0]?.toLowerCase() || ''; // Ensure lowercase for comparison
         let progression = 0;
         
         if (roundName === 'cup') round = 0;

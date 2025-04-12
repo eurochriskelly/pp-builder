@@ -61,7 +61,7 @@ function generateUpcomingRow(
         ${row.id ? row.id.toString().slice(-3) : 'N/A'}
       </td>
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
-      <td><knockout-level match-id="${row.id || ''}" stage="${row.stage || ''}" category="${row.category || ''}"></knockout-level></td>
+      <td><knockout-level match-id="${row.id || ''}" stage="${row.stage || ''}" category="${row.category || ''}" group="${row.grp || ''}" no-id></knockout-level></td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
       <td>${row.scheduledTime || 'N/A'}</td>
       <td style="${team1CellStyle}"><team-name name="${row.team1}" maxchars="25"></team-name></td>
@@ -94,7 +94,7 @@ function generateFinishedRow(row, index, isHidden) {
     return `<tr style="${rowStyle}" data-category="${category}">
       <td style="background-color: #808080; color: white;">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
-      <td><knockout-level match-id="${row.id || ''}" stage="${row.stage || ''}" category="${row.category || ''}"></knockout-level></td>
+      <td><knockout-level match-id="${row.id || ''}" stage="${row.stage || ''}" category="${row.category || ''}" group="${row.grp || ''}" no-id></knockout-level></td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
       <td>${row.scheduledTime || 'N/A'}</td>
       <td><team-name direction="r2l" name="${row.team1}" maxchars="25"></team-name></td>
