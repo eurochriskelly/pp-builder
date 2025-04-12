@@ -13,7 +13,7 @@ module.exports = function generateImportFixtures(
         <h2 class="text-2xl font-bold mb-2">${heading}</h2>
         <p class="text-gray-700 m-4">${subHeading}</p>
         ${uploadForm(tournamentId)}      
-        <script src="/scripts/importFixturesScripts.js"></script>
+        <script src="/scripts/importFixures.public.js"></script>
      `;
     if (csvData) {
         html += showCsvData(csvData, validationResult, tournamentId)
