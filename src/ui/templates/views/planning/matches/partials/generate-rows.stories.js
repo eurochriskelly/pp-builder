@@ -1,5 +1,6 @@
 import '../../../../../public/scripts/webcomponents/team-name.js';
 import '../../../../../public/scripts/webcomponents/logo-box.js';
+import '../../../../../public/scripts/webcomponents/knockout-level.js'; // Import knockout-level
 const { generateUpcomingRow, generateFinishedRow } = require('./generate-rows');
 
 // Sample data for upcoming matches

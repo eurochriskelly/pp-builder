@@ -1,4 +1,5 @@
 const { formatScore } = require('../../../../../utils');
+require('../../../../../public/scripts/webcomponents/knockout-level.js'); // Import the component
 
 // Inline CSS for row and play button
 const rowStyleBase = ` position: relative; transition: background-color 0.2s; `;
@@ -60,7 +61,7 @@ function generateUpcomingRow(
         ${row.id ? row.id.toString().slice(-3) : 'N/A'}
       </td>
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
-      <td>${processStage(row.stage)}</td>
+      <td><knockout-level match-id="${row.id || ''}" stage="${row.stage || ''}" category="${row.category || ''}"></knockout-level></td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
       <td>${row.scheduledTime || 'N/A'}</td>
       <td style="${team1CellStyle}"><team-name name="${row.team1}" maxchars="25"></team-name></td>
@@ -93,7 +94,7 @@ function generateFinishedRow(row, index, isHidden) {
     return `<tr style="${rowStyle}" data-category="${category}">
       <td style="background-color: #808080; color: white;">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
-      <td>${processStage(row.stage)}</td>
+      <td><knockout-level match-id="${row.id || ''}" stage="${row.stage || ''}" category="${row.category || ''}"></knockout-level></td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
       <td>${row.scheduledTime || 'N/A'}</td>
       <td><team-name direction="r2l" name="${row.team1}" maxchars="25"></team-name></td>
@@ -103,17 +104,6 @@ function generateFinishedRow(row, index, isHidden) {
     </tr>`;
 }
 
-
-// Function to process stage display
-function processStage(stage) {
-    if (stage !== 'group') {
-        const parts = stage.split('_');
-        if (parts.length === 2) {
-            return `<b>${parts[0]}:</b>${parts[1]}`;
-        }
-    }
-    return stage;
-}
 
 // Function to generate a consistent pastel color for categories/pitches or dark color for teams
 function getRandomColor(name, isTeam = false) {

@@ -1,5 +1,7 @@
 const simulateHeader = require('./partials/simulate-header');
 const { generateFinishedRow, generateUpcomingRow } = require('./partials/generate-rows');
+// Note: This view relies on the <knockout-level> web component being loaded.
+// Ensure it's included globally or via the build process.
 
 
 // ----- Main Exported Function -----
