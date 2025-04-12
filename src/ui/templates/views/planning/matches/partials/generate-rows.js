@@ -59,6 +59,7 @@ function generateUpcomingRow(
         <button class="play-btn" style="${playButtonStyle}" onclick="playNextNMatches(${index + 1}, '${tournamentId}')">▶</button>
         ${row.id ? row.id.toString().slice(-3) : 'N/A'}
       </td>
+      <td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
       <td>${processStage(row.stage)}</td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
@@ -92,6 +93,7 @@ function generateFinishedRow(row, index, isHidden) {
 
     return `<tr style="${rowStyle}" data-category="${category}">
       <td style="background-color: #808080; color: white;">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>
+      <td style="${getGroupBackground(row.stage)}">${row.grp || 'N/A'}</td>
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
       <td>${processStage(row.stage)}</td>
       <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
