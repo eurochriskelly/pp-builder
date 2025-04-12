@@ -31,6 +31,13 @@ function startServer(port, restPort, restHost, bypassAuth) {
         res.sendFile(filePath);
       });
     });
+    glob.sync(path.join(__dirname, '../templates/**/**/*.style.css')).forEach(filePath => {
+      const fileName = path.basename(filePath);
+      console.log(`Adding public style: /styles/${fileName}`)
+      app.get(`/styles/${fileName}`, (req, res) => {
+        res.sendFile(filePath);
+      });
+    });
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(fileUpload());
