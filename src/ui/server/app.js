@@ -1,6 +1,8 @@
 require('dotenv').config(); // Add this at the top
 const express = require('express');
 const session = require('express-session');
+const path = require('path');
+const glob = require('glob');
 const fileUpload = require('express-fileupload');
 const { setApiBaseUrl } = require('../api');
 const { setup } = require('./index.js');
@@ -20,6 +22,15 @@ function startServer(port, restPort, restHost, bypassAuth) {
     const app = express();
     app.use('/styles', express.static(__dirname + '/../public/styles'));
     app.use('/scripts', express.static(__dirname + '/../public/scripts'));
+
+    // Dynamically register static routes for *.public.js files
+    glob.sync(path.join(__dirname, '../templates/**/**/*.public.js')).forEach(filePath => {
+      const fileName = path.basename(filePath);
+      console.log(`Adding public script: /scripts/${fileName}`)
+      app.get(`/scripts/${fileName}`, (req, res) => {
+        res.sendFile(filePath);
+      });
+    });
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(fileUpload());

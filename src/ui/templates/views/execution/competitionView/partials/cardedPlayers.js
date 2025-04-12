@@ -1,6 +1,6 @@
-const { generateTableCell, generateTable } = require('../../partials/tableUtils');
-const { getCardColorStyle } = require('../../partials/styleUtils');
-const { processTeamName } = require('../../../utils'); // For consistent team styling
+const { generateTableCell, generateTable } = require('../../../../partials/tableUtils');
+const { getCardColorStyle } = require('../../../../partials/styleUtils');
+const { processTeamName } = require('../../../../../utils'); // For consistent team styling
 
 // Row generator function for carded players
 function generateCardedPlayerRow(row) {

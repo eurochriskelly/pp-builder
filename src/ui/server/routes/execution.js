@@ -11,12 +11,12 @@ const {
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const generateRecentView = require('../../templates/views/execution/recent');
-const generateGroupFixtures = require('../../templates/views/execution/groupFixtures');
-const generateGroupStandings = require('../../templates/views/execution/groupStandings');
-const generateKnockoutFixtures = require('../../templates/views/execution/knockoutFixtures');
-const generateCardedPlayers = require('../../templates/views/execution/cardedPlayers');
-const generateMatchesByPitch = require('../../templates/views/execution/matchesByPitch/index');
-const generateFinalsResults = require('../../templates/views/execution/finalsResults');
+const generateGroupFixtures = require('../../templates/views/execution/competitionView/partials/groupFixtures');
+const generateGroupStandings = require('../../templates/views/execution/competitionView/partials/groupStandings');
+const generateKnockoutFixtures = require('../../templates/views/execution/competitionView/partials/knockoutFixtures');
+const generateCardedPlayers = require('../../templates/views/execution/competitionView/partials/cardedPlayers');
+const generateFinalsResults = require('../../templates/views/execution/competitionView/partials/finalsResults');
+const generateMatchesByPitch = require('../../templates/views/execution/matchesByPitch');
 
 const router = express.Router();
 
@@ -31,6 +31,7 @@ router.get('/execution/:id/recent', async (req, res) => {
         const html = `${generateHeader('Tournament Status', tournamentId, 'execution', 'recent', isLoggedIn, isLoggedIn)}<div id="content" hx-get="/execution/${tournamentId}/recent-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);
     } catch (error) {
+        console.log(error)
         console.error('Error in /execution/:id/recent:', error.message);
         res.status(500).send('Server Error');
     }

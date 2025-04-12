@@ -1,13 +1,13 @@
-const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
-const { processTeamName } = require('../../../utils');
-const { formatCategory } = require('../../../utils/categoryFormatter');
+const { UtilTable, UtilRow, ScoreData } = require('../../../../partials/tableUtils');
+const { processTeamName } = require('../../../../../utils');
+const { formatCategory } = require('../../../../../utils/categoryFormatter');
 // abbreviateStage might still be used elsewhere, but removed from the stage field generation
-const { parseStageToLevel, abbreviateStage } = require('../../../utils/stageParser'); 
+const { parseStageToLevel, abbreviateStage } = require('../../../../../utils/stageParser'); 
 const {
   getScoreComparisonClasses,
   getFinalScoreDisplay,
   getMatchOutcomeStyles,
-} = require('../../partials/scoreUtils');
+} = require('../../../../partials/scoreUtils');
 
 // Define the desired order for tournament parts
 const tournamentPartOrder = ['cup', 'shield', 'plate'];

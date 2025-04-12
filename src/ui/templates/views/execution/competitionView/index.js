@@ -1,7 +1,7 @@
 // Import individual section generators
-const generateSingleGroupFixtures = require('./groupFixtures'); // Renamed import
-const generateSingleGroupStandings = require('./groupStandings'); // Renamed import
-const generateKnockoutFixtures = require('./knockoutFixtures');
+const generateSingleGroupFixtures = require('./partials/groupFixtures'); // Renamed import
+const generateSingleGroupStandings = require('./partials/groupStandings'); // Renamed import
+const generateKnockoutFixtures = require('./partials/knockoutFixtures');
 
 /**
  * Generates the combined HTML view for a single competition, grouping standings and fixtures by group.

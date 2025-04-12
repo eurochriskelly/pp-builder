@@ -1,8 +1,8 @@
 import generateGroupStandings from './groupStandings.js';
 
-import '../../../public/scripts/webcomponents/team-name.js';
-import '../../../public/scripts/webcomponents/logo-box.js';
-import '../../../public/scripts/webcomponents/gaelic-score.js';
+import '../../../../../public/scripts/webcomponents/team-name.js';
+import '../../../../../public/scripts/webcomponents/logo-box.js';
+import '../../../../../public/scripts/webcomponents/gaelic-score.js';
 
 // Sample data to showcase the function
 const sampleData = {

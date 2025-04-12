@@ -2,7 +2,7 @@ const express = require('express');
 const { createTournament } = require('../../queries/tournaments'); // Fixed path
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
-const generateTournamentSelection = require('../../templates/views/tournamentSelection');
+const generateTournamentSelection = require('../../templates/views/tournamentSelection/index');
 const generateCreateTournament = require('../../templates/views/createTournament');
 const { getTournaments } = require('../../../../dist/src/simulation/retrieve');
 

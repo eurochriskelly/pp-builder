@@ -1,8 +1,8 @@
 import generateKnockoutFixtures from './knockoutFixtures.js';
 
-import '../../../public/scripts/webcomponents/team-name.js';
-import '../../../public/scripts/webcomponents/logo-box.js';
-import '../../../public/scripts/webcomponents/gaelic-score.js';
+import '../../../../../public/scripts/webcomponents/team-name.js';
+import '../../../../../public/scripts/webcomponents/logo-box.js';
+import '../../../../../public/scripts/webcomponents/gaelic-score.js';
 
 // Realistic tournament progression data
 const sampleData = [

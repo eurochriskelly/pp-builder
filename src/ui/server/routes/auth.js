@@ -3,7 +3,7 @@ const { loginUser } = require('../../queries/auth'); // Fixed path
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const generateLoginForm = require('../../templates/views/loginForm'); // Import the new form template
-const generateTournamentSelection = require('../../templates/views/tournamentSelection');
+const generateTournamentSelection = require('../../templates/views/tournamentSelection/index');
 const { getTournaments } = require('../../../../dist/src/simulation/retrieve');
 
 const router = express.Router();

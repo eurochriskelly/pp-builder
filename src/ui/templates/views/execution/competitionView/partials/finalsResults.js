@@ -1,10 +1,10 @@
-const { UtilTable, UtilRow, ScoreData } = require('../../partials/tableUtils');
-const { processTeamName } = require('../../../utils');
+const { UtilTable, UtilRow, ScoreData } = require('../../../../partials/tableUtils');
+const { processTeamName } = require('../../../../../utils');
 const {
   getScoreComparisonClasses,
   getFinalScoreDisplay,
   getMatchOutcomeStyles,
-} = require('../../partials/scoreUtils');
+} = require('../../../../partials/scoreUtils');
 
 function createFinalsTable(categoryData) {
     const table = new UtilTable({
