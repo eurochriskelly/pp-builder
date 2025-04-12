@@ -26,7 +26,8 @@ const svgs = {
 
 class KnockoutLevel extends HTMLElement {
   static get observedAttributes() {
-    return ['match-id', 'stage', 'stage-level', 'category'];
+    // Add 'group' to observed attributes
+    return ['match-id', 'stage', 'stage-level', 'category', 'group'];
   }
 
   constructor() {
@@ -47,21 +48,31 @@ class KnockoutLevel extends HTMLElement {
     const stage = this.getAttribute('stage') || '';
     const stageLevel = this.getAttribute('stage-level') || '';
     const category = this.getAttribute('category') || '';
+    // Get the group attribute
+    const group = this.getAttribute('group'); // Can be null if not set
 
     // Extract last 3 digits of match ID
     const matchNum = matchId.slice(-3);
 
-    // Split stage into round and level
-    const [round, level] = stage.split('_');
-
-    // Split stage-level and get the second part
-    const [, levelNum] = stageLevel.split('.');
-
-    // Determine display abbreviation
+    // Determine display abbreviation and content
     let abbrev = '';
-    if (level === 'final') {
-      abbrev = 'FIN';
-    } else if (level === 'finals') {
+    let stageContent = ''; // Initialize stage content
+
+    if (stage === 'group') {
+      // Handle group stage specifically
+      abbrev = `GP${group || '?'}`;
+      stageContent = abbrev; // For group stage, content is just the abbreviation
+    } else {
+      // --- Existing logic for non-group (knockout) stages ---
+      // Split stage into round and level (only if not group)
+      const [round, level] = stage.split('_');
+
+      // Split stage-level and get the second part (only if not group and stageLevel exists)
+      const [, levelNum] = stageLevel ? stageLevel.split('.') : [null, null];
+
+      if (level === 'final' || level === 'finals') {
+        abbrev = 'FIN';
+      } else if (level === 'semis') {
       abbrev = 'FIN';
     } else if (level === 'semis') {
       abbrev = `SF${levelNum || ''}`;
@@ -76,26 +87,29 @@ class KnockoutLevel extends HTMLElement {
         '6th7th': '6/7',
         '7th8th': '7/8',
       };
-      abbrev = mappings[level] || level.toUpperCase();
-    }
+        abbrev = mappings[level] || level.toUpperCase();
+      }
 
-    // Determine content for the stage display area
-    let stageContent = abbrev; // Default to text abbreviation
-    if (abbrev === 'FIN') {
-      const tournamentPart = round.toUpperCase(); // Get 'CUP', 'SHIELD', etc.
-      const svgString = svgs[tournamentPart];
-      if (svgString) {
-        // Wrap the SVG group in an SVG element with viewBox and styling
-        // Adjust viewBox and size. Let's try a smaller size first.
-        // Keep viewBox="0 0 50 50" for now, but reduce rendered size.
+      // Determine content for the stage display area (default to text abbreviation)
+      stageContent = abbrev;
+      if (abbrev === 'FIN' && round) { // Check abbrev is FIN and round is defined (only in this else block)
+        const tournamentPart = round.toUpperCase(); // Get 'CUP', 'SHIELD', etc.
+        // Use the correct key for lookup (SHD for shield, others as is)
+        const svgKey = tournamentPart === 'SHIELD' ? 'SHD' : tournamentPart;
+        const svgString = svgs[svgKey];
+        if (svgString) {
+          // Wrap the SVG group in an SVG element with viewBox and styling
+          // Adjust viewBox and size. Let's try a smaller size first.
+          // Keep viewBox="0 0 50 50" for now, but reduce rendered size.
         stageContent = `
           <svg viewBox="0 0 40 40" width="38" height="48" preserveAspectRatio="xMidYMid meet">
             ${svgString}
           </svg>
         `;
       }
-      // If no matching SVG, stageContent remains 'FIN'
-    }
+        // If no matching SVG, stageContent remains 'FIN'
+      }
+    } // End of knockout stage specific logic
 
 
     this.shadowRoot.innerHTML = `

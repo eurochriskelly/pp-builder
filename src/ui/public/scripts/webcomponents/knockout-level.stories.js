@@ -15,20 +15,33 @@ export default {
     stageLevel: {
       control: 'text',
       description: 'Stage level in format x.y (e.g., 2.1)',
+      name: 'stage-level', // Use kebab-case for attribute control
     },
     category: {
       control: 'text',
       description: 'Category (e.g., Mens, Womens) - not used yet',
     },
+    // Add group argType, conditional display
+    group: {
+      control: 'text',
+      description: 'Group number (only used when stage is "group")',
+      if: { arg: 'stage', eq: 'group' }, // Show only if stage is 'group'
+    },
   },
 };
 
-const Template = ({ matchId, stage, stageLevel, category }) => {
+// Add 'group' to Template parameters
+const Template = ({ matchId, stage, stageLevel, category, group }) => {
   const el = document.createElement('knockout-level');
   if (matchId) el.setAttribute('match-id', matchId);
   if (stage) el.setAttribute('stage', stage);
-  if (stageLevel) el.setAttribute('stageLevel', stageLevel);
+  // Use kebab-case for stage-level attribute
+  if (stageLevel) el.setAttribute('stage-level', stageLevel);
   if (category) el.setAttribute('category', category);
+  // Set group attribute only if stage is 'group' and group is provided
+  if (stage === 'group' && group) {
+    el.setAttribute('group', group);
+  }
   return el;
 };
 
@@ -140,6 +153,37 @@ SeventhEighth.args = {
 };
 SeventhEighth.storyName = '7th/8th Place';
 
+// --- Add Group Stage Stories ---
+export const Group1 = Template.bind({});
+Group1.args = {
+  matchId: '120044',
+  stage: 'group', // Set stage to 'group'
+  group: '1',     // Specify group number
+  category: 'Mens',
+  // stageLevel is not relevant for groups
+};
+Group1.storyName = 'Group 1 (GP1)';
+
+export const Group2 = Template.bind({});
+Group2.args = {
+  matchId: '120043',
+  stage: 'group',
+  group: '2',
+  category: 'Mens',
+};
+Group2.storyName = 'Group 2 (GP2)';
+
+export const GroupUnknown = Template.bind({});
+GroupUnknown.args = {
+  matchId: '120040',
+  stage: 'group',
+  // No group attribute provided
+  category: 'Mens',
+};
+GroupUnknown.storyName = 'Group ? (Unknown)';
+// --- End Group Stage Stories ---
+
+
 export const AllStages = {
   render: () => {
     const container = document.createElement('div');
@@ -163,14 +207,25 @@ export const AllStages = {
       { matchId: '120047', stage: 'cup_5th6th', stageLevel: '3.6', category: 'Mens' },
       { matchId: '120046', stage: 'cup_6th7th', stageLevel: '3.7', category: 'Mens' },
       { matchId: '120045', stage: 'cup_7th8th', stageLevel: '3.8', category: 'Mens' },
+      // Add group stage examples
+      { matchId: '120044', stage: 'group', group: '1', category: 'Mens' },
+      { matchId: '120043', stage: 'group', group: '2', category: 'Mens' },
+      { matchId: '120040', stage: 'group', category: 'Mens' }, // Unknown group
+      // Add shield final example to test SVG logic
+      { matchId: '120030', stage: 'shield_final', stageLevel: '1.2', category: 'Mens' },
     ];
 
-    stages.forEach(({ matchId, stage, stageLevel, category }) => {
+    // Refactor to dynamically set attributes based on the data keys
+    stages.forEach((attrs) => {
       const el = document.createElement('knockout-level');
-      el.setAttribute('match-id', matchId);
-      el.setAttribute('stage', stage);
-      el.setAttribute('stage-level', stageLevel);
-      el.setAttribute('category', category);
+      Object.entries(attrs).forEach(([key, value]) => {
+        // Convert potential camelCase keys (like stageLevel) to kebab-case attribute names
+        const attrName = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+        // Set attribute only if value is provided
+        if (value !== undefined && value !== null) {
+          el.setAttribute(attrName, value);
+        }
+      });
       container.appendChild(el);
     });
 
