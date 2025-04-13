@@ -31,16 +31,17 @@ export default {
 };
 
 // Add 'group' to Template parameters
-const Template = ({ matchId, stage, stageLevel, category, group }) => {
+const Template = ({ matchId, stage, stageLevel, category, group, noId }) => {
   const el = document.createElement('knockout-level');
   if (matchId) el.setAttribute('match-id', matchId);
   if (stage) el.setAttribute('stage', stage);
-  // Use kebab-case for stage-level attribute
   if (stageLevel) el.setAttribute('stage-level', stageLevel);
   if (category) el.setAttribute('category', category);
-  // Set group attribute only if stage is 'group' and group is provided
   if (stage === 'group' && group) {
     el.setAttribute('group', group);
+  }
+  if (noId) {
+    el.setAttribute('no-id', '');
   }
   return el;
 };
@@ -183,6 +184,16 @@ GroupUnknown.args = {
 GroupUnknown.storyName = 'Group ? (Unknown)';
 // --- End Group Stage Stories ---
 
+// --- Add New Story for No Fixture ID ---
+export const NoId = Template.bind({});
+NoId.args = {
+  matchId: '120056',
+  stage: 'cup_final',
+  stageLevel: '1.1',
+  category: 'Mens',
+  noId: true, // will result in no-id attribute being set
+};
+NoId.storyName = 'No Fixture ID';
 
 export const AllStages = {
   render: () => {
