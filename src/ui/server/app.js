@@ -12,6 +12,7 @@ const planningRoutes = require('./routes/planning');
 const importRoutes = require('./routes/planning-import');
 const executionRoutes = require('./routes/execution');
 const eventRoutes = require('./routes/events');
+const chronicleRoutes = require('./routes/chronicle'); // added chronicle routes import
 
 function startServer(port, restPort, restHost, bypassAuth) {
     setup(restHost, port, restPort) 
@@ -62,6 +63,7 @@ function startServer(port, restPort, restHost, bypassAuth) {
     app.use(importRoutes);
     app.use(executionRoutes);
     app.use(eventRoutes);
+  app.use('/chronicle', chronicleRoutes); // added chronicle route mounting
 
     console.log('Starting server on port:', port);
     const server = app.listen(port, () => {
