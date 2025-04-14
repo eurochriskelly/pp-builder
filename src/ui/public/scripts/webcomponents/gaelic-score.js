@@ -17,10 +17,22 @@ class GaelicScore extends HTMLElement {
   }
 
   render() {
-    const goals = parseInt(this.getAttribute('goals') || '0', 10);
-    const points = parseInt(this.getAttribute('points') || '0', 10);
+    const rawGoals = this.getAttribute('goals');
+    const rawPoints = this.getAttribute('points');
     const layout = this.getAttribute('layout') || 'default';
     const scale = parseFloat(this.getAttribute('scale') || '1');
+
+    // If goals or points is empty, missing, or "null", display a single N/A
+    if (
+      !rawGoals || rawGoals.trim() === "" || rawGoals === "null" ||
+      !rawPoints || rawPoints.trim() === "" || rawPoints === "null"
+    ) {
+      this.shadowRoot.innerHTML = '<div class="unplayed" style="font-size:80%;color:#aaa">#&nbsp;##</div>';
+      return;
+    }
+
+    const goals = parseInt(rawGoals, 10);
+    const points = parseInt(rawPoints, 10);
 
     const goalsAgainst = parseInt(this.getAttribute('goalsagainst') || '0', 10);
     const pointsAgainst = parseInt(this.getAttribute('pointsagainst') || '0', 10);
@@ -28,18 +40,18 @@ class GaelicScore extends HTMLElement {
 
     // Handle unplayed matches
     if (!played) {
-      // Check for walkover scenario (0-1 vs 0-0)
+      // Check for walkover scenario (1-1 vs 0-0)
       if (goals === 0 && points === 1 && goalsAgainst === 0 && pointsAgainst === 0) {
-        this.shadowRoot.innerHTML = '<div class="unplayed">WALK OVER</div>';
+        this.shadowRoot.innerHTML = '<div class="unplayed"><span style="font-size:70%;">WALK OVER</span></div>';
         return;
       }
       if (goals === 0 && points === 0 && goalsAgainst === 0 && pointsAgainst === 1) {
-        this.shadowRoot.innerHTML = '<div class="unplayed">SCR</div>';
+        this.shadowRoot.innerHTML = '<div class="unplayed"><span style="font-size:70%;">SCR</span></div>';
         return;
       }
       // Check for shared points scenario (0-0 vs 0-0)
       if (goals === 0 && points === 0 && goalsAgainst === 0 && pointsAgainst === 0) {
-        this.shadowRoot.innerHTML = '<div class="unplayed">SHARE</div>';
+        this.shadowRoot.innerHTML = '<div class="unplayed"><span style="font-size:70%;">SHARE</span></div>';
         return;
       }
     }
@@ -51,11 +63,12 @@ class GaelicScore extends HTMLElement {
     const goalStr = goals.toString();
     const pointStr = points.toString().padStart(2, '0');
     const totalStr = total.toString().padStart(2, '0');
-    const gray = '#bbb';
-
     // Formatted score parts
     const scorePart = `<span style="white-space: nowrap;">${goalStr}-${pointStr}</span>`; // Goals-Points with nowrap
-    const totalPart = `<span>(${totalStr})</span>`; // Total points in separate span
+    let totalPart = `<span>(${totalStr})</span>`; // Total points in separate span
+    if (layout === 'over') {
+      totalPart = `<span>${totalStr}</span>`;
+    }
 
     let content = '';
 
@@ -67,8 +80,10 @@ class GaelicScore extends HTMLElement {
       `; // Added space after scorePart for consistency, though layout might override
     } else if (layout === 'over') {
       content = `
-        <div class="top">${scorePart}</div>
-        <div class="bottom">${totalPart}</div>
+        <div class="over-container">
+          <div class="top">${scorePart}</div>
+          <div class="bottom">${totalPart}</div>
+        </div>
       `;
     } else if (layout === 'compare' || layout === 'compare-rtl') {
         const scoreFor = goals * 3 + points;
@@ -112,15 +127,22 @@ class GaelicScore extends HTMLElement {
             font-family: sans-serif;
             transform: scale(${scale});
             transform-origin: top left;
+            display: block;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
           }
 
           /* Removed .bracket style as it's now part of the span */
 
-          .top {
+          .over-container {
+            text-align: center;
+          }
+          .top { 
             text-align: center;
             font-size: 1rem;
           }
-
+          
           .bottom {
             text-align: center;
             font-size: 2rem;
@@ -138,14 +160,6 @@ class GaelicScore extends HTMLElement {
             text-align: center;
             font-size: 1.44rem; /* Decreased by 20% */
             line-height: 1;
-          }
-
-          :host {
-            display: block;
-            width: 100%;
-            height: 100%;
-            padding: 0.3em;
-            box-sizing: border-box;
           }
 
           :host(.green) {
@@ -184,9 +198,11 @@ class GaelicScore extends HTMLElement {
 
           .unplayed {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             font-weight: bold;
-            color: #666;
+            white-space: nowrap;
+            color: #AAA;
+            font-weight: bold;
             padding: 0.5em;
           }
         </style>
