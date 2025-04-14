@@ -3,6 +3,8 @@ import generateKnockoutFixtures from './index.js';
 import '../../../../../../public/scripts/webcomponents/team-name.js';
 import '../../../../../../public/scripts/webcomponents/logo-box.js';
 import '../../../../../../public/scripts/webcomponents/gaelic-score.js';
+import '../../../../../../public/scripts/webcomponents/cup-icon.js';
+import '../../../../../../public/scripts/webcomponents/knockout-level.js';
 
 // Realistic tournament progression data
 const sampleData = [
