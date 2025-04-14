@@ -24,13 +24,13 @@ function generateSingleGroupFixtures(groupFixtures, groupName) {
         emptyMessage: `No group fixtures found for Group ${groupName}.`
       })
       .addHeaders({
-          team1: { label: 'Team 1', align: 'left', width: '28%' },
-            score1: { label: 'Score 1', align: 'center', width: '8%' },
-            winner1: { label: '', align: 'left', width: '4%' },
-          level: { label: 'Level', align: 'center', width: '12%' },
-            winner2: { label: '', align: 'right', width: '4%' },
-            score2: { label: 'Score 2', align: 'center', width: '8%' },
-          team2: { label: 'Team 2', align: 'left', width: '28%' },
+          team1: { label: 'Team 1', align: 'left', width: 'auto' },
+          score1: { label: 'Score 1', align: 'center', width: '8%' },
+          winner1: { label: '', align: 'left', width: '2%' },
+          level: { label: 'Level', align: 'center', width: 'auto' },
+          winner2: { label: '', align: 'right', width: '2%' },
+          score2: { label: 'Score 2', align: 'center', width: '8%' },
+          team2: { label: 'Team 2', align: 'left', width: 'auto' },
           })
         .noHeader();
 
@@ -46,17 +46,25 @@ function generateSingleGroupFixtures(groupFixtures, groupName) {
 
             const team1Won = team1Score.total > team2Score.total;
             const team2Won = team2Score.total > team1Score.total;
-      console.log('t1s', team1Score)
             
+            const w = 'auto';
             const utilRow = new UtilRow()
                 .setFields({
-                    team1: `<team-name name="${team1Won ? row.team1 : row.team2}" direction="r2l" />`,
+                    team1: `
+                        <div style="display: flex; justify-content: flex-end; align-items: center; width: ${w};min-width:${w};max-width:${w}">
+                            <team-name name="${team1Won ? row.team1 : row.team2}" direction="r2l" />
+                        </div>
+                    `,
                     score1: team1Won ? team1Score : team2Score,
                     winner1: team1Won ? '◄' : '',
                     level: `<knockout-level stage="group" group="${groupName}" match-id="${row.id || ''}" />`,
                     winner2: team2Won ? '►' : '',
                     score2: team1Won ? team2Score : team1Score,
-                    team2: `<team-name name="${team1Won ? row.team2 : row.team1}" />`, 
+                    team2: `
+                        <div style="display: flex; align-items: left; width: ${w};min-width:${w};max-width:${w}">
+                            <team-name name="${team1Won ? row.team2 : row.team1}" />
+                        </div>
+                    `, 
                 })
                 .setStyle('team1', {
                     'font-weight': styles.team1.fontWeight,
@@ -70,6 +78,13 @@ function generateSingleGroupFixtures(groupFixtures, groupName) {
                     'font-weight': styles.team1.fontWeight,
                     'color': styles.team1.textColor, 
                 })
+                .setStyle('level', {
+                    'margin': '0',
+                    'padding': '0',
+                    'max-width': '60px !important',
+                    'width': '60px',
+                    'min-width': '60px',
+                })
                 .setStyle('score2', {
                     'font-weight': styles.team2.fontWeight,
                     'color': styles.team2.textColor
@@ -78,12 +93,14 @@ function generateSingleGroupFixtures(groupFixtures, groupName) {
                     'padding': '0',
                     'margin': '0',
                     'font-size': '1em',
+                    'max-width': '1em',
                     'vertical-align': 'middle',
                     'line-height': '1.2'
                 })
                 .setStyle('winner2', {
                     'padding': '0',
                     'margin': '0',
+                    'max-width': '1em',
                     'font-size': '1em',
                     'vertical-align': 'middle',
                     'line-height': '1.2'

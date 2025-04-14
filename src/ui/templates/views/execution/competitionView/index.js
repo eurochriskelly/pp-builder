@@ -31,7 +31,7 @@ module.exports = function generateCompetitionView(data) {
     // Section: Knockout Fixtures
     if (knockoutFixtures && knockoutFixtures.length > 0) {
         html += '<section id="comp-knockout-fixtures">';
-        html += '<h2 class="text-xl font-semibold mb-2 mt-4">Knockout Games</h2>'; // Added H2 subheading
+        html += '<h2 class="event-h2 text-xl font-semibold mb-2 mt-4">Knockout Games</h2>'; // Added H2 subheading
         html += generateKnockoutFixtures(knockoutFixtures);
         html += '</section>';
     }
@@ -71,6 +71,8 @@ module.exports = function generateCompetitionView(data) {
         // Sort groups alphabetically by name for consistent order
         groupsData.sort((a, b) => (a.groupName || '').localeCompare(b.groupName || ''));
 
+
+        html += '<h2 class="event-h2 text-xl font-semibold mb-2 mt-4">Group Games</h2>'; 
         // Loop through each group within the competition
         groupsData.forEach(groupData => {
             const groupName = groupData.groupName;
