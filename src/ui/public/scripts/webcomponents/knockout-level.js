@@ -23,25 +23,29 @@ class KnockoutLevel extends HTMLElement {
     const stage = this.getAttribute('stage') || '';
     const stageLevel = this.getAttribute('stage-level') || '';
     const group = this.getAttribute('group') || '';
+    let tint = this.getAttribute('tint') || '#98bdc5;'; // Default tint color
 
     // Extract last 3 digits of match ID (handled above if showId)
 
     let abbrev = '';
     if (stage === 'group') {
       // Handle group stage
+      tint = '#c3c598;'; 
       abbrev = `GP${group || '?'}`;
     } else {
       const [round, level] = stage.split('_');
       const [, levelNum] = stageLevel.split('.');
-
       // Determine display abbreviation for knockout stages
+      if (['plt', 'plate'].includes(round)) tint = '#c598a1;';
+      if (['shd', 'sld', 'shield', 'sheild'].includes(round)) tint = '#aaddbd;';
+
       if (level === 'final') {
         abbrev = 'FIN';
       } else if (level === 'finals') {
         abbrev = 'FIN';
-      } else if (level === 'semis') {
+      } else if (level === 'semis' || level === 'semi') {
         abbrev = `SF${levelNum || ''}`;
-      } else if (level === 'quarters') {
+      } else if ((level === 'quarters') || (level === 'quarter')) {
         abbrev = `QF${levelNum || ''}`;
       } else {
         // Handle positional matches (e.g., 3/4, 4/5, etc.)
@@ -69,8 +73,9 @@ class KnockoutLevel extends HTMLElement {
           display: inline-block;
           font-family: sans-serif;
           text-align: center;
-          min-width: 60px;
-          background: #98bdc5;
+          max-width: 4rem;
+          min-width: 4rem;
+          background:${tint} 
           border-radius: 100rem;
         }
         .container {
