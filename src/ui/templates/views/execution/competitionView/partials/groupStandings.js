@@ -189,10 +189,13 @@ function createStandingsTable(groupData, categoryFixtures) { // Renamed fixtures
 
     // Add rows
     groupData.rows.forEach((row, rowIndex) => {
-        console.log('processing row ', rowIndex);
-
         const { teamName, teamStyle } = processTeamName(row.team);
-        const teamLabel = `<team-name name="${row.team}" height="30px" direction="l2r" />`;
+        const w = '240px';
+        const teamLabel = `
+            <div style="display: flex; justify-content: flex-start; align-items: center; overflow:hidden;width: ${w};min-width:${w};max-width:${w}">
+                <team-name name="${row.team}" height="30px" direction="l2r" />
+            </div>
+        `;
 
         const fields = {
           ...row,
@@ -212,8 +215,9 @@ function createStandingsTable(groupData, categoryFixtures) { // Renamed fixtures
         generateGroupMatrixRow(utilRow, groupData.rows, rowIndex, categoryFixtures);
 
         // Apply specific styles after all fields are set for the row
-        utilRow.setStyle('TotalPoints', { 'font-weight': 'bold' }) // Keep bold style
-               .addBorder('TotalPoints', 'left');                 // Use addBorder for left border
+        utilRow
+            .setStyle('TotalPoints', { 'font-weight': 'bold' }) // Keep bold style
+            .addBorder('TotalPoints', 'left');                 // Use addBorder for left border
         utilRow.addBorder('PointsFrom', 'left');                  // Use addBorder for left border
  
         table.addRow(utilRow);
