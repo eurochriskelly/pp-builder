@@ -1,18 +1,22 @@
-const { allowedViews } = require('../../config/allowedViews');
+const { allowedViews } = require('../../../config/allowedViews');
+const { Calendar, MapPin } = require('lucide');
 
-function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false) {
+function generateEventManager(uuid, tournament, isLoggedIn = false) {
     // Check if tournament.categories is a non-empty array
     const competitions = Array.isArray(tournament.categories) ? tournament.categories : [];
     let initialLoadAttributes = '';
+    let currentCompetition = '';
+    
     if (competitions.length > 0) {
-        const firstCompName = competitions[0];
-        const encodedFirstCompName = encodeURIComponent(firstCompName);
+        currentCompetition = competitions[0]; // Default to first competition
+        const encodedFirstCompName = encodeURIComponent(currentCompetition);
         const initialLoadUrl = `/event/${uuid}/competition-update?competition=${encodedFirstCompName}`;
         initialLoadAttributes = `
             hx-get="${initialLoadUrl}"
             hx-trigger="load"
             hx-target="#content"
             hx-swap="innerHTML"
+            data-current-competition="${currentCompetition}"
         `;
     }
 
@@ -21,29 +25,37 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
     let html = `<div id="event-manager" class="event-manager-container"${initialLoadAttributes}>`;
     // Restore mx-auto for centering (assuming Tailwind is active)
     html += `<div class="event-manager-header">
-                <h2 class="mx-auto">${tournament.Title || tournament.title || 'Event'}</h2>
-                <p class="text-3xl m-4 mb-8 mx-auto">${tournament.Date ? tournament.Date.substring(0,10) : tournament.date || ''} | ${tournament.Location || tournament.location || ''}</p>
-             </div>`;
+                <h2 class="mx-auto event-info-title">
+                    <span class="icon"><Calendar size="16" /></span>
+                    ${tournament.Title || tournament.title || 'Event'}
+                </h2>
+                <p class="text-3xl m-4 mb-8 mx-auto">
+                    <span class="icon"><Calendar size="16" /></span>
+                    ${tournament.Date ? tournament.Date.substring(0,10) : tournament.date || ''} |
+                    <span class="icon"><MapPin size="16" /></span>
+                    ${tournament.Location || tournament.location || ''}
+                </p>
+             </div>`; // Fixed missing closing bracket and extra curly brace
   
-    html += '<nav class="event-manager-nav competition-nav mb-4">';
-    html += '  <div class="event-manager-nav-inner">';
-    html += '    <span class="mr-4 font-semibold">Competitions:</span>';
+    html += '<nav class="event-manager-nav competition-nav mb-4 mt-4">';
+    html += '  <div class="mr-4 mt-4 font-semibold">Competitions:</div>'; // Keep "Competitions:" text directly inside <nav>
+    html += '  <div class="competition-links-container">'; // Add a container div for the links
 
     // Generate links for Competitions
-
-   // Competitions array is already defined above
-   if (competitions.length > 0) {
-       competitions.forEach(compName => { // Iterate directly over the array elements (names)
-           const encodedCompName = encodeURIComponent(compName); // Encode the actual name
-            // Target the new competition-update endpoint directly
+    if (competitions.length > 0) {
+        competitions.forEach(compName => {
+            const encodedCompName = encodeURIComponent(compName);
             const updateUrl = `/event/${uuid}/competition-update?competition=${encodedCompName}`;
+            // Add a selected-competition class when this is the current competition
+            const isSelected = compName === currentCompetition ? ' selected-competition' : '';
             html += `
                 <a href="#"
                    hx-get="${updateUrl}"
                    hx-target="#content"
                    hx-swap="innerHTML"
                    hx-trigger="click"
-                   class="event-manager-link competition-link">
+                   class="event-manager-link competition-link${isSelected}"
+                   data-competition-name="${compName}">
                     ${compName}
                 </a>`;
         });
@@ -63,12 +75,14 @@ function generateEventManager(tournamentId, uuid, tournament, isLoggedIn = false
         html += '</div>';
     }
 
-    html += '</div></nav>';
+    html += '  </div>'; // Close competition-links-container
+    html += '</nav>';
     html += '</div>'; // Close event-manager-container
 
-    if (isLoggedIn) {
-        html += `<script src="/scripts/tournamentSelection.public.js"></script>`;
-    }
+    html += `<link rel="stylesheet" href="/styles/eventManager.style.css" />`;
+    
+    // Add the JavaScript for competition selection highlighting and make it work after HTMX swaps
+    html += `<script src="/scripts/eventManager.public.js"></script>`;
 
     return html;
 }

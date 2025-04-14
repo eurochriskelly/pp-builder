@@ -1,0 +1,68 @@
+/* Event Manager Styles */
+.selected-competition {
+    color: #ff6b97 !important; /* Pink color for selected competition */
+    font-weight: bold;
+}
+  
+.competition-links-container {
+    height: 4rem;
+    text-align: center;
+}
+.competition-link {
+    margin-right: 10px;
+    height: 4rem;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-size: 3rem;
+}
+
+.competition-link:hover {
+    text-decoration: underline;
+}
+
+#event-manager {
+  width: 100%;
+  background: none;
+}
+
+.event-manager-header {
+  text-align: center;
+  margin-bottom: 3rem; 
+}
+.event-manager-nav> div:first-child {
+  margin-top: 20px;
+  height: 3rem;
+  font-style: italic;
+  text-align: center;
+}
+
+.event-h2 {
+    text-align: center;
+    color: #5b3f47;
+    padding: 0.9rem;
+    text-transform: uppercase;
+    border-top: 6px solid #5b3f4724;
+    font-size: 2.2rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+.event-manager-header h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    background: #5b3f47;
+    color: white;
+    padding: 2rem;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+article {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
