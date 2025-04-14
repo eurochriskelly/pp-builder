@@ -17,38 +17,205 @@ async function getRegions() {
         years: {
             [currentYear]: [
                 {
-                    championship: "Benelux football",
-                    winner: "Luxembourg GFC",
-                    runnerUp: "Brussels GFC"
+                    championship: "Mens Football",
+                    levels: {
+                        championship: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                        plate: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        }
+                    }
                 },
                 {
-                    championship: "The All-Benelux rounders competition",
-                    winner: "Den Haag",
-                    runnerUp: "Brussels GFC"
+                    championship: "Ladies Football",
+                    levels: {
+                        championship: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                        plate: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        }
+                    }
+                },
+                {
+                    championship: "Hurling",
+                    levels: {
+                        championship: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                    }
+                },
+                {
+                    championship: "Camogie",
+                    levels: {
+                        championship: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                    }
+                },
+                {
+                    championship: "Youth Football",
+                    levels: {
+                        under14: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        under12: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                        under10: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        },
+                    }
                 },
             ],
             [currentYear - 1]: [
                 {
-                    championship: "Benelux football",
-                    winner: "Amsterdam FC",
-                    runnerUp: "Rotterdam FC"
+                    championship: "Mens Football",
+                    levels: {
+                        championship: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                        plate: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        }
+                    }
                 },
                 {
-                    championship: "The All-Benelux rounders competition",
-                    winner: "Antwerp",
-                    runnerUp: "Rotterdam FC"
+                    championship: "Ladies Football",
+                    levels: {
+                        championship: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                        plate: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        }
+                    }
+                },
+                {
+                    championship: "Hurling",
+                    levels: {
+                        championship: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                    }
+                },
+                {
+                    championship: "Camogie",
+                    levels: {
+                        championship: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                    }
                 },
             ],
             [currentYear - 2]: [
                 {
-                    championship: "Benelux football",
-                    winner: "Brussels GFC",
-                    runnerUp: "Luxembourg GFC"
+                    championship: "Mens Football",
+                    levels: {
+                        championship: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                        plate: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        }
+                    }
                 },
                 {
-                    championship: "The All-Benelux rounders competition",
-                    winner: "Rotterdam FC",
-                    runnerUp: "Amsterdam FC"
+                    championship: "Ladies Football",
+                    levels: {
+                        championship: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                        plate: {
+                            winner: "Amsterdam FC",
+                            runnerUp: "Rotterdam FC"
+                        }
+                    }
+                },
+                {
+                    championship: "Hurling",
+                    levels: {
+                        championship: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                    }
+                },
+                {
+                    championship: "Camogie",
+                    levels: {
+                        championship: {
+                            winner: "Den Haag",
+                            runnerUp: "Brussels GFC"
+                        },
+                        shield: {
+                            winner: "Luxembourg GFC",
+                            runnerUp: "Brussels GFC"
+                        },
+                    }
                 },
             ],
         }
