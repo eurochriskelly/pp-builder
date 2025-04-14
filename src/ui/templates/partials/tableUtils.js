@@ -17,6 +17,11 @@ class ScoreData {
            ? 'SCRATCH' 
            : (this.goals === 0 && this.points === 0) ? 'WALKED' : 'INVALID'
     }
+
+    // Add method to support custom HTML rendering
+    toHTML() {
+        return this.customHtml || this.toString();
+    }
 }
 
 // Row class to manage individual table rows
@@ -98,12 +103,14 @@ class UtilTable {
     }
     addHeaders(headerConfig) {
         Object.entries(headerConfig).forEach(([key, config]) => {
-            this.headers.set(key, {
+            const obj = {
                 label: config.label || key,
                 width: config.width || 'auto',
                 align: config.align || 'left',
+                style: config.style || {},
                 className: `text-${config.align || 'left'}`
-            });
+            }
+            this.headers.set(key, obj);
         });
         return this;
     }
@@ -161,20 +168,26 @@ class UtilTable {
                 className += ' text-grey';
             }
         } else if (headerKey.includes('score')) {
-            cellContent = content instanceof ScoreData ? content.toString() : formatScore(null, null);
-            
-            if (typeof content === 'string') {
-                const lowerContent = content.toLowerCase();
-                if (lowerContent.includes('walked')) {
-                    className += ' walked-score';
-                } else if (lowerContent.includes('concede')) {
-                    className += ' conceded-score';
-                } else if (lowerContent.includes('shared')) {
-                    className += ' shared-score';
+            // Check if content has custom HTML
+            if (content instanceof ScoreData && content.customHtml) {
+                cellContent = content.customHtml;
+            } else {
+                cellContent = content instanceof ScoreData ? content.toString() : formatScore(null, null);
+
+                if (typeof content === 'string') {
+                    const lowerContent = content.toLowerCase();
+                    if (lowerContent.includes('walked')) {
+                        className += ' walked-score';
+                    } else if (lowerContent.includes('concede')) {
+                        className += ' conceded-score';
+                    } else if (lowerContent.includes('shared')) {
+                        className += ' shared-score';
+                    }
                 }
+
+                className += content === 'N/A' ? ' text-grey' : '';
             }
-            
-            className += content === 'N/A' ? ' text-grey' : '';
+
         }
 
         const styleStr = Object.entries(style)
@@ -197,16 +210,38 @@ class UtilTable {
         if (this.showHeader) {
             html += '<thead><tr>';
             for (const [key, header] of this.headers) {
+                // Build style string from all header properties that should be applied to style
                 let styleStr = `width: ${header.width}; text-align: ${header.align}`;
+
+                // Apply all custom style properties from config.style
+                if (header.style) {
+                    for (const [styleProp, styleValue] of Object.entries(header.style)) {
+                        // Skip properties that aren't CSS styles
+                        if (styleProp !== 'className' && styleProp !== 'label' && styleProp !== 'width' && styleProp !== 'align') {
+                            styleStr += `; ${styleProp}: ${styleValue}`;
+                        }
+                    }
+                }
+
+                // Default border handling if not explicitly set
                 if (!header.style?.['border-left']) styleStr += '; border-left: none';
                 if (!header.style?.['border-right']) styleStr += '; border-right: none';
+
                 // Add specific styles for standings table headers
                 if (key === 'TotalPoints') {
                     styleStr += ` font-weight: bold; border-left: 1px solid #ccc;`;
                 } else if (key === 'PointsFrom') {
                     styleStr += ` border-left: 1px solid #ccc;`;
                 }
-                html += `<th class="${header.className}" style="${styleStr}">${header.label}</th>`;
+                // Concatenate additional styles with camelCase to kebab-case conversion
+                if (header.style) {
+                    Object.entries(header.style).forEach(([styleKey, styleValue]) => {
+                        const kebabKey = styleKey.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+                        styleStr += `; ${kebabKey}: ${styleValue}`;
+                    });
+                }
+
+                html += `<th class="${header.className} xx" style="${styleStr}">${header.label}</th>`;
             }
             html += '</tr></thead>';
         }

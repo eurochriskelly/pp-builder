@@ -56,11 +56,12 @@ router.get('/event/:uuid/competition-update', async (req, res) => {
         const content = generator(competitionData);
 
         // Prepend the H1 title (using the actual competition name)
-        const responseHtml = `<h1>${competitionName}</h1>${content}`;
+        const responseHtml = `${content}`;
 
         res.send(responseHtml);
 
     } catch (error) {
+        console.log(error);
         console.error(`Error fetching/generating competition view for ${competitionName} in tournament ${uuid}:`, error.message);
         res.status(500).send(`<h1 class="error">${competitionName}</h1><p class="error p-4">Error loading data for ${competitionName}. Please try again later.</p>`);
     }
@@ -100,7 +101,7 @@ router.get('/event/:uuid', async (req, res) => { // Removed optional :view? para
     // Construct the final HTML for initial page load
     try {
         // generateEventManager handles competition selection links
-        const eventManagerHtml = generateEventManager(tournamentId, uuid, tournament, isLoggedIn);
+        const eventManagerHtml = generateEventManager(uuid, tournament, isLoggedIn);
 
         const html = `
           ${generateHeader(pageTitle, tournamentId, 'execution', null, isLoggedIn, false)}
