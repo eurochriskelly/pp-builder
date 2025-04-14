@@ -12,8 +12,8 @@ function generateGroupMatrixHeaders(groupRows) {
     const totalVsColumns = 5;
     const placeholderStyle = { 'background-color': '#888' }; // Updated background color
 
-    // Iterate in reverse order to add headers from right to left, up to totalVsColumns
-    for (let i = totalVsColumns - 1; i >= 0; i--) {
+    // Iterate in forward order to add headers from left to right, up to totalVsColumns
+    for (let i = 0; i < totalVsColumns; i++) {
         const fieldName = `vs${i}`;
         if (i < numTeams) {
             // Actual team header
@@ -48,8 +48,8 @@ function generateGroupMatrixRow(utilRow, groupRows, rowIndex, fixtures) {
     const totalVsColumns = 5;
     const placeholderStyle = { 'background-color': '#888' }; // Updated background color
 
-    // Iterate columns in reverse order to match the reversed header order, up to totalVsColumns
-    for (let colIndex = totalVsColumns - 1; colIndex >= 0; colIndex--) {
+    // Iterate columns in forward order to match the updated header order
+    for (let colIndex = 0; colIndex < totalVsColumns; colIndex++) {
         const fieldName = `vs${colIndex}`;
 
         if (colIndex >= numTeams) {
@@ -167,11 +167,7 @@ function createStandingsTable(groupData, categoryFixtures) { // Renamed fixtures
         emptyMessage: `No standings available for Group ${groupName}.` // Use safe groupName
     });
 
-    // Generate and add group matrix headers first
-    const vsHeaders = generateGroupMatrixHeaders(groupData.rows);
-    table.addHeaders(vsHeaders);
-
-    // Add Team header after vs columns
+    // Add Team header first
     table.addHeaders({
         team: { label: 'Team', align: 'left', width: 'auto' },
     });
@@ -186,6 +182,10 @@ function createStandingsTable(groupData, categoryFixtures) { // Renamed fixtures
         PointsDifference: { label: 'SD', align: 'center', width: '4%' },
         TotalPoints: { label: 'Pts', align: 'center', width: '4%' }
     });
+
+    // Generate and add group matrix headers AFTER stats columns
+    const vsHeaders = generateGroupMatrixHeaders(groupData.rows);
+    table.addHeaders(vsHeaders);
 
     // Add rows
     groupData.rows.forEach((row, rowIndex) => {
@@ -210,15 +210,14 @@ function createStandingsTable(groupData, categoryFixtures) { // Renamed fixtures
                 ...teamStyle
             });
 
-        // Populate the group matrix cells for this row using the new function
-        // Pass categoryFixtures instead of just fixtures
-        generateGroupMatrixRow(utilRow, groupData.rows, rowIndex, categoryFixtures);
-
-        // Apply specific styles after all fields are set for the row
+        // Apply specific styles to the stats columns
         utilRow
             .setStyle('TotalPoints', { 'font-weight': 'bold' }) // Keep bold style
-            .addBorder('TotalPoints', 'left');                 // Use addBorder for left border
-        utilRow.addBorder('PointsFrom', 'left');                  // Use addBorder for left border
+            .addBorder('TotalPoints', 'right');                 // Change left to right border to separate from matrix
+
+        // Populate the group matrix cells for this row using the existing function
+        // Pass categoryFixtures instead of just fixtures
+        generateGroupMatrixRow(utilRow, groupData.rows, rowIndex, categoryFixtures);
  
         table.addRow(utilRow);
     });

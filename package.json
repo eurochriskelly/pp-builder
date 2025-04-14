@@ -58,6 +58,7 @@
     "gcp-core": "file:../gcp-core",
     "inquirer": "^9.2.16",
     "jsonwebtoken": "^9.0.2",
+    "lucide": "^0.488.0",
     "ts-jest": "^29.1.2",
     "uuid": "^11.1.0"
   }
