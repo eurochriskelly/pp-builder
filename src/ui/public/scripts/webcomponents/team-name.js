@@ -81,6 +81,14 @@ class TeamName extends HTMLElement {
         const completion = parseInt(this.getAttribute('completion') || '1');
         const isR2L = direction === 'r2l';
 
+        // Calculate the max-width based on completion level
+        let nameMaxWidth = '330px'; // Default for completion 1
+        if (completion === 2) {
+            nameMaxWidth = '300px';
+        } else if (completion === 3) {
+            nameMaxWidth = '270px';
+        }
+
         const marginSide = `calc(${height} / 2)`;
         const logoSize = `calc(${height} * 1.4)`;
         const spacerWidth = `calc(${logoSize} * ${completion - 1} * 1.3)`;
@@ -120,7 +128,7 @@ class TeamName extends HTMLElement {
                         <logo-box size="${logoSize}" title="${name}" ${name.startsWith('~') ? 'border-color="red"' : ''}></logo-box>
                     </span>
                 ` : ''}
-                ${this.hasAttribute('icon-only') ? '' : `<span class="name-container" style="flex: 1; min-width: 0; max-width: 170px; overflow: hidden; text-overflow: ellipsis; ${isR2L ? 'justify-content: flex-end;' : ''}">
+                ${this.hasAttribute('icon-only') ? '' : `<span class="name-container" style="flex: 1; min-width: 0; max-width: ${nameMaxWidth}; overflow: hidden; text-overflow: ellipsis; ${isR2L ? 'justify-content: flex-end;' : ''}">
                     ${this.renderNameParts(name)}
                 </span>`}
             </span>

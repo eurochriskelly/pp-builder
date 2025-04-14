@@ -299,18 +299,12 @@ hr {
     margin-bottom: 10px;
   }
   #event-manager nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  #event-manager nav a {
-    display: inline-block;
-    width: calc(33.33% - 10px);
-    font-size: 200%;
-    margin-bottom: 10px;
-    text-align: center;
-    padding: 20px 10px !important;
-    box-sizing: border-box;
+    /* display: flex; */
+        /* Removed flex to allow block layout */
+        /* flex-wrap: wrap; */
+        /* Removed flex wrap */
+        /* gap: 10px; */
+        /* Removed gap */
   }
 }
 
@@ -322,4 +316,12 @@ hr {
 
 table.util-table td {
   text-transform: uppercase;
+}
+
+/* Add styles for icons */
+.icon svg {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
 }
