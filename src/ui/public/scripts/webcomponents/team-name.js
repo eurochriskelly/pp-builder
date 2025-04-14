@@ -62,14 +62,34 @@ class TeamName extends HTMLElement {
         }
 
         const parts = displayName.split('/');
-        if (parts.length === 1) {
-            return `<span title="${isTruncated ? name : ''}">${displayName}${isTruncated ? '<span style="color:pink">→</span>' : ''}</span>`;
+
+        // Apply character limits per part based on number of parts
+        let partMaxLength = 0;
+        if (parts.length === 2) {
+            partMaxLength = 7;
+        } else if (parts.length >= 3) {
+            partMaxLength = 5;
         }
 
-        return parts.map((part, index) =>
+        // Truncate each part if necessary
+        const truncatedParts = parts.map(part => {
+            if (partMaxLength > 0 && part.trim().length > partMaxLength) {
+                return part.trim().substring(0, partMaxLength);
+            }
+            return part.trim();
+        });
+
+        // Check if any part was truncated
+        const anyPartTruncated = partMaxLength > 0 && parts.some((part, i) => part.trim().length > partMaxLength);
+
+        if (truncatedParts.length === 1) {
+            return `<span title="${isTruncated || anyPartTruncated ? name : ''}">${truncatedParts[0]}${isTruncated ? '<span style="color:pink">→</span>' : ''}</span>`;
+        }
+
+        return truncatedParts.map((part, index) =>
             index === 0
-                ? `<span title="${isTruncated ? name : ''}">${part}</span>`
-                : `<span style="color:pink;margin:0.3rem">/</span><span title="${isTruncated ? name : ''}">${part}${isTruncated && index === parts.length - 1 ? '<span style="color:pink">→</span>' : ''}</span>`
+                ? `<span title="${isTruncated || anyPartTruncated ? name : ''}">${part}</span>`
+                : `<span style="color:pink;margin:0.3rem">/</span><span title="${isTruncated || anyPartTruncated ? name : ''}">${part}${isTruncated && index === truncatedParts.length - 1 ? '<span style="color:pink">→</span>' : ''}</span>`
         ).join('');
     }
 
