@@ -66,8 +66,8 @@ class FixtureRow extends HTMLElement {
           background: var(--fixture-row-bg, #fff);
           border-radius: 6px;
           box-shadow: var(--fixture-row-shadow, none);
-          padding-top: 0.5rem;
-          padding-bottom: 0.5rem;
+          padding-top: 1.2rem;
+          padding-bottom: 1.2rem;
         }
         .team1 {
           min-width: ${ROW_WIDTHS.minTeam}px;

@@ -126,6 +126,7 @@ module.exports = function generateCompetitionView(data) {
     html += '</section>'; // Close comp-groups section
     // Add the styles previously removed from groupStandings.js
     html += `<link rel="text/css" href="/styles/competitionView.style.css" /> `;
+    html += `<script src="/scripts/webcomponents/fixture-row.js" /> `;
     html += '</div>'; // Close competition-view container
 
     return html;
