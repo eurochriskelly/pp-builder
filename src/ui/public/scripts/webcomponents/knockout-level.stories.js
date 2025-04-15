@@ -195,6 +195,53 @@ NoId.args = {
 };
 NoId.storyName = 'No Fixture ID';
 
+// Add more position match stories
+export const EighthNinth = Template.bind({});
+EighthNinth.args = {
+  matchId: '120044',
+  stage: 'cup_8th9th',
+  stageLevel: '3.9',
+  category: 'Mens',
+};
+EighthNinth.storyName = '8th/9th Place';
+
+export const NinthTenth = Template.bind({});
+NinthTenth.args = {
+  matchId: '120043',
+  stage: 'cup_9th10th',
+  stageLevel: '3.10',
+  category: 'Mens',
+};
+NinthTenth.storyName = '9th/10th Place';
+
+export const TenthEleventh = Template.bind({});
+TenthEleventh.args = {
+  matchId: '120042',
+  stage: 'cup_10th11th',
+  stageLevel: '3.11',
+  category: 'Mens',
+};
+TenthEleventh.storyName = '10th/11th Place';
+
+export const FifteenthSixteenth = Template.bind({});
+FifteenthSixteenth.args = {
+  matchId: '120036',
+  stage: 'cup_15th16th',
+  stageLevel: '3.16',
+  category: 'Mens',
+};
+FifteenthSixteenth.storyName = '15th/16th Place';
+
+export const NineteenthTwentieth = Template.bind({});
+NineteenthTwentieth.args = {
+  matchId: '120032',
+  stage: 'cup_19th20th',
+  stageLevel: '3.20',
+  category: 'Mens',
+};
+NineteenthTwentieth.storyName = '19th/20th Place';
+
+// Update the AllStages story to include the new position matches
 export const AllStages = {
   render: () => {
     const container = document.createElement('div');
@@ -218,11 +265,17 @@ export const AllStages = {
       { matchId: '120047', stage: 'cup_5th6th', stageLevel: '3.6', category: 'Mens' },
       { matchId: '120046', stage: 'cup_6th7th', stageLevel: '3.7', category: 'Mens' },
       { matchId: '120045', stage: 'cup_7th8th', stageLevel: '3.8', category: 'Mens' },
-      // Add group stage examples
+      // Add new position matches
+      { matchId: '120044', stage: 'cup_8th9th', stageLevel: '3.9', category: 'Mens' },
+      { matchId: '120043', stage: 'cup_9th10th', stageLevel: '3.10', category: 'Mens' },
+      { matchId: '120042', stage: 'cup_10th11th', stageLevel: '3.11', category: 'Mens' },
+      { matchId: '120041', stage: 'cup_15th16th', stageLevel: '3.16', category: 'Mens' },
+      { matchId: '120039', stage: 'cup_19th20th', stageLevel: '3.20', category: 'Mens' },
+      // Group stage examples
       { matchId: '120044', stage: 'group', group: '1', category: 'Mens' },
       { matchId: '120043', stage: 'group', group: '2', category: 'Mens' },
       { matchId: '120040', stage: 'group', category: 'Mens' }, // Unknown group
-      // Add shield final example to test SVG logic
+      // Shield final example
       { matchId: '120030', stage: 'shield_final', stageLevel: '1.2', category: 'Mens' },
     ];
 

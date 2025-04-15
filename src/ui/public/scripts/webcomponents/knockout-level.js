@@ -55,8 +55,31 @@ class KnockoutLevel extends HTMLElement {
           '5th6th': '5/6',
           '6th7th': '6/7',
           '7th8th': '7/8',
+          '8th9th': '8/9',
+          '9th10th': '9/10',
+          '10th11th': '10/11',
+          '11th12th': '11/12',
+          '12th13th': '12/13',
+          '13th14th': '13/14',
+          '14th15th': '14/15',
+          '15th16th': '15/16',
+          '16th17th': '16/17',
+          '17th18th': '17/18',
+          '18th19th': '18/19',
+          '19th20th': '19/20'
         };
-        abbrev = mappings[level] || level.toUpperCase();
+
+        const positionMatch = mappings[level];
+        if (positionMatch) {
+          // Split positions to apply different sizes for double-digit numbers
+          const [pos1, pos2] = positionMatch.split('/');
+          // Create HTML with appropriate sizing
+          abbrev = `<div class="position-wrapper">
+            <span class="${pos1.length > 1 ? 'small-pos' : 'big-pos'}">${pos1}</span><span class="separator">/</span><span class="${pos2.length > 1 ? 'small-pos' : 'big-pos'}">${pos2}</span>
+          </div>`;
+        } else {
+          abbrev = level.toUpperCase();
+        }
       }
     }
 
@@ -105,6 +128,21 @@ class KnockoutLevel extends HTMLElement {
         .stage-abbrev svg {
           display: block;
           fill: currentColor;
+        }
+        .position-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          white-space: nowrap;
+        }
+        .big-pos {
+          font-size: 1em;
+        }
+        .small-pos {
+          font-size: 0.75em;
+        }
+        .separator {
+          font-size: 0.9em;
         }
       </style>
       <div class="container">
