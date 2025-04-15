@@ -10,7 +10,7 @@ function generateGroupMatrixHeaders(groupRows) {
     const vsHeaders = {};
     const numTeams = groupRows.length;
     const totalVsColumns = 5;
-    const placeholderStyle = { 'background-color': '#888' }; // Updated background color
+    const placeholderStyle = { 'background-color': '#f0f0f0' }; // Updated to light gray to match other headers
 
     // Iterate in forward order to add headers from left to right, up to totalVsColumns
     for (let i = 0; i < totalVsColumns; i++) {
@@ -46,7 +46,7 @@ function generateGroupMatrixHeaders(groupRows) {
 function generateGroupMatrixRow(utilRow, groupRows, rowIndex, fixtures) {
     const numTeams = groupRows.length;
     const totalVsColumns = 5;
-    const placeholderStyle = { 'background-color': '#888' }; // Updated background color
+    const placeholderStyle = { 'background-color': '#888' }; // Keep this darker for row cells
 
     // Iterate columns in forward order to match the updated header order
     for (let colIndex = 0; colIndex < totalVsColumns; colIndex++) {
