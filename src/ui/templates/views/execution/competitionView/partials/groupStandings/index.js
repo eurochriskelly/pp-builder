@@ -1,5 +1,5 @@
-const { UtilTable, UtilRow } = require('../../../../partials/tableUtils');
-const { processTeamName } = require('../../../../../utils'); // Removed generateTeamLabel as it's not used directly here anymore
+const { UtilTable, UtilRow } = require('../../../../../partials/tableUtils');
+const { processTeamName } = require('../../../../../../utils'); // Removed generateTeamLabel as it's not used directly here anymore
 
 /**
  * Generates the header configuration for the group matrix (vs columns).

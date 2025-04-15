@@ -319,9 +319,33 @@ table.util-table td {
 }
 
 /* Add styles for icons */
+.icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    vertical-align: middle !important;
+    gap: 0.25em;
+}
 .icon svg {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 4px;
+    display: inline-block !important;
+        width: 1em !important;
+        height: 1em !important;
+        vertical-align: middle !important;
+        margin-right: 0.25em !important;
+        margin-left: 0 !important;
+        /* Remove float or absolute if inherited */
+        float: none !important;
+        position: static !important;
+        max-width: none !important;
+        max-height: none !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        box-sizing: content-box !important;
+    }
+    
+    /* Utility for icon+text inline grouping */
+    .inline-icon-text {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.25em;
 }

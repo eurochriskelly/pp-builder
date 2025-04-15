@@ -1,6 +1,6 @@
-import generateGroupFixtures from './groupFixtures.js';
+import generateGroupFixtures from './index.js';
 
-import '../../../../../public/scripts/webcomponents/team-name.js';
+import '../../../../../../public/scripts/webcomponents/team-name.js';
 
 // Sample data to showcase the function
 const sampleData = [

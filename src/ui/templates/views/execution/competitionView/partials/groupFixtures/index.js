@@ -1,6 +1,6 @@
-const { processTeamName } = require('../../../../../utils');
-const { UtilTable, UtilRow, ScoreData } = require('../../../../partials/tableUtils');
-const { getMatchOutcomeStyles } = require('../../../../partials/scoreUtils');
+const { processTeamName } = require('../../../../../../utils');
+const { UtilTable, UtilRow, ScoreData } = require('../../../../../partials/tableUtils');
+const { getMatchOutcomeStyles } = require('../../../../../partials/scoreUtils');
 
 /**
  * Generates HTML for a single group's fixtures table.

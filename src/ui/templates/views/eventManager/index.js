@@ -1,5 +1,5 @@
 const { allowedViews } = require('../../../config/allowedViews');
-const { Calendar, MapPin } = require('lucide');
+// Lucide CDN and web component usage: no need to import Calendar, MapPin
 
 function generateEventManager(uuid, tournament, isLoggedIn = false) {
     // Check if tournament.categories is a non-empty array
@@ -22,21 +22,26 @@ function generateEventManager(uuid, tournament, isLoggedIn = false) {
 
     // Use CSS classes instead of inline styles
     // Add initial load attributes if competitions exist
-    let html = `<div id="event-manager" class="event-manager-container"${initialLoadAttributes}>`;
-    // Restore mx-auto for centering (assuming Tailwind is active)
+    let html = `<div id="event-manager" class="event-manager-container"
+        ${initialLoadAttributes}
+    >`;
     html += `<div class="event-manager-header">
                 <h2 class="mx-auto event-info-title">
-                    <span class="icon"><Calendar size="16" /></span>
                     ${tournament.Title || tournament.title || 'Event'}
                 </h2>
                 <p class="text-3xl m-4 mb-8 mx-auto">
-                    <span class="icon"><Calendar size="16" /></span>
-                    ${tournament.Date ? tournament.Date.substring(0,10) : tournament.date || ''} |
-                    <span class="icon"><MapPin size="16" /></span>
-                    ${tournament.Location || tournament.location || ''}
+                    <span class="inline-icon-text">
+                        <span class="icon"><i data-lucide="calendar"></i></span>
+                        ${tournament.Date ? tournament.Date.substring(0, 10) : tournament.date || ''}
+                    </span>
+                    <span class="mx-2">|</span>
+                    <span class="inline-icon-text">
+                        <span class="icon"><i data-lucide="map-pin"></i></span>
+                        ${tournament.Location || tournament.location || ''}
+                    </span>
                 </p>
-             </div>`; // Fixed missing closing bracket and extra curly brace
-  
+             </div>`;
+
     html += '<nav class="event-manager-nav competition-nav mb-4 mt-4">';
     html += '  <div class="mr-4 mt-4 font-semibold">Competitions:</div>'; // Keep "Competitions:" text directly inside <nav>
     html += '  <div class="competition-links-container">'; // Add a container div for the links
@@ -80,7 +85,10 @@ function generateEventManager(uuid, tournament, isLoggedIn = false) {
     html += '</div>'; // Close event-manager-container
 
     html += `<link rel="stylesheet" href="/styles/eventManager.style.css" />`;
-    
+    // Lucide web component CDN and initialization
+    html += `<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>`;
+    html += `<script>lucide.createIcons();</script>`;
+
     // Add the JavaScript for competition selection highlighting and make it work after HTMX swaps
     html += `<script src="/scripts/eventManager.public.js"></script>`;
 
