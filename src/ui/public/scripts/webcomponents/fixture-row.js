@@ -1,3 +1,11 @@
+const ROW_WIDTHS = {
+    score: 50,
+    child: 38,
+    knockout: 60,
+    minTeam: 60,
+    maxTeam: 420
+};
+
 class FixtureRow extends HTMLElement {
   static get observedAttributes() {
     return [
@@ -45,11 +53,11 @@ class FixtureRow extends HTMLElement {
           display: grid;
           grid-template-columns:
             1fr /* team1 */
-            70px /* score1 */
-            var(--fixture-row-child-width, 48px) /* child1 */
-            60px /* knockout-level */
-            var(--fixture-row-child-width, 48px) /* child2 */
-            70px /* score2 */
+            ${ROW_WIDTHS.score}px /* score1 */
+            var(--fixture-row-child-width, ${ROW_WIDTHS.child}px) /* child1 */
+            ${ROW_WIDTHS.knockout}px /* knockout-level */
+            var(--fixture-row-child-width, ${ROW_WIDTHS.child}px) /* child2 */
+            ${ROW_WIDTHS.score}px /* score2 */
             1fr /* team2 */;
           align-items: center;
           gap: 0.5rem;
@@ -58,10 +66,12 @@ class FixtureRow extends HTMLElement {
           background: var(--fixture-row-bg, #fff);
           border-radius: 6px;
           box-shadow: var(--fixture-row-shadow, none);
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
         }
         .team1 {
-          min-width: 60px;
-          max-width: 420px;
+          min-width: ${ROW_WIDTHS.minTeam}px;
+          max-width: ${ROW_WIDTHS.maxTeam}px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -73,8 +83,8 @@ class FixtureRow extends HTMLElement {
           ${debug ? 'background: #ffe0e0;' : ''}
         }
         .team2 {
-          min-width: 60px;
-          max-width: 420px;
+          min-width: ${ROW_WIDTHS.minTeam}px;
+          max-width: ${ROW_WIDTHS.maxTeam}px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -113,7 +123,7 @@ class FixtureRow extends HTMLElement {
           ${debug ? 'background: #e0f7ff;' : ''}
         }
         .child-placeholder {
-          width: var(--fixture-row-child-width, 48px);
+          width: var(--fixture-row-child-width, ${ROW_WIDTHS.child}px);
           height: 1.5em;
           display: block;
           background: transparent;
@@ -127,7 +137,7 @@ class FixtureRow extends HTMLElement {
           <team-name name="${team1}" direction="r2l"></team-name>
         </div>
         <div class="score">
-          <gaelic-score goals="${team1Goals}" points="${team1Points}" played="${outcome === 'played'}"></gaelic-score>
+          <gaelic-score goals="${team1Goals}" points="${team1Points}" played="${outcome === 'played'}" layout="over"></gaelic-score>
         </div>
         <slot name="child1"><div class="child-placeholder"></div></slot>
         <div class="center">
@@ -140,7 +150,7 @@ class FixtureRow extends HTMLElement {
         </div>
         <slot name="child2"><div class="child-placeholder"></div></slot>
         <div class="score">
-          <gaelic-score goals="${team2Goals}" points="${team2Points}" played="${outcome === 'played'}"></gaelic-score>
+          <gaelic-score goals="${team2Goals}" points="${team2Points}" played="${outcome === 'played'}" layout="over"></gaelic-score>
         </div>
         <div class="team2">
           <slot name="team2-logo"></slot>
