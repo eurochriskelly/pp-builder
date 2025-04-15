@@ -28,6 +28,7 @@ class KnockoutLevel extends HTMLElement {
     // Extract last 3 digits of match ID (handled above if showId)
 
     let abbrev = '';
+    let isPlacementGame = false;
     if (stage === 'group') {
       // Handle group stage
       tint = '#c3c598;'; 
@@ -39,10 +40,9 @@ class KnockoutLevel extends HTMLElement {
       if (['plt', 'plate'].includes(round)) tint = '#c598a1;';
       if (['shd', 'sld', 'shield', 'sheild'].includes(round)) tint = '#aaddbd;';
 
-      if (level === 'final') {
+      if (level === 'final' || level === 'finals') {
         abbrev = 'FIN';
-      } else if (level === 'finals') {
-        abbrev = 'FIN';
+        isPlacementGame = true;
       } else if (level === 'semis' || level === 'semi') {
         abbrev = `SF${levelNum || ''}`;
       } else if ((level === 'quarters') || (level === 'quarter')) {
@@ -77,6 +77,7 @@ class KnockoutLevel extends HTMLElement {
           abbrev = `<div class="position-wrapper">
             <span class="${pos1.length > 1 ? 'small-pos' : 'big-pos'}">${pos1}</span><span class="separator">/</span><span class="${pos2.length > 1 ? 'small-pos' : 'big-pos'}">${pos2}</span>
           </div>`;
+          isPlacementGame = true;
         } else {
           abbrev = level.toUpperCase();
         }
@@ -96,10 +97,11 @@ class KnockoutLevel extends HTMLElement {
           display: inline-block;
           font-family: sans-serif;
           text-align: center;
-          max-width: 4rem;
-          min-width: 4rem;
-          background:${tint} 
+          max-width: 4.1rem;
+          min-width: 4.1rem;
+          background: ${tint};
           border-radius: 100rem;
+          ${isPlacementGame ? 'border: 0.25rem solid #5b3f47 !important;' : ''}
         }
         .container {
           display: flex;
