@@ -64,7 +64,7 @@ function createKnockoutHTML(categoryData) {
         const tournamentPartDisplay = tournamentPart.toUpperCase();
         html += `<h3 class="knockout-part-header group-header uppercase text-center font-bold text-xl mb-4">${tournamentPartDisplay}</h3>`;
 
-        fixtures.forEach(row => {
+        fixtures.forEach((row, idx) => {
             const stageParts = row.stage?.split('_') || [];
             // Only swap display order if team2 won and it's a played match
             let team1 = row.team1;
@@ -114,6 +114,7 @@ function createKnockoutHTML(categoryData) {
             // Compose fixture-row HTML
             html += `
 <fixture-row
+    row-index="${idx}"
     team1="${team1.replace(/"/g, '&quot;')}"
     team1-goals="${goals1}"
     team1-points="${points1}"

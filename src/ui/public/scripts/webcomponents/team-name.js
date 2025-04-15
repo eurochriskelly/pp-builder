@@ -66,9 +66,9 @@ class TeamName extends HTMLElement {
         // Apply character limits per part based on number of parts
         let partMaxLength = 0;
         if (parts.length === 2) {
-            partMaxLength = 7;
+            partMaxLength = 12;
         } else if (parts.length >= 3) {
-            partMaxLength = 5;
+            partMaxLength = 10;
         }
 
         // Truncate each part if necessary
@@ -94,7 +94,7 @@ class TeamName extends HTMLElement {
     }
 
     render() {
-        const name = this.getAttribute('name') || '';
+        const name = this.getAttribute('name').toUpperCase() || '';
         const showLogo = this.getAttribute('showLogo') !== 'false';
         const height = this.getAttribute('height') || '30px';
         const direction = this.getAttribute('direction') || 'l2r';

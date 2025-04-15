@@ -41,6 +41,8 @@ class FixtureRow extends HTMLElement {
     const stageLevel = this.getAttribute('stage-level') || '';
     const category = this.getAttribute('category') || '';
     const debug = this.hasAttribute('debug');
+      const rowIndex = parseInt(this.getAttribute('row-index'), 10);
+      const bgColor = !isNaN(rowIndex) && rowIndex % 2 === 0 ? '#f9fafb' : '#fff'; // gray-50 or white
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -63,7 +65,7 @@ class FixtureRow extends HTMLElement {
           gap: 0.5rem;
           width: 100%;
           min-height: 48px;
-          background: var(--fixture-row-bg, #fff);
+          background: var(--fixture-row-bg, ${bgColor});
           border-radius: 6px;
           box-shadow: var(--fixture-row-shadow, none);
           padding-top: 1.2rem;

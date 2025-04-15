@@ -18,7 +18,7 @@ function generateSingleGroupFixtures(groupFixtures, groupName) {
 
     // Render each fixture as a fixture-row component
     let html = `<div class="group-fixtures-list">`;
-    groupFixtures.forEach(row => {
+    groupFixtures.forEach((row, idx) => {
         // Calculate total scores (3 points per goal + 1 point per point)
         const team1Total = (row.goals1 * 3) + row.points1;
         const team2Total = (row.goals2 * 3) + row.points2;
@@ -29,6 +29,7 @@ function generateSingleGroupFixtures(groupFixtures, groupName) {
 
         html += `
 <fixture-row
+    row-index="${idx}"
     team1="${row.team1.replace(/"/g, '&quot;')}"
     team1-goals="${row.goals1}"
     team1-points="${row.points1}"
