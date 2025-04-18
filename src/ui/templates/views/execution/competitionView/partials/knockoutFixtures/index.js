@@ -1,11 +1,4 @@
-const { processTeamName } = require('../../../../../../utils');
-const { formatCategory } = require('../../../../../../utils/categoryFormatter');
 const { parseStageToLevel } = require('../../../../../../utils/stageParser');
-const {
-  getScoreComparisonClasses,
-  getFinalScoreDisplay,
-  getMatchOutcomeStyles,
-} = require('../../../../../partials/scoreUtils');
 
 // Define the desired order for tournament parts
 const tournamentPartOrder = ['cup', 'shield', 'plate'];
@@ -24,7 +17,7 @@ function getTeamLastFixtures(categoryData) {
     }));
 }
 
-function createKnockoutHTML(categoryData) {
+function createKnockoutHTML(categoryData, editable = false, tournamentId = '') {
     let html = '';
     // Get each team's last match
     const teamLastFixtures = getTeamLastFixtures(categoryData);
@@ -112,6 +105,18 @@ function createKnockoutHTML(categoryData) {
             }
 
             // Compose fixture-row HTML
+            // When editable, wrap the row & inject pencil icon + hidden edit container
+            if (editable) {
+                html += `<div class="fixture-edit-wrapper relative">`;
+                html += `<div class="edit-icon absolute left-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                         hx-get="/execution/${tournamentId}/fixture/${row.id}/edit"
+                         hx-target="#edit-dialog-content-${row.id}"
+                         hx-swap="innerHTML"
+                         hx-on="htmx:afterSwap: document.getElementById('edit-dialog-${row.id}').showModal()">
+                           <i data-lucide="pencil-line"></i>
+                        </div>`;
+                html += `<div class="fixture-row-wrapper">`;
+            }
             html += `
 <fixture-row
     row-index="${idx}"
@@ -131,12 +136,21 @@ function createKnockoutHTML(categoryData) {
     ${isTeam2Last ? `<span slot="child2" title="Last match">X</span>` : ''}
 </fixture-row>
             `;
+            if (editable) {
+                html += `</div>`; // close fixture-row-wrapper
+                html += `<dialog id="edit-dialog-${row.id}" class="edit-dialog p-4 bg-white rounded shadow-lg relative mt-2">
+                            <button class="dialog-close absolute top-2 right-2 text-gray-600" 
+                                    onclick="this.closest('dialog').close()">×</button>
+                            <div id="edit-dialog-content-${row.id}"></div>
+                         </dialog>`;
+                html += `</div>`; // close fixture-edit-wrapper
+            }
         });
     }
     return html;
 }
 
-module.exports = function generateKnockoutFixtures(data) {
+module.exports = function generateKnockoutFixtures(data, editable = false, tournamentId = '') {
     let html = '<div id="knockout-fixtures">';
     // Group data by category and sort by stage level
     const groupedData = data.reduce((acc, row) => {
@@ -159,7 +173,7 @@ module.exports = function generateKnockoutFixtures(data) {
     // Generate fixture-row HTML for each category
     for (const category in groupedData) {
         const categoryData = groupedData[category];
-        html += createKnockoutHTML(categoryData);
+        html += createKnockoutHTML(categoryData, editable, tournamentId);
     }
 
     if (Object.keys(groupedData).length === 0) {
@@ -169,6 +183,8 @@ module.exports = function generateKnockoutFixtures(data) {
     html += `
     </div>
     <script src="/scripts/knockoutFixtures.public.js"></script>
+    <script src = "https://unpkg.com/lucide@latest/dist/umd/lucide.js" ></script>
+    <script > lucide.createIcons();</script>
     `;
     return html;
 };

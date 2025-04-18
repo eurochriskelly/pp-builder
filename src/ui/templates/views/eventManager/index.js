@@ -1,7 +1,6 @@
-const { allowedViews } = require('../../../config/allowedViews');
 // Lucide CDN and web component usage: no need to import Calendar, MapPin
 
-function generateEventManager(uuid, tournament, isLoggedIn = false) {
+function generateEventManager(uuid, tournament, loggedIn = false, editable = false) {
     // Check if tournament.categories is a non-empty array
     const competitions = Array.isArray(tournament.categories) ? tournament.categories : [];
     let initialLoadAttributes = '';
@@ -10,7 +9,7 @@ function generateEventManager(uuid, tournament, isLoggedIn = false) {
     if (competitions.length > 0) {
         currentCompetition = competitions[0]; // Default to first competition
         const encodedFirstCompName = encodeURIComponent(currentCompetition);
-        const initialLoadUrl = `/event/${uuid}/competition-update?competition=${encodedFirstCompName}`;
+        const initialLoadUrl = `/event/${uuid}/competition-update${editable ? '/edit' : ''}?competition=${encodedFirstCompName}`;
         initialLoadAttributes = `
             hx-get="${initialLoadUrl}"
             hx-trigger="load"
@@ -57,7 +56,7 @@ function generateEventManager(uuid, tournament, isLoggedIn = false) {
     if (competitions.length > 0) {
         competitions.forEach(compName => {
             const encodedCompName = encodeURIComponent(compName);
-            const updateUrl = `/event/${uuid}/competition-update?competition=${encodedCompName}`;
+            const updateUrl = `/event/${uuid}/competition-update${editable ? '/edit' : ''}?competition=${encodedCompName}`;
             // Add a selected-competition class when this is the current competition
             const isSelected = compName === currentCompetition ? ' selected-competition' : '';
             html += `
@@ -92,6 +91,7 @@ function generateEventManager(uuid, tournament, isLoggedIn = false) {
     html += '</div>'; // Close event-manager-container
 
     html += `<link rel="stylesheet" href="/styles/eventManager.style.css" />`;
+
     // Lucide web component CDN and initialization
     html += `<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>`;
     html += `<script>lucide.createIcons();</script>`;

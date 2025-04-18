@@ -16,4 +16,16 @@
             }
         });
     });
+
+    // Open dialogs after HTMX swaps in their content
+    document.body.addEventListener('htmx:afterSwap', function (evt) {
+        const tgt = evt.detail.target;
+        if (tgt.id && tgt.id.startsWith('edit-dialog-content-')) {
+            const matchId = tgt.id.split('-').pop();
+            const dlg = document.getElementById(`edit-dialog-${matchId}`);
+            if (dlg && typeof dlg.showModal === 'function') {
+                dlg.showModal();
+            }
+        }
+    });
 })();

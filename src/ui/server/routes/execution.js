@@ -75,7 +75,8 @@ router.get('/execution/:id/view4', async (req, res) => {
     try {
         console.log(`Fetching knockout fixtures for tournament ${tournamentId}...`);
         const data = await getKnockoutFixtures(tournamentId);
-        const content = generateKnockoutFixtures(data);
+        console.log('TTTTT', tournamentId)
+        const content = generateKnockoutFixtures(data, true, tournamentId);
         const isLoggedIn = !!req.session.user;
         const html = `${generateHeader('Knockout Fixtures', tournamentId, 'execution', 'view4', isLoggedIn, isLoggedIn)}<div id="content" hx-get="/execution/${tournamentId}/view4-update" hx-trigger="every 30s" hx-swap="innerHTML">${content}</div>${generateFooter()}`;
         res.send(html);
@@ -128,6 +129,14 @@ router.get('/execution/:id/view7', async (req, res) => {
         console.error('Error in /execution/:id/view7:', error.message);
         res.status(500).send('Server Error');
     }
+});
+
+// New edit‐fragment route
+router.get('/execution/:tournamentId/fixture/:matchId/edit', async (req, res) => {
+    const { tournamentId, matchId } = req.params;
+    console.log('We are here', tournamentId, matchId);
+    // fetch or compute whatever edit‐form markup you need; minimal example:
+    res.send(`<div class="p-4 bg-gray-100 rounded">Edit form for fixture ${matchId} in tournament ${tournamentId}</div>`);
 });
 
 module.exports = router;

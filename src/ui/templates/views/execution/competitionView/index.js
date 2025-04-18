@@ -10,7 +10,7 @@ const generateKnockoutFixtures = require('./partials/knockoutFixtures');
  *                        knockoutFixtures, finalsResults.
  * @returns {string} - The HTML string for the combined view.
  */
-module.exports = function generateCompetitionView(data) {
+function generateCompetitionView(data, editable = false, tournamentId = '') {
     if (!data || !data.competitionName) {
         return '<p class="error p-4">Missing competition data.</p>';
     }
@@ -32,7 +32,7 @@ module.exports = function generateCompetitionView(data) {
     if (knockoutFixtures && knockoutFixtures.length > 0) {
         html += '<section id="comp-knockout-fixtures">';
         html += '<h2 class="event-h2 text-xl font-semibold mb-2 mt-4">Knockout Games</h2>'; // Added H2 subheading
-        html += generateKnockoutFixtures(knockoutFixtures);
+        html += generateKnockoutFixtures(knockoutFixtures, editable, tournamentId);
         html += '</section>';
     }
 
@@ -131,3 +131,5 @@ module.exports = function generateCompetitionView(data) {
 
     return html;
 };
+
+module.exports = generateCompetitionView
