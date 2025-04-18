@@ -1,6 +1,6 @@
 class GaelicScore extends HTMLElement {
   static get observedAttributes() {
-    return ['goals', 'points', 'layout', 'scale', 'goalsagainst', 'pointsagainst', 'played'];
+    return ['goals', 'points', 'layout', 'scale', 'goalsagainst', 'pointsagainst', 'played', 'bold'];
   }
 
   constructor() {
@@ -21,11 +21,12 @@ class GaelicScore extends HTMLElement {
     const rawPoints = this.getAttribute('points');
     const layout = this.getAttribute('layout') || 'default';
     const scale = parseFloat(this.getAttribute('scale') || '1');
+    const isBold = this.hasAttribute('bold');
 
     // If goals or points is empty, missing, or "null", display a single N/A
     if (
-      !rawGoals || rawGoals.trim() === "" || rawGoals === "null" ||
-      !rawPoints || rawPoints.trim() === "" || rawPoints === "null"
+      !rawGoals || rawGoals.trim() === "" || (rawGoals === "null" || rawGoals === "NaN") ||
+      !rawPoints || rawPoints.trim() === "" || (rawPoints === "null" || rawPoints === "NaN")
     ) {
       this.shadowRoot.innerHTML = '<div class="unplayed" style="font-size:80%;color:#aaa">#&nbsp;##</div>';
       return;
@@ -64,7 +65,7 @@ class GaelicScore extends HTMLElement {
     const pointStr = points.toString().padStart(2, '0');
     const totalStr = total.toString().padStart(2, '0');
     // Formatted score parts
-    const scorePart = `<span style="white-space: nowrap;">${goalStr}-${pointStr}</span>`; // Goals-Points with nowrap
+    const scorePart = `<span class="score-value">${goalStr}-${pointStr}</span>`;
     let totalPart = `<span>(${totalStr})</span>`; // Total points in separate span
     if (layout === 'over') {
       totalPart = `<span>${totalStr}</span>`;
@@ -132,7 +133,9 @@ class GaelicScore extends HTMLElement {
             height: 100%;
             box-sizing: border-box;
           }
-
+          .score-value {
+            font-weight: ${isBold ? 'bold' : 'normal'};
+          }
           /* Removed .bracket style as it's now part of the span */
 
           .over-container {

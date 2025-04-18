@@ -27,20 +27,27 @@ function generateEventManager(uuid, tournament, isLoggedIn = false) {
     >`;
     html += `<div class="event-manager-header">
                 <h2 class="mx-auto event-info-title">
-                    ${tournament.Title || tournament.title || 'Event'}
+                    <span>${tournament.Title || tournament.title || 'Event'}</span>
+                    <span class="event-info-icon" style="float: right;">
+                        <i data-lucide="toggle-left" class="toggle-icon" style="transform: scale(1.5);" onclick="toggleIcon(this)"></i>
+                    </span>
                 </h2>
                 <p class="text-3xl m-4 mb-8 mx-auto">
                     <span class="inline-icon-text">
-                        <span class="icon"><i data-lucide="calendar"></i></span>
+                        <span class="icon"><i data-lucide="calendar" style="transform: scale(1.5);"></i></span>
                         ${tournament.Date ? tournament.Date.substring(0, 10) : tournament.date || ''}
                     </span>
                     <span class="mx-2">|</span>
                     <span class="inline-icon-text">
-                        <span class="icon"><i data-lucide="map-pin"></i></span>
+                        <span class="icon"><i data-lucide="map-pin" style="transform: scale(1.5);"></i></span>
                         ${tournament.Location || tournament.location || ''}
                     </span>
                 </p>
              </div>`;
+
+    // Add the toggleIcon function to handle the icon toggle
+    html += `<script>
+             </script>`;
 
     html += '<nav class="event-manager-nav competition-nav mb-4 mt-4">';
     html += '  <div class="mr-4 mt-4 font-semibold">Competitions:</div>'; // Keep "Competitions:" text directly inside <nav>

@@ -101,7 +101,7 @@ class KnockoutLevel extends HTMLElement {
           min-width: 4.1rem;
           background: ${tint};
           border-radius: 100rem;
-          ${isPlacementGame ? 'border: 0.25rem solid #5b3f47 !important;' : ''}
+          ${isPlacementGame ? 'border: 0.33rem solid #e81350 !important;' : ''}
         }
         .container {
           display: flex;

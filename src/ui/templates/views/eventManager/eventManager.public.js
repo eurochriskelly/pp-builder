@@ -13,6 +13,15 @@ function setupCompetitionListeners() {
     });
 }
 
+function toggleIcon(iconElement) {
+    if (iconElement.getAttribute('data-lucide') === 'toggle-left') {
+        iconElement.setAttribute('data-lucide', 'toggle-right');
+    } else {
+        iconElement.setAttribute('data-lucide', 'toggle-left');
+    }
+    lucide.createIcons(); // Reinitialize Lucide icons
+}
+
 // Set up listeners when the page loads
 document.addEventListener('DOMContentLoaded', setupCompetitionListeners);
 
