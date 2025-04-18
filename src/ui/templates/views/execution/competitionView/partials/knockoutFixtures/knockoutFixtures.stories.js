@@ -191,7 +191,7 @@ const sampleData = [
 
 // Export the story metadata
 export default {
-  title: 'Fixtures/Knockout', // The category and name in Storybook's sidebar
+  title: 'Execution/Knockout', // The category and name in Storybook's sidebar
   parameters: {
     layout: 'padded',
   },
