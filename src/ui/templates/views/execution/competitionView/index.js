@@ -51,13 +51,14 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
             font-weight: 500;
             text-transform: uppercase;
             font-size: 2rem;
-            padding: 1rem;
+            padding: 2.4rem 0.4rem;
             background: #e0d1d6;
             color: #777;
             border-top-right-radius: 1rem;
             border: none;
             cursor: pointer;
             transition: all 0.2s ease;
+            margin-top:2rem;
         }
         .competition-tabs .tab-button.active {
             background: #d5a8b6;
