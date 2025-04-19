@@ -63,7 +63,7 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
 
         <!-- Tab Buttons -->
         <div class="tab-container">
-            <button class="tab-button active" onclick="openTab(event, 'myGroupTab')">My group</button>
+            <button class="tab-button active" onclick="openTab(event, 'myGroupTab')">Match info</button>
             <button class="tab-button" onclick="openTab(event, 'adjustFixtureTab')">Adjust fixture</button>
         </div>
 
@@ -120,7 +120,7 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
             </div>
              <div class="actions">
                 <button type="button">Update Score</button> <!-- Clarified button action -->
-                <button type="button" formmethod="dialog">Close</button> <!-- Use formmethod="dialog" to close parent dialog -->
+                <button type="button" onclick="this.closest('dialog.edit-dialog').close()">Close</button> <!-- Close parent dialog via JS -->
                     </div>
                 </div>
             </div>

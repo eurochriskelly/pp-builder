@@ -139,7 +139,7 @@ function createKnockoutHTML(categoryData, editable = false, tournamentId = '') {
             if (editable) {
                 html += `</div>`; // close fixture-row-wrapper
                 html += `<dialog id="edit-dialog-${row.id}" class="edit-dialog p-4 bg-white rounded shadow-lg relative mt-2">
-                            <button class="dialog-close absolute top-2 right-2 text-gray-600" 
+                            <button class="dialog-close absolute top-4 right-4 text-gray-600 text-2xl" 
                                     onclick="this.closest('dialog').close()">×</button>
                             <div id="edit-dialog-content-${row.id}"></div>
                          </dialog>`;

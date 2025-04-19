@@ -101,8 +101,8 @@
 
 /* Style for small icons (used for edit icons now) */
 .icon-small {
-    width: 1em;  /* Adjust size as needed */
-    height: 1em; /* Adjust size as needed */
+    width: 1.5em;  /* Increased from 1em */
+    height: 1.5em; /* Increased from 1em */
     stroke-width: 2; /* Adjust line thickness */
     cursor: pointer; /* Indicate interactivity */
 }
@@ -128,11 +128,12 @@
 .input-cell select,
 .team-input-wrapper input, /* Style input when swapped in */
 .team-input-wrapper select { /* Style select inside wrapper */
-    padding: 0.5rem;
+    padding: 0.75rem; /* Increased from 0.5rem */
     border: 1px solid #ccc;
     border-radius: 3px;
     width: 100%;
     box-sizing: border-box; /* Include padding and border in element's total width */
+    font-size: 1.5em; /* 50% larger */
 }
 
 /* Container for side-by-side score inputs */
@@ -143,8 +144,10 @@
 
 /* Style for individual score inputs */
 .score-input {
-    width: 50px; /* Adjust width as needed */
+    width: 75px; /* Increased from 50px */
     text-align: center;
+    font-size: 1.5em; /* 50% larger */
+    padding: 0.75rem; /* Increased from 0.5rem */
 }
 
 
@@ -173,10 +176,11 @@
 .form-row input,
 .form-row select {
     flex-grow: 1; /* Allow input/select to take remaining space */
-    padding: 0.5rem;
+    padding: 0.75rem; /* Increased from 0.5rem */
     border: 1px solid #ccc;
     border-radius: 3px;
     width: auto; /* Override potential 100% width */
+    font-size: 1.5em; /* 50% larger */
 }
 
 
@@ -189,10 +193,11 @@
 }
 
 .actions button {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem; /* Increased from 0.5rem 1rem */
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 1.5em; /* 50% larger */
 }
 
 .actions button:first-child {
@@ -205,19 +210,33 @@
 }
 
 /* Styling for the native <dialog> element */
-dialog.edit-dialog { /* Target the dialog specifically if needed */
-    border: none; /* Remove default browser border */
-    padding: 0; /* Remove default browser padding, handled by .fixture-dialog */
-    background: transparent; /* Make dialog itself transparent, backdrop provides background */
-    max-width: calc(100% - 8rem); /* Full width minus left/right margins */
-    margin-top: 4rem; /* Top margin */
-    margin-left: 4rem; /* Left margin */
-    margin-right: 4rem; /* Right margin */
-    margin-bottom: auto; /* Allow bottom margin to auto-adjust */
-    box-shadow: none; /* Remove default shadow if any, handled by .fixture-dialog */
-    border-radius: 0; /* Remove default radius, handled by .fixture-dialog */
-    /* Ensure it's above other content if needed, though ::backdrop usually handles this */
-    /* z-index: 1000; */
+dialog.edit-dialog {
+    border: none;
+    padding: 0;
+    background: transparent;
+    width: 100%;
+    max-width: 800px;
+    margin: 4rem auto;
+    box-shadow: none;
+    border-radius: 0;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Style for dialog close button */
+.dialog-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+}
+
+.dialog-close:hover {
+    color: #000;
+    transform: scale(1.1);
 }
 
 /* Styling for the backdrop pseudo-element */
