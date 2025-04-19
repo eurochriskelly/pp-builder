@@ -1,0 +1,21 @@
+@startsalt
+{
+  {^"Fixture-row"
+    The fixture-row goes here
+  }
+  {^"My group"
+    _         | Team 1          | Team 2
+    Name      | ^Team1 name   ^ | ^Team2 name   ^
+    Goals     | "0            " | "0            "
+    Points    | "0            " | "0            "
+  }
+  [ Update ] | [ Cancel ]
+
+  {^"Adjust fixture"
+    On pitch     | ^Current pitch selected ^
+    Destination  | ^Move this fixture after^
+    With fixture | ^#123 - Mens - BA vs AB^
+  }
+  [ Update ] | [ Cancel ]
+}
+@endsalt 

@@ -1,26 +1,21 @@
-import generateEditFixtureForm from './index.js';
+import generateEditFixtureForm from './index';
+import '/styles/editFixture.style.css';
 
 export default {
-  title: 'Fixtures/Edit Fixture',
-  parameters: { layout: 'padded' },
+  title: 'Competition/EditFixtureDialog',
 };
 
 const sampleFixture = {
   id: '123',
-  team1: 'Belgium A',
-  goals1: 2,
-  points1: 1,
-  team2: 'Team B',
-  goals2: 1,
+  team1: 'BA',
+  team2: 'AB',
+  goals1: 0,
+  points1: 0,
+  goals2: 0,
   points2: 0,
-  pitch: 'Pitch 1',
-  time: '2024-07-01T15:00',
+  groupName: 'Mens',
+  pitch: 'Main Pitch',
+  moveAfter: 2
 };
 
-export const Default = {
-  render: () => generateEditFixtureForm(sampleFixture),
-};
-
-export const Empty = {
-  render: () => generateEditFixtureForm({}),
-};
+export const Default = () => generateEditFixtureForm(sampleFixture);

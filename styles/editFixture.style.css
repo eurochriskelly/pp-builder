@@ -1,0 +1,8 @@
+.fixture-dialog { font-family: sans-serif; }
+.dialog-section { margin-bottom: 16px; }
+.team-summary { width: 100%; border-collapse: collapse; }
+.team-summary th,
+.team-summary td { border: 1px solid #ccc; padding: 4px 8px; }
+.dialog-section label { display: block; margin: 8px 0; }
+.actions { margin-top: 8px; text-align: right; }
+.actions button + button { margin-left: 8px; }
