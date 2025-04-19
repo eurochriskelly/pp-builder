@@ -120,8 +120,7 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
             </div>
              <div class="actions">
                 <button type="button">Update Score</button> <!-- Clarified button action -->
-                        <button type="button">Update Score</button> <!-- Clarified button action -->
-                        <button type="button">Cancel</button>
+                <button type="button" onclick="closeDialog(event)">Close</button>
                     </div>
                 </div>
             </div>
@@ -155,7 +154,7 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
                 </div>
                 <div class="actions">
                     <button type="submit">Update Schedule</button> <!-- Clarified button action -->
-                    <button type="button">Cancel</button>
+                    <button type="button" onclick="closeDialog(event)">Close</button>
                         </div>
                     </form>
                 </div>

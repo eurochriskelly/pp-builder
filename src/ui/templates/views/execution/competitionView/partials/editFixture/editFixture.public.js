@@ -81,3 +81,23 @@ document.addEventListener('DOMContentLoaded', function() {
             openTab(null, 'myGroupTab');
         }
 });
+
+/**
+ * Closes the currently open dialog(s) by removing all overlay elements
+ * and stopping the event propagation.
+ * @param {Event} event - The click event object.
+ */
+function closeDialog(event) {
+    // Stop the event from bubbling up to prevent unintended side effects
+    if (event) {
+        event.stopPropagation();
+    }
+
+    const overlays = document.querySelectorAll('.dialog-overlay');
+    if (overlays.length > 0) {
+        overlays.forEach(overlay => overlay.remove());
+        console.log(`Removed ${overlays.length} dialog overlay(s).`); // Optional: for debugging
+    } else {
+        console.warn('Dialog overlay not found, cannot close.');
+    }
+}
