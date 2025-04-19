@@ -40,8 +40,8 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
     };
 
 
-    return `<div class="dialog-overlay">
-      <div class="fixture-dialog">
+    // Return only the inner content, the <dialog> wrapper is provided by the caller (knockoutFixtures)
+    return `<div class="fixture-dialog">
         <link rel="stylesheet" href="/styles/editFixture.style.css">
 
         <div class="fixture-row">
@@ -120,7 +120,7 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
             </div>
              <div class="actions">
                 <button type="button">Update Score</button> <!-- Clarified button action -->
-                <button type="button" onclick="closeDialog(event)">Close</button>
+                <button type="button" formmethod="dialog">Close</button> <!-- Use formmethod="dialog" to close parent dialog -->
                     </div>
                 </div>
             </div>
@@ -154,7 +154,7 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
                 </div>
                 <div class="actions">
                     <button type="submit">Update Schedule</button> <!-- Clarified button action -->
-                    <button type="button" onclick="closeDialog(event)">Close</button>
+                    <button type="button" formmethod="dialog">Close</button> <!-- Use formmethod="dialog" to close parent dialog -->
                         </div>
                     </form>
                 </div>
@@ -165,8 +165,7 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
         <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" ></script>
         <script> lucide.createIcons();</script>
         <script src="/scripts/editFixture.public.js"></script>
-      </div>
-    </div>`;
+      </div>`; // Removed closing div for dialog-overlay
 }
 
 module.exports = generateEditFixtureForm;

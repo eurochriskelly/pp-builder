@@ -203,21 +203,39 @@
 .actions button:last-child {
     background: #f0f0f0;
 }
-/* Overlay to cover the page */
-.dialog-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-    z-index: 1000; /* Ensure it's above other content */
-    display: flex; /* Use flexbox for centering */
-    justify-content: center; /* Center horizontally */
-    /* align-items: center; /* Center vertically if needed, but request is 4rem top margin */
-    padding-top: 4rem; /* Top margin */
-    padding-left: 4rem; /* Left margin */
-    padding-right: 4rem; /* Right margin */
-    box-sizing: border-box; /* Include padding in dimensions */
-    overflow-y: auto; /* Allow scrolling if content overflows */
+
+/* Styling for the native <dialog> element */
+dialog.edit-dialog { /* Target the dialog specifically if needed */
+    border: none; /* Remove default browser border */
+    padding: 0; /* Remove default browser padding, handled by .fixture-dialog */
+    background: transparent; /* Make dialog itself transparent, backdrop provides background */
+    max-width: calc(100% - 8rem); /* Full width minus left/right margins */
+    margin-top: 4rem; /* Top margin */
+    margin-left: 4rem; /* Left margin */
+    margin-right: 4rem; /* Right margin */
+    margin-bottom: auto; /* Allow bottom margin to auto-adjust */
+    box-shadow: none; /* Remove default shadow if any, handled by .fixture-dialog */
+    border-radius: 0; /* Remove default radius, handled by .fixture-dialog */
+    /* Ensure it's above other content if needed, though ::backdrop usually handles this */
+    /* z-index: 1000; */
 }
+
+/* Styling for the backdrop pseudo-element */
+dialog.edit-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    /* Add blur or other effects if desired */
+    /* backdrop-filter: blur(2px); */
+}
+
+/* Ensure .fixture-dialog styles (white background, padding, etc.) are applied correctly */
+/* .fixture-dialog styles should already exist and define the visual appearance */
+
+/* Optional: Adjustments if the dialog content overflows */
+dialog.edit-dialog {
+    overflow-y: visible; /* Allow content to determine height */
+}
+/* The .fixture-dialog inside might need max-height and overflow-y: auto if content can be very long */
+/* .fixture-dialog {
+    max-height: calc(100vh - 8rem); /* Example: viewport height minus top/bottom margins */
+/*    overflow-y: auto;
+/* } */
