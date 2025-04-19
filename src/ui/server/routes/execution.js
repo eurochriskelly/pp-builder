@@ -14,6 +14,7 @@ const generateRecentView = require('../../templates/views/execution/recent');
 const generateGroupFixtures = require('../../templates/views/execution/competitionView/partials/groupFixtures');
 const generateGroupStandings = require('../../templates/views/execution/competitionView/partials/groupStandings');
 const generateKnockoutFixtures = require('../../templates/views/execution/competitionView/partials/knockoutFixtures');
+const generateEditFixtureForm = require('../../templates/views/execution/competitionView/partials/editFixture');
 const generateCardedPlayers = require('../../templates/views/execution/competitionView/partials/cardedPlayers');
 const generateFinalsResults = require('../../templates/views/execution/competitionView/partials/finalsResults');
 const generateMatchesByPitch = require('../../templates/views/execution/matchesByPitch');
@@ -136,7 +137,20 @@ router.get('/execution/:tournamentId/fixture/:matchId/edit', async (req, res) =>
     const { tournamentId, matchId } = req.params;
     console.log('We are here', tournamentId, matchId);
     // fetch or compute whatever edit‐form markup you need; minimal example:
-    res.send(`<div class="p-4 bg-gray-100 rounded">Edit form for fixture ${matchId} in tournament ${tournamentId}</div>`);
+    //const data = await getFixture(tournamentId, matchId);
+    res.send(generateEditFixtureForm(
+        {
+            id: '',
+            team1: 'xx',
+            team2: 'yy',
+            goals1: 0,
+            points1: 0,
+            goals2: 0,
+            points2: 0,
+            pitch: '',
+            time: ''
+        }
+    ));
 });
 
 module.exports = router;
