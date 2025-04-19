@@ -36,22 +36,51 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
 
     // Tab Navigation
     html += `
-    <div class="competition-tabs mb-4">
+    <style>
+        .competition-tabs {
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+        .competition-tabs .flex {
+            display: flex;
+            width: 100%;
+        }
+        .competition-tabs .tab-button {
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 2rem;
+            padding: 1rem;
+            background: #e0d1d6;
+            color: #777;
+            border-top-right-radius: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .competition-tabs .tab-button.active {
+            background: #d5a8b6;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+    <div class="competition-tabs">
         <div class="flex">
-            <button class="tab-button active px-4 py-2 font-medium uppercase" 
-                    style="font-size: 2rem; background: #d5a8b6; padding: 1rem; color: white; border-top-right-radius: 1rem; font-weight: bold;"
-                    data-tab="knockout-tab">Knockout Games</button>
-            <button class="tab-button px-4 py-2 font-medium uppercase" 
-                    style="font-size: 2rem; background: #d5a8b6; padding: 1rem; color: #777; border-top-right-radius: 1rem;"
-                    data-tab="groups-tab">Group Games</button>
+            <button class="tab-button active" data-tab="knockout-tab">Knockout Games</button>
+            <button class="tab-button" data-tab="groups-tab">Group Games</button>
         </div>
     </div>
     `;
 
     // Section: Knockout Fixtures
     if (knockoutFixtures && knockoutFixtures.length > 0) {
-        html += '<section id="comp-knockout-fixtures" class="tab-content active" data-tab-content="knockout-tab">';
+        html += '<section id="comp-knockout-fixtures" class="tab-content active" data-tab-content="knockout-tab" style="display: block;">';
         html += generateKnockoutFixtures(knockoutFixtures, editable, tournamentId);
+        html += '</section>';
+    } else {
+        html += '<section id="comp-knockout-fixtures" class="tab-content active" data-tab-content="knockout-tab" style="display: block;">';
+        html += '<p>No knockout fixtures found.</p>';
         html += '</section>';
     }
 

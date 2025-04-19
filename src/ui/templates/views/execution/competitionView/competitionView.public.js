@@ -68,20 +68,28 @@ function setupTabs() {
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
             // Remove active class from all buttons and contents
-            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.background = '#e0d1d6';
+                btn.style.color = '#777';
+                btn.style.fontWeight = 'normal';
+            });
+            
             tabContents.forEach(content => {
                 content.classList.remove('active');
-                content.classList.add('hidden');
+                content.style.display = 'none';
             });
 
-            // Add active class to clicked button and corresponding content
+            // Add active class to clicked button and show corresponding content
             button.classList.add('active');
+            button.style.background = '#d5a8b6';
             button.style.color = 'white';
             button.style.fontWeight = 'bold';
+            
             const tabId = button.dataset.tab;
             const content = document.querySelector(`[data-tab-content="${tabId}"]`);
             if (content) {
-                content.classList.remove('hidden');
+                content.style.display = 'block';
                 content.classList.add('active');
             }
         });
@@ -104,10 +112,25 @@ if (document.readyState === 'interactive' || document.readyState === 'complete')
 // Initialize tabs when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     setupTabs();
+    
     // Set initial active tab styles
     const activeTab = document.querySelector('.tab-button.active');
     if (activeTab) {
+        activeTab.style.background = '#d5a8b6';
         activeTab.style.color = 'white';
         activeTab.style.fontWeight = 'bold';
+        
+        const tabId = activeTab.dataset.tab;
+        const activeContent = document.querySelector(`[data-tab-content="${tabId}"]`);
+        if (activeContent) {
+            activeContent.style.display = 'block';
+        }
     }
+    
+    // Hide all other tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        if (!content.classList.contains('active')) {
+            content.style.display = 'none';
+        }
+    });
 });
