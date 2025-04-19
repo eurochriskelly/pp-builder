@@ -23,14 +23,20 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
     } = data;
 
     // Use a container div for the whole competition view
-    let html = `<div id="competition-${encodeURIComponent(competitionName)}" class="competition-view p-4 space-y-6">`; // Add spacing between sections
+    let html = `
+    <div id="competition-${encodeURIComponent(competitionName)}" class="competition-view p-4 space-y-6">
+        <div id="competition-loading" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+            <p class="mt-4 text-lg">Loading competition data...</p>
+        </div>
+        <div id="competition-content" class="hidden">`;
 
     // Add sections, using the individual generators
     // Add checks to only render sections if data exists
 
     // Section: Knockout Fixtures
     if (knockoutFixtures && knockoutFixtures.length > 0) {
-        html += '<section id="comp-knockout-fixtures">';
+        html += '<section id="comp-knockout-fixtures" class="here">';
         html += '<h2 class="event-h2 text-xl font-semibold mb-2 mt-4">Knockout Games</h2>'; // Added H2 subheading
         html += generateKnockoutFixtures(knockoutFixtures, editable, tournamentId);
         html += '</section>';
@@ -126,8 +132,12 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
     html += '</section>'; // Close comp-groups section
     // Add the styles previously removed from groupStandings.js
     html += `<link rel="text/css" href="/styles/competitionView.style.css" /> `;
-    html += `<script src="/scripts/webcomponents/fixture-row.js" /> `;
-    html += '</div>'; // Close competition-view container
+    html += `<script src="/scripts/webcomponents/fixture-row.js"></script>`;
+    html += `
+        </div>
+    </div>
+    <script src="/scripts/competitionView.public.js"></script>
+    `;
 
     return html;
 };
