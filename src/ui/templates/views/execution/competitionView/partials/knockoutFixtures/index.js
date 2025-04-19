@@ -108,12 +108,12 @@ function createKnockoutHTML(categoryData, editable = false, tournamentId = '') {
             // When editable, wrap the row & inject pencil icon + hidden edit container
             if (editable) {
                 html += `<div class="fixture-edit-wrapper relative">`;
-                html += `<div class="edit-icon absolute left-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                html += `<div class="edit-icon absolute left-2 top-1/2 transform -translate-y-1/2 cursor-pointer text-2xl"
                          hx-get="/execution/${tournamentId}/fixture/${row.id}/edit"
                          hx-target="#edit-dialog-content-${row.id}"
                          hx-swap="innerHTML"
                          hx-on="htmx:afterSwap: document.getElementById('edit-dialog-${row.id}').showModal()">
-                           <i data-lucide="pencil-line"></i>
+                        <i data-lucide="pencil-line" style="width: 2em; height: 2em;"></i>
                         </div>`;
                 html += `<div class="fixture-row-wrapper">`;
             }
