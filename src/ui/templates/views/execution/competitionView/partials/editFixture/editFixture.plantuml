@@ -8,13 +8,13 @@
     Name      | ^Team1 name   ^ | ^Team2 name   ^
     Goals/Points     | { " 0" | " 0"} | { " 0" | " 0" }
   }
-  [ Update ] | [ Cancel ]
+  [ Update Score ] | [ Cancel ]
 
   {^"Adjust fixture"
     On pitch     | ^Current pitch selected ^
-    Destination  | ^Move this fixture after^
-    With fixture | ^#123 - Mens - BA vs AB^
+    Action       | ^Place after^
+    Relative to  | ^Select target fixture...^
   }
-  [ Update ] | [ Cancel ]
+  [ Update Schedule ] | [ Cancel ]
 }
 @endsalt 
