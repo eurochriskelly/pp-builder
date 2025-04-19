@@ -60,6 +60,34 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', () => clearTimeout(fallbackTimeout));
 });
 
+// Tab switching functionality
+function setupTabs() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                content.classList.add('hidden');
+            });
+
+            // Add active class to clicked button and corresponding content
+            button.classList.add('active');
+            button.style.color = 'white';
+            button.style.fontWeight = 'bold';
+            const tabId = button.dataset.tab;
+            const content = document.querySelector(`[data-tab-content="${tabId}"]`);
+            if (content) {
+                content.classList.remove('hidden');
+                content.classList.add('active');
+            }
+        });
+    });
+}
+
 // Immediately handle case where document already loaded
 if (document.readyState === 'interactive' || document.readyState === 'complete') {
     console.log('[CompetitionView] Document already readyState:', document.readyState, '- performing immediate loadComplete');
@@ -69,5 +97,17 @@ if (document.readyState === 'interactive' || document.readyState === 'complete')
         loadingEl.classList.add('hidden');
         contentEl.classList.remove('hidden');
         console.log('[CompetitionView] Spinner hidden, content shown via immediate check');
+        setupTabs();
     }
 }
+
+// Initialize tabs when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    setupTabs();
+    // Set initial active tab styles
+    const activeTab = document.querySelector('.tab-button.active');
+    if (activeTab) {
+        activeTab.style.color = 'white';
+        activeTab.style.fontWeight = 'bold';
+    }
+});

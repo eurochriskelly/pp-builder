@@ -34,16 +34,29 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
     // Add sections, using the individual generators
     // Add checks to only render sections if data exists
 
+    // Tab Navigation
+    html += `
+    <div class="competition-tabs mb-4">
+        <div class="flex">
+            <button class="tab-button active px-4 py-2 font-medium uppercase" 
+                    style="font-size: 2rem; background: #d5a8b6; padding: 1rem; color: white; border-top-right-radius: 1rem; font-weight: bold;"
+                    data-tab="knockout-tab">Knockout Games</button>
+            <button class="tab-button px-4 py-2 font-medium uppercase" 
+                    style="font-size: 2rem; background: #d5a8b6; padding: 1rem; color: #777; border-top-right-radius: 1rem;"
+                    data-tab="groups-tab">Group Games</button>
+        </div>
+    </div>
+    `;
+
     // Section: Knockout Fixtures
     if (knockoutFixtures && knockoutFixtures.length > 0) {
-        html += '<section id="comp-knockout-fixtures" class="here">';
-        html += '<h2 class="event-h2 text-xl font-semibold mb-2 mt-4">Knockout Games</h2>'; // Added H2 subheading
+        html += '<section id="comp-knockout-fixtures" class="tab-content active" data-tab-content="knockout-tab">';
         html += generateKnockoutFixtures(knockoutFixtures, editable, tournamentId);
         html += '</section>';
     }
 
     // Section: Groups (Standings + Fixtures)
-    html += '<section id="comp-groups" class="space-y-6">'; // Container for all groups
+    html += '<section id="comp-groups" class="tab-content hidden" data-tab-content="groups-tab">'; // Container for all groups
 
     // groupStandings is an object keyed by category, e.g., { "Cup": [ { groupName: 'A', rows: [...] }, { groupName: 'B', ... } ] }
     // We expect only one category (competitionName) in the passed groupStandings object here.
@@ -78,7 +91,6 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
         groupsData.sort((a, b) => (a.groupName || '').localeCompare(b.groupName || ''));
 
 
-        html += '<h2 class="event-h2 text-xl font-semibold mb-2 mt-4">Group Games</h2>'; 
         // Loop through each group within the competition
         groupsData.forEach(groupData => {
             const groupName = groupData.groupName;
