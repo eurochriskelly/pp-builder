@@ -50,76 +50,67 @@ function generateEditFixtureForm(fixture = {}) {
     } = fixture;
 
     return `<div class="fixture-dialog">
-        <!-- fixture-row -->
         <script type="module" src="/scripts/webcomponents/fixture-row.js"></script>
         <link rel="stylesheet" href="/styles/editFixture.style.css">
 
-        <!-- display current fixture as a row -->
-        <fixture-row
-          row-index="0"
-          team1="${team1}"
-          team1-goals="${goals1}"
-          team1-points="${points1}"
-          team2="${team2}"
-          team2-goals="${goals2}"
-          team2-points="${points2}"
-          outcome="${(goals1 + points1 + goals2 + points2) > 0 ? 'played' : ''}"
-          match-id="${id}"
-          stage="${stage}"
-          stage-level="${stageLevel}"
-          category="${groupName || ''}"
-        ></fixture-row>
-
-        <!-- Group summary -->
-        <div class="dialog-section group-section">
-          <table class="team-summary">
-            <thead>
-              <tr><th></th><th>Team 1</th><th>Team 2</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Name</td>
-                <td><input type="text" name="team1" value="${team1}" required /></td>
-                <td><input type="text" name="team2" value="${team2}" required /></td>
-              </tr>
-              <tr>
-                <td>Goals</td>
-                <td><input type="number" name="goals1" value="${goals1}" /></td>
-                <td><input type="number" name="goals2" value="${goals2}" /></td>
-              </tr>
-              <tr>
-                <td>Points</td>
-                <td><input type="number" name="points1" value="${points1}" /></td>
-                <td><input type="number" name="points2" value="${points2}" /></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="actions">
-            <button type="button" id="group-update">Update</button>
-            <button type="button" id="group-cancel">Cancel</button>
-          </div>
+        <div class="fixture-row">
+            <fixture-row
+              row-index="0"
+              team1="${team1}"
+              team1-goals="${goals1}"
+              team1-points="${points1}"
+              team2="${team2}"
+              team2-goals="${goals2}"
+              team2-points="${points2}"
+              outcome="${(goals1 + points1 + goals2 + points2) > 0 ? 'played' : ''}"
+              match-id="${id}"
+              stage="${stage}"
+              stage-level="${stageLevel}"
+              category="${groupName || ''}"
+            ></fixture-row>
         </div>
 
-        <!-- Adjust fixture -->
-        <div class="dialog-section adjust-section">
-          <form id="edit-fixture-form">
-            <label>On pitch:
-              <input type="text" name="pitch" value="${pitch}" required />
-            </label>
-            <label>Destination:
-              <input type="number" name="moveAfter" value="${moveAfter}" />
-            </label>
-            <label>With fixture:
-              <select name="fixture" required>
-                <option value="" disabled>Select fixture</option>
-                <option value="${id}" selected>#${id} - ${groupName} - ${team1} vs ${team2}</option>
-              </select>
-            </label>
+        <div class="team-details">
+            <h3>My group</h3>
+            <table>
+                <tr>
+                    <td>_</td>
+                    <td>Team 1</td>
+                    <td>Team 2</td>
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td><input type="text" name="team1" value="${team1}" /></td>
+                    <td><input type="text" name="team2" value="${team2}" /></td>
+                </tr>
+                <tr>
+                    <td>Goals</td>
+                    <td><input type="number" name="goals1" value="${goals1}" /></td>
+                    <td><input type="number" name="goals2" value="${goals2}" /></td>
+                </tr>
+                <tr>
+                    <td>Points</td>
+                    <td><input type="number" name="points1" value="${points1}" /></td>
+                    <td><input type="number" name="points2" value="${points2}" /></td>
+                </tr>
+            </table>
             <div class="actions">
-              <button type="submit">Update</button>
-              <button type="button" id="close-button">Cancel</button>
+                <button type="button">Update</button>
+                <button type="button">Cancel</button>
             </div>
-          </form>
+        </div>
+
+        <div class="adjust-fixture">
+            <h3>Adjust fixture</h3>
+            <form>
+                <label>On pitch: <input type="text" name="pitch" value="${pitch}" /></label>
+                <label>Destination: <input type="text" name="moveAfter" value="${moveAfter}" /></label>
+                <label>With fixture: <input type="text" name="fixture" value="#${id} - ${groupName} - ${team1} vs ${team2}" /></label>
+                <div class="actions">
+                    <button type="submit">Update</button>
+                    <button type="button">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>`;
 }
