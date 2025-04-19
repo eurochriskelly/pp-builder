@@ -45,10 +45,6 @@ async function competitionPage(editable, req, res) { // Removed optional :view? 
     // Title for the <title> tag
     let pageTitle = tournament.title || 'Event Overview'; // Use tournament title or default
 
-    // Default placeholder content for the #content div
-    let content = '<p class="p-4 text-gray-600">Select a competition above to view details.</p>';
-    // Set the ID for the content div, polling will be added dynamically by eventManager links
-
     // Construct the final HTML for initial page load
     try {
         // generateEventManager handles competition selection links
@@ -58,9 +54,7 @@ async function competitionPage(editable, req, res) { // Removed optional :view? 
           <div style="display: flex;">
             ${eventManagerHtml}
           </div>
-          <div id="content">
-            ${content}
-          </div>
+          <div id="content"></div>
           ${generateFooter()}
         `;
         res.send(html);
