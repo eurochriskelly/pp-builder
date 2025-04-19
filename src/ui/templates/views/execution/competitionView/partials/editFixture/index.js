@@ -1,32 +1,3 @@
-/*
-
-Layout:
-
-
-Wireframe see (wireframe.md):
-
-<fixture-row .. />
-div: Has 2 children side by side
-  div: (this div is on the left hand side)
-        "Team 1 details":
-        [ Team 1 name ! ]
-        [ Team 1 goals  ]
-        [ Team 1 points ]
-   div: (this div is on the right hand side)
-        "Team 2 details": 
-        [ Team 2 name ! ]
-        [ Team 2 goals ]
-        [ Team 2 points ]
-
-"On pitch" [ Pitch name ! ]
-[ Move after ! ] 
-"Fixture" [ Select fixture ! ]
-
-<update> <close>
-*/
-
-
-
 /**
  * Generates an HTML form for editing a fixture.
  * @param {Object} fixture - The fixture data to edit.
@@ -69,8 +40,8 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
     };
 
 
-    return `<div class="fixture-dialog">
-        <script type="module" src="/scripts/webcomponents/fixture-row.js"></script>
+    return `<div class="dialog-overlay">
+      <div class="fixture-dialog">
         <link rel="stylesheet" href="/styles/editFixture.style.css">
 
         <div class="fixture-row">
@@ -109,18 +80,31 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
                 <div class="grid-cell header-cell">Team 2</div>
 
                 <!-- Name Row -->
+                <!-- Name Row -->
                 <div class="grid-cell label-cell">Name</div>
-                <div class="grid-cell input-cell">
-                    <select name="team1">
-                        <option value="">Select Team 1</option>
-                        ${generateOptions(teams, team1)}
-                    </select>
+                <div class="grid-cell input-cell team-name-cell">
+                    <div id="team1-wrapper" class="team-input-wrapper">
+                        <select id="team1-select" name="team1">
+                            <option value="">Select Team 1</option>
+                            ${generateOptions(teams, team1)}
+                        </select>
+                        <input type="text" id="team1-input" name="team1_alt_name" value="${team1}" class="hidden" placeholder="Enter new team name">
+                    </div>
+                    <i id="team1-edit-icon" data-lucide="pencil" class="icon-small edit-team-icon"
+                       onclick="toggleTeamEdit('team1')"
+                       title="Edit Team 1 Name"></i>
                 </div>
-                <div class="grid-cell input-cell">
-                     <select name="team2">
-                        <option value="">Select Team 2</option>
-                        ${generateOptions(teams, team2)}
-                    </select>
+                <div class="grid-cell input-cell team-name-cell">
+                     <div id="team2-wrapper" class="team-input-wrapper">
+                        <select id="team2-select" name="team2">
+                            <option value="">Select Team 2</option>
+                            ${generateOptions(teams, team2)}
+                        </select>
+                        <input type="text" id="team2-input" name="team2_alt_name" value="${team2}" class="hidden" placeholder="Enter new team name">
+                     </div>
+                     <i id="team2-edit-icon" data-lucide="pencil" class="icon-small edit-team-icon"
+                        onclick="toggleTeamEdit('team2')"
+                        title="Edit Team 2 Name"></i>
                 </div>
 
                 <!-- Goals/Points Row -->
@@ -178,55 +162,11 @@ function generateEditFixtureForm(fixture = {}, availableData = {}) {
             </div>
         </div>
 
-        <script>
-            function openTab(evt, tabName) {
-                // Declare all variables
-                var i, tabcontent, tablinks;
-
-                // Get all elements with class="tab-panel" and hide them
-                tabcontent = document.getElementsByClassName("tab-panel");
-                for (i = 0; i < tabcontent.length; i++) {
-                    tabcontent[i].style.display = "none";
-                    tabcontent[i].classList.remove("active");
-                }
-
-                // Get all elements with class="tab-button" and remove the class "active"
-                tablinks = document.getElementsByClassName("tab-button");
-                for (i = 0; i < tablinks.length; i++) {
-                    tablinks[i].classList.remove("active");
-                }
-
-                // Show the current tab, and add an "active" class to the button that opened the tab
-                const currentTab = document.getElementById(tabName);
-                if (currentTab) {
-                    currentTab.style.display = "block";
-                    currentTab.classList.add("active");
-                }
-                 if (evt && evt.currentTarget) {
-                    evt.currentTarget.classList.add("active");
-                 }
-            }
-
-            // Initialize the default tab on load
-            document.addEventListener('DOMContentLoaded', function() {
-                 // Find the initially active tab panel and display it
-                 const defaultActiveTab = document.querySelector('.tab-panel.active');
-                 if (defaultActiveTab) {
-                    // Ensure only the default active tab is shown initially
-                    const allTabs = document.querySelectorAll('.tab-panel');
-                    allTabs.forEach(tab => {
-                        if (tab.id !== defaultActiveTab.id) {
-                            tab.style.display = 'none';
-                        } else {
-                             tab.style.display = 'block'; // Ensure the active one is displayed
-                        }
-                    });
-                 } else {
-                     // Fallback if no tab has 'active' class: open the first one
-                     openTab(null, 'myGroupTab');
-                 }
-            });
-        </script>
+        <script type="module" src="/scripts/webcomponents/fixture-row.js"></script>
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" ></script>
+        <script> lucide.createIcons();</script>
+        <script src="/scripts/editFixture.public.js"></script>
+      </div>
     </div>`;
 }
 

@@ -14,8 +14,7 @@ const sampleFixture = {
   id: 'fxt-123',
   team1: 'Team Alpha',
   team2: 'Team Beta',
-  goals1: 0,
-  points1: 0,
+  // Corrected: Removed duplicate goals1/points1
   goals1: 1,
   points1: 2,
   goals2: 0,

@@ -2,8 +2,16 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 1rem;
-    max-width: 600px;
+    padding: 1.5rem; /* Increased padding for better spacing */
+    background-color: white; /* Give the dialog a solid background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Add some shadow */
+    /* max-width: 600px; /* Keep or adjust max-width as needed */
+    width: 100%; /* Take full width within the padded overlay */
+    max-width: 800px; /* Optional: Set a max-width if needed */
+    margin: 0 auto; /* Center horizontally within the flex container */
+    /* Top margin is handled by the overlay's padding-top */
+    height: fit-content; /* Adjust height based on content */
 }
 
 .fixture-row {
@@ -68,6 +76,11 @@
     border-top: none; /* Remove top border as tabs handle it */
 }
 
+/* Utility class to hide elements */
+.hidden {
+    display: none !important;
+}
+
 /* Grid layout for Team Details */
 .form-grid {
     display: grid;
@@ -85,13 +98,36 @@
     font-weight: bold;
     text-align: center;
 }
+
+/* Style for small icons (used for edit icons now) */
+.icon-small {
+    width: 1em;  /* Adjust size as needed */
+    height: 1em; /* Adjust size as needed */
+    stroke-width: 2; /* Adjust line thickness */
+    cursor: pointer; /* Indicate interactivity */
+}
+
 .label-cell {
      text-align: right;
      font-weight: bold;
 }
 
+/* Align wrapper and icon in the team name cell */
+.team-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Space between input/select wrapper and icon */
+}
+
+/* Wrapper for the select/input to control its growth */
+.team-input-wrapper {
+    flex-grow: 1; /* Allow wrapper to take available space */
+}
+
 .input-cell input,
-.input-cell select {
+.input-cell select,
+.team-input-wrapper input, /* Style input when swapped in */
+.team-input-wrapper select { /* Style select inside wrapper */
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 3px;
@@ -166,4 +202,22 @@
 
 .actions button:last-child {
     background: #f0f0f0;
+}
+/* Overlay to cover the page */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 1000; /* Ensure it's above other content */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    /* align-items: center; /* Center vertically if needed, but request is 4rem top margin */
+    padding-top: 4rem; /* Top margin */
+    padding-left: 4rem; /* Left margin */
+    padding-right: 4rem; /* Right margin */
+    box-sizing: border-box; /* Include padding in dimensions */
+    overflow-y: auto; /* Allow scrolling if content overflows */
 }
