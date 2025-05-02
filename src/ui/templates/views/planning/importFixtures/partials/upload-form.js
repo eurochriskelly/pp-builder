@@ -58,7 +58,6 @@ module.exports = function (
         <div id="paste-section" class="mb-4" style="display: none;">
           <div class="flex justify-between items-center mb-1">
              <label for="pastedData" class="block font-medium">Paste your spreadsheet fixtures here:</label>
-             ${renderSampleTable(sample)}
              <div class="space-x-2">
                  <button 
                     type="button" 
@@ -68,6 +67,7 @@ module.exports = function (
              </div>
           </div>
           <textarea id="pastedData" name="pastedData" rows="10" class="w-full border p-1"></textarea>
+          <div>${renderSampleTable(sample)}</div>
         </div>
 
         <div>
@@ -85,6 +85,7 @@ function renderSampleTable(sample) {
   const headers = Object.keys(sample[0]);
   return `
     <div class="text-xs mb-2">
+      <h2>Here is some sample data</h2>
       <span class="font-semibold">Example format:</span>
       <table class="border border-gray-300 mt-1">
         <thead>

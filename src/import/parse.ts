@@ -2,8 +2,7 @@ type FixtureData = Record<string, string[]>;
 
 const groupTypes = new Set(['gp', 'grp', 'group', 'pool', 'ple', 'poule']);
 
-const getCategories = (matches: string[]) =>
-  [...new Set(matches.map(match => match.split('.')[0]))];
+const getCategories = (matches: string[]) => [...new Set(matches.map(match => match.split('.')[0]))];
 
 const computeMatchIds = (matches: string[], categories: string[]) =>
   matches.map(match => {
@@ -130,6 +129,7 @@ const toCSV = (data: FixtureData, headers: string[]): string => {
 };
 
 export const processPastedFixtures = (tsvData: string) => {
+  console.log('processing parse fixtures', tsvData)
   const lines = tsvData.split('\n').filter(line => line.trim());
   const headers = lines.shift()!.split('\t').map(x => x.trim());
 
