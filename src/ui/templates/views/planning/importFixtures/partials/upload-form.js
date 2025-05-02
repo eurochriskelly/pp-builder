@@ -1,3 +1,15 @@
+const sample = [
+  {
+    foo: "121",
+    bar: "hello"
+  },
+  {
+    foo: "123",
+    bar: "hello 3"
+  }
+]
+
+
 module.exports = function (
   tournamentId,
 ) {
@@ -46,6 +58,7 @@ module.exports = function (
         <div id="paste-section" class="mb-4" style="display: none;">
           <div class="flex justify-between items-center mb-1">
              <label for="pastedData" class="block font-medium">Paste your spreadsheet fixtures here:</label>
+             ${renderSampleTable(sample)}
              <div class="space-x-2">
                  <button 
                     type="button" 
@@ -64,4 +77,8 @@ module.exports = function (
 
       </form>
   `
+}
+
+function renderSampleTable(sample) {
+  
 }
