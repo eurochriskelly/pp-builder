@@ -80,5 +80,26 @@ module.exports = function (
 }
 
 function renderSampleTable(sample) {
+  if (!sample || !sample.length) return '';
   
+  const headers = Object.keys(sample[0]);
+  return `
+    <div class="text-xs mb-2">
+      <span class="font-semibold">Example format:</span>
+      <table class="border border-gray-300 mt-1">
+        <thead>
+          <tr>
+            ${headers.map(h => `<th class="border px-2 py-1 bg-gray-100">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${sample.map(row => `
+            <tr>
+              ${headers.map(h => `<td class="border px-2 py-1">${row[h]}</td>`).join('')}
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
