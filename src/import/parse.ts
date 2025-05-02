@@ -2,13 +2,39 @@ type FixtureData = Record<string, string[]>;
 
 const groupTypes = new Set(['gp', 'grp', 'group', 'pool', 'ple', 'poule']);
 
-const getCategories = (matches: string[]) => [...new Set(matches.map(match => match.split('.')[0]))];
+/**
+ * Normalizes match strings like 'C1' or 'H12' to 'C.1' or 'H.12'.
+ * Leaves strings already containing a dot (e.g., 'U12.1') unchanged.
+ * @param match The raw match string.
+ * @returns The normalized match string.
+ */
+function normalizeMatchString(match: string): string {
+  // Check if it's like C1, H12 (letters followed directly by numbers without a dot)
+  const shortFormatMatch = match.match(/^([a-zA-Z]+)(\d+)$/);
+  if (shortFormatMatch && !match.includes('.')) {
+    return `${shortFormatMatch[1]}.${shortFormatMatch[2]}`; // Convert C1 to C.1, H12 to H.12
+  }
+  // Otherwise, assume it's already in the desired format (like U12.1) or invalid
+  return match;
+}
+
+
+const getCategories = (matches: string[]) => [...new Set(matches.map(match => {
+  const normalizedMatch = normalizeMatchString(match);
+  return normalizedMatch.split('.')[0];
+}))];
 
 const computeMatchIds = (matches: string[], categories: string[]) =>
   matches.map(match => {
-    const [cat, numStr] = match.split('.');
+    const normalizedMatch = normalizeMatchString(match);
+    const [cat, numStr] = normalizedMatch.split('.');
     const num = parseInt(numStr, 10);
-    const catIndex = categories.indexOf(cat);
+    // Find category index ignoring case, default to 0 if not found
+    let catIndex = categories.findIndex(c => c.toLowerCase() === cat?.toLowerCase());
+    if (catIndex === -1) {
+        console.warn(`Category '${cat}' from match '${match}' not found in derived categories: [${categories.join(', ')}]. Defaulting to index 0.`);
+        catIndex = 0; // Assign to the first category as a fallback
+    }
     return ((catIndex + 1) * 100 + num).toString();
   });
 
@@ -77,10 +103,16 @@ const parseTeamColumn = (
       const v = val.toLowerCase().trim();
       if (v.startsWith("winner ") || v.startsWith("loser ")) {
         const isWinner = v.startsWith("winner ");
-        const [cat, numStr] = v.replace(/^(winner|loser)\s+/, '').split('.');
+        const matchPart = v.replace(/^(winner|loser)\s+/, '');
+        const normalizedMatchPart = normalizeMatchString(matchPart); // Normalize here
+        const [cat, numStr] = normalizedMatchPart.split('.');
         const num = parseInt(numStr, 10);
-        let catIndex = categories.findIndex(c => c.toLowerCase() === cat);
-        if (catIndex === -1) catIndex = 0;
+        // Find category index ignoring case, default to 0 if not found
+        let catIndex = categories.findIndex(c => c.toLowerCase() === cat?.toLowerCase());
+         if (catIndex === -1) {
+            console.warn(`Category '${cat}' from reference '${val}' not found in derived categories: [${categories.join(', ')}]. Defaulting to index 0.`);
+            catIndex = 0; // Assign to the first category as a fallback
+        }
         const matchId = (catIndex + 1) * 100 + num;
         pool.push("match");
         poolId.push(matchId.toString());
