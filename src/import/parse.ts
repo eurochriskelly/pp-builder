@@ -95,14 +95,20 @@ const parseTeamColumn = (
     const stage = stageCol[i].toLowerCase();
     if (val.startsWith('~')) {
       // Handle special ~format:foo:N/p:M syntax
-      const match = val.match(/^~([^:]+):([^\/]+)\/p:(\d+)$/);
+      const match = val.match(/^~([^:]+):([^\/]+)\/p:(\d+)/);
       if (match) {
         team.push('~');
         pool.push(match[1]); // foo
         poolId.push(match[2]); // N
         position.push(match[3]); // M
+        console.log(`Parsed special team format:`, { 
+          input: val, 
+          pool: match[1], 
+          poolId: match[2], 
+          position: match[3] 
+        });
       } else {
-        // Fallback to empty values if format is invalid
+        console.warn(`Failed to parse special team format: ${val}`);
         team.push('~');
         pool.push('');
         poolId.push('');
