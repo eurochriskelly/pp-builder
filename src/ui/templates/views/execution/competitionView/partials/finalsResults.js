@@ -1,5 +1,5 @@
 const { UtilTable, UtilRow, ScoreData } = require('../../../../partials/tableUtils');
-const { processTeamName } = require('../../../../../utils');
+const { processTeamName } = require('../../../../../utils/teamName');
 const {
   getScoreComparisonClasses,
   getFinalScoreDisplay,

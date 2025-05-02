@@ -1,4 +1,4 @@
-const { apiRequest } = require('../api');
+const { apiRequest } = require('../../api');
 
 /* 
 Route /chronicle show the tournmaent regions and years

@@ -1,4 +1,4 @@
-const { formatScore } = require('../../../../../utils');
+const { formatScore } = require('../../../../../utils/teamName');
 // Note: The <knockout-level> component script should be loaded in the browser, not required here.
 
 // Inline CSS for row and play button

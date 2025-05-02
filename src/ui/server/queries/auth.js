@@ -1,4 +1,4 @@
-const { apiRequest } = require('../api');
+const { apiRequest } = require('../../api');
 
 async function loginUser(email, password) {
     const data = await apiRequest('post', '/auth/login', { email, password });

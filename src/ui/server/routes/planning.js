@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllMatches } = require('../../queries/tournaments');
+const { getAllMatches } = require('../queries/tournaments');
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const generateMatchesPlanning = require('../../templates/views/planning/matches/');

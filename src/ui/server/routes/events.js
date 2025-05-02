@@ -1,6 +1,6 @@
 const express = require('express');
-const { getTournamentByUuid } = require('../../queries');
-const { getCompetitionData } = require('../../queries/matches');
+const { getTournamentByUuid } = require('../queries');
+const { getCompetitionData } = require('../queries/matches');
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const { generateEventManager } = require('../../templates/views/eventManager');

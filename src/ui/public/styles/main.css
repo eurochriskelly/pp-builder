@@ -5,6 +5,7 @@
     margin: 0;
     box-sizing: border-box;
     /* Removed padding: 0 to let Tailwind utilities apply */
+    padding: 0;
 }
 .score-winner {
   text-transform: uppercase;
@@ -27,6 +28,7 @@ body {
 /* Article container */
 article {
     @apply max-w-7xl mx-auto p-5;
+    margin: 0;
 }
 
 /* Headings */
@@ -161,10 +163,6 @@ tr:hover {
     @apply bg-green-100 font-bold;
 }
 
-/* Execution view specific styles */
-body > article.execution {
-    @apply p-4;
-}
 
 body > article.execution table {
     @apply w-full border-collapse bg-white shadow-md rounded-lg mb-5;

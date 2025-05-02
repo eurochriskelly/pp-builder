@@ -1,5 +1,5 @@
 const express = require('express');
-const { createTournament } = require('../../queries/tournaments'); // Fixed path
+const { createTournament } = require('../queries/tournaments'); // Fixed path
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const generateTournamentSelection = require('../../templates/views/tournamentSelection/index');

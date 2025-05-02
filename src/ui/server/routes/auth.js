@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser } = require('../../queries/auth'); // Fixed path
+const { loginUser } = require('../queries/auth'); // Fixed path
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const generateLoginForm = require('../../templates/views/loginForm'); // Import the new form template

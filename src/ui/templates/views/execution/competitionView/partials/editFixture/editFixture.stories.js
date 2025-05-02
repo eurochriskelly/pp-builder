@@ -2,7 +2,7 @@ import generateEditFixtureForm from './index.js'; // Ensure .js extension if nee
 import './editFixture.style.css'; // Import CSS directly
 
 export default {
-  title: 'Competition/Edit Fixture Dialog', // Adjusted title
+  title: 'execution/Edit Fixture', // Adjusted title
   argTypes: { // Optional: Define controls for Storybook UI if needed
     fixture: { control: 'object' },
     availableData: { control: 'object' },

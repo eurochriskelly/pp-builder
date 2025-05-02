@@ -1,6 +1,6 @@
 const express = require('express');
 const { csvRows } = require('./planning');
-const { getAllMatches } = require('../../queries/tournaments');
+const { getAllMatches } = require('../queries/tournaments');
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const generateMatchesPlanning = require('../../templates/views/planning/matches/');

@@ -28,23 +28,4 @@ function formatScore(goals, points) {
     return `<span style="white-space: nowrap;">${goals}-${paddedPoints}</span> <span>(${calculatedScore})</span>`;
 }
 
-/**
- * Generates a short label (up to 3 chars) from the capital letters and numbers in a team name.
- * @param {string} teamName - The full name of the team.
- * @returns {string} - The generated short label (e.g., "IU1", "FD", "AA"). Returns '???' if no label can be generated.
- */
-function generateTeamLabel(teamName) {
-    if (!teamName || typeof teamName !== 'string') {
-        return '???'; // Handle null, undefined, or non-string input
-    }
-    // Extract capital letters and numbers
-    const extracted = teamName.match(/[A-Z0-9]/g);
-    if (!extracted || extracted.length === 0) {
-        // Fallback: Use first 3 letters if no caps/numbers found
-        return teamName.substring(0, 3).toUpperCase(); 
-    }
-    // Join the extracted characters and take the first 3
-    return extracted.join('').substring(0, 3);
-}
-
-module.exports = { processTeamName, formatScore, generateTeamLabel };
+module.exports = { processTeamName, formatScore };

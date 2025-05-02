@@ -1,5 +1,5 @@
 const { UtilTable, UtilRow, ScoreData } = require('./tableUtils');
-const { processTeamName } = require('../../utils');
+const { processTeamName } = require('../../utils/teamName');
 
 export default {
   title: 'Components/Table',

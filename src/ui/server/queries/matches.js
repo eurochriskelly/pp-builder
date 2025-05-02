@@ -1,4 +1,4 @@
-const { apiRequest } = require('../api');
+const { apiRequest } = require('../../api');
 
 // Fetch group standings, optionally filtered by competition
 async function getGroupStandings(tournamentId, competitionName = null) {
@@ -186,6 +186,46 @@ async function getFinalsResults(tournamentId, competitionName = null) {
     }));
 }
 
+async function getFixtureData(tournamentId, matchId) {
+    const data = await apiRequest('get', `/tournaments/${tournamentId}/fixtures/${matchId}`);
+    console.log('data is ', data);
+    return data?.data? data.data : {
+        id: data.id,
+        category: data.category || 'N/A',
+        stage: data.stage || 'N/A',
+        pitch: data.pitch || 'N/A',
+        scheduledTime: data.scheduledTime || 'N/A',
+        team1: data.team1 || 'N/A',
+        goals1: data.goals1,
+        points1: data.points1,
+        team2: data.team2 || 'N/A',
+        goals2: data.goals2,
+        points2: data.points2,
+        umpireTeam: data.umpireTeam || 'N/A',
+        outcome: data.outcome,
+        started: data.started || 'false',
+    };
+}
+
+async function getCategoryTeams(tournamentId, stage, category) {
+    const data = await apiRequest('get', `/tournaments/${tournamentId}/fixtures/${matchId}`);
+    return data?.data? data.data : {
+        id: data.id,
+        category: data.category || 'N/A',
+        stage: data.stage || 'N/A',
+        pitch: data.pitch || 'N/A',
+        scheduledTime: data.scheduledTime || 'N/A',
+        team1: data.team1 || 'N/A',
+        goals1: data.goals1,
+        points1: data.points1,
+        team2: data.team2 || 'N/A',
+        goals2: data.goals2,
+        points2: data.points2,
+        umpireTeam: data.umpireTeam || 'N/A',
+        outcome: data.outcome,
+        started: data.started || 'false',
+    };
+}
 module.exports = { 
     getRecentMatches, 
     getGroupFixtures, 
@@ -195,6 +235,8 @@ module.exports = {
     getFinalsResults,
     getGroupStandings,
     getCompetitionData, // Add the new function here
+    getFixtureData, 
+    getCategoryTeams,
 };
 
 // New function to fetch all data for a specific competition

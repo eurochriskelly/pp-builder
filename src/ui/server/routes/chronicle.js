@@ -1,5 +1,5 @@
 const express = require('express');
-const { getRegions } = require('../../queries/chronicle');
+const { getRegions } = require('../queries/chronicle');
 const renderChronicle = require('../../templates/views/chronicle');
 
 const router = express.Router();

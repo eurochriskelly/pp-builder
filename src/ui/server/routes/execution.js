@@ -6,8 +6,10 @@ const {
     getGroupStandings, 
     getKnockoutFixtures,
     getMatchesByPitch,
+    getFixtureData,
+    getCategoryTeams,
     getFinalsResults 
-} = require('../../queries/matches');
+} = require('../queries/matches');
 const generateHeader = require('../../templates/header');
 const generateFooter = require('../../templates/footer');
 const generateRecentView = require('../../templates/views/execution/recent');
@@ -18,6 +20,7 @@ const generateEditFixtureForm = require('../../templates/views/execution/competi
 const generateCardedPlayers = require('../../templates/views/execution/competitionView/partials/cardedPlayers');
 const generateFinalsResults = require('../../templates/views/execution/competitionView/partials/finalsResults');
 const generateMatchesByPitch = require('../../templates/views/execution/matchesByPitch');
+const { data } = require('autoprefixer');
 
 const router = express.Router();
 
@@ -135,22 +138,18 @@ router.get('/execution/:id/view7', async (req, res) => {
 // New edit‐fragment route
 router.get('/execution/:tournamentId/fixture/:matchId/edit', async (req, res) => {
     const { tournamentId, matchId } = req.params;
-    console.log('We are here', tournamentId, matchId);
+    const data = await getFixtureData(tournamentId, matchId);
+    const teams = await getCategoryTeams(tournamentId, data.stage, data.category);
+
+    console.log('1232131ss')
+    console.log('dat is teams', teams);
     // fetch or compute whatever edit‐form markup you need; minimal example:
-    //const data = await getFixture(tournamentId, matchId);
-    res.send(generateEditFixtureForm(
-        {
-            id: '',
-            team1: 'xx',
-            team2: 'yy',
-            goals1: 0,
-            points1: 0,
-            goals2: 0,
-            points2: 0,
-            pitch: '',
-            time: ''
-        }
-    ));
+    const obj = {
+        ...data,
+        team1: data.team1Id || 'N/A',
+        team2: data.team2Id || 'N/A',
+    }
+    res.send(generateEditFixtureForm(obj));
 });
 
 module.exports = router;

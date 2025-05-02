@@ -25,18 +25,18 @@ function generateEventManager(uuid, tournament, loggedIn = false, editable = fal
         ${initialLoadAttributes}
     >`;
     html += `<div class="event-manager-header">
-                <h2 class="mx-auto event-info-title">
+                <h2 class="m-0 p-3 event-info-title" style="margin-bottom:0">
                     <span>${tournament.Title || tournament.title || 'Event'}</span>
                     <span class="event-info-icon" style="float: right;">
                         <i data-lucide="toggle-left" class="toggle-icon" style="transform: scale(1.5);" onclick="toggleIcon(this)"></i>
                     </span>
                 </h2>
-                <p class="text-3xl m-4 mb-8 mx-auto">
+                <p class="text-3xl m-4 mb-8 mx-auto bg-rose-300 text-white p-8" style="padding:1rem">
                     <span class="inline-icon-text">
                         <span class="icon"><i data-lucide="calendar" style="transform: scale(1.5);"></i></span>
                         ${tournament.Date ? tournament.Date.substring(0, 10) : tournament.date || ''}
                     </span>
-                    <span class="mx-2">|</span>
+                    <span class="mx-2">&nbsp;</span>
                     <span class="inline-icon-text">
                         <span class="icon"><i data-lucide="map-pin" style="transform: scale(1.5);"></i></span>
                         ${tournament.Location || tournament.location || ''}

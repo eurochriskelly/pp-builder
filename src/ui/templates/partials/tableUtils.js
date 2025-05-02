@@ -1,4 +1,4 @@
-const { processTeamName, formatScore } = require('../../utils');
+const { processTeamName, formatScore } = require('../../utils/teamName');
 const { hashString } = require('./styleUtils');
 
 // Helper class to represent score data

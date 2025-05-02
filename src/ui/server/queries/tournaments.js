@@ -1,4 +1,4 @@
-const { apiRequest } = require('../api');
+const { apiRequest } = require('../../api');
 
 async function getAllMatches(tournamentId) {
     const data = await apiRequest('get', `/tournaments/${tournamentId}/all-matches`);

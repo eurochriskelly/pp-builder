@@ -1,4 +1,4 @@
-const { formatScore } = require('../../utils.js');
+const { formatScore } = require('../../utils/teamName.js');
 
 /**
  * Determines CSS classes for teams and scores based on comparing two formatted scores.

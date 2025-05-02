@@ -26,7 +26,7 @@ const sampleFixtures = [
 
 // Export the story metadata
 export default {
-  title: 'Standings/Table', // The category and name in Storybook’s sidebar
+  title: 'execution/Standings', // The category and name in Storybook’s sidebar
   parameters: {
     // Optional: Define how the story is rendered
     layout: 'padded',

@@ -1,4 +1,4 @@
-const { processTeamName } = require('../../../../../../utils');
+const { processTeamName } = require('../../../../../../utils/teamName');
 
 /**
  * Generates HTML for a single group's fixtures using fixture-row web component.

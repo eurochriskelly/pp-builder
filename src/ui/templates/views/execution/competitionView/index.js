@@ -1,3 +1,6 @@
+//
+// Route: 
+
 // Import individual section generators
 const generateSingleGroupFixtures = require('./partials/groupFixtures'); // Renamed import
 const generateSingleGroupStandings = require('./partials/groupStandings'); // Renamed import
