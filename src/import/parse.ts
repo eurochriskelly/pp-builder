@@ -116,6 +116,7 @@ const normalizeDurationColumn = (rawDurations: string[]): string[] =>
 
 
 const toCSV = (data: FixtureData, headers: string[]): string => {
+  console.log('data is ', data)
   const rows: string[] = [];
   // Header
   rows.push(headers.join(';'));
