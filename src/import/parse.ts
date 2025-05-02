@@ -99,9 +99,23 @@ const parseTeamColumn = (
       poolId.push('');
       position.push('');
     } else {
-      team.push('~');
+      team.push('~'); // Placeholder for calculated teams
       const v = val.toLowerCase().trim();
-      if (v.startsWith("winner ") || v.startsWith("loser ")) {
+
+      if (v.includes('best')) {
+        // Handle "best" format, e.g., "best 1st place", "2nd best 3rd place"
+        pool.push("best");
+
+        // Extract rank (before "best"), default to 1 if not specified
+        const rankMatch = v.match(/(\d+)(?:st|nd|rd|th)?\s+best/);
+        poolId.push(rankMatch ? rankMatch[1] : '1');
+
+        // Extract place (after "place")
+        const placeMatch = v.match(/(\d+)(?:st|nd|rd|th)?\s+place/);
+        position.push(placeMatch ? placeMatch[1] : ''); // Store the numeric part
+
+      } else if (v.startsWith("winner ") || v.startsWith("loser ")) {
+        // Handle "winner/loser" format
         const isWinner = v.startsWith("winner ");
         const matchPart = v.replace(/^(winner|loser)\s+/, '');
         const normalizedMatchPart = normalizeMatchString(matchPart); // Normalize here
@@ -118,17 +132,27 @@ const parseTeamColumn = (
         poolId.push(matchId.toString());
         position.push(isWinner ? "1" : "2");
       } else {
+        // Handle positional group format, e.g., "1st Gp.1", "3rd Gp.2"
         const parts = v.split(' ');
-        const posMatch = parts[0].match(/^\d+/);
-        position.push(posMatch ? posMatch[0] : '');
-        const poolPart = parts[1] || '';
-        if (poolPart.includes('/')) {
-          pool.push("group");
-          poolId.push("1");
+        const posMatch = parts[0].match(/^(\d+)/); // Extract numeric part of position
+        position.push(posMatch ? posMatch[1] : ''); // Store only the number
+
+        const poolPart = parts.length > 1 ? parts.slice(1).join(' ') : ''; // Join remaining parts for pool info
+        if (poolPart.includes('/')) { // Handle cases like "3rd Gp.1/2" - treat as group 1 for now
+            pool.push("group");
+            poolId.push("1");
         } else {
-          const [poolKeyRaw, poolVal] = poolPart.split('.');
-          pool.push(groupTypes.has(poolKeyRaw) ? "group" : poolKeyRaw);
-          poolId.push(poolVal);
+            const poolMatch = poolPart.match(/^(.*?)(?:\.(\d+))?$/); // Match pool key and optional ID
+            if (poolMatch) {
+                const poolKeyRaw = poolMatch[1].trim();
+                const poolVal = poolMatch[2] || "1"; // Default pool ID to 1 if not present
+                pool.push(groupTypes.has(poolKeyRaw) ? "group" : poolKeyRaw);
+                poolId.push(poolVal);
+            } else {
+                // Fallback if parsing fails
+                pool.push('');
+                poolId.push('');
+            }
         }
       }
     }
