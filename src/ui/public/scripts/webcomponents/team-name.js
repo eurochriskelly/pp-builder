@@ -32,7 +32,7 @@ class TeamName extends HTMLElement {
                 const N = groupMatch[1];
                 const M = parseInt(groupMatch[2], 10);
                 if (M >= 1 && M <= 9) {
-                    return `<span>${M}${this.getOrdinalSuffix(M)} Gp.${N}</span>`;
+                    return `<span>${M}${this.getOrdinalSuffix(M)} in Gp.${N}</span>`;
                 }
             }
 
