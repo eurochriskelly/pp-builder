@@ -38,6 +38,8 @@ function filterByCategory(selectedCategory) {
     const showLessFinishedLink = document.getElementById('show-less-finished');
     const upcomingShowMoreContainer = document.getElementById('show-more-container-upcoming');
     const finishedShowMoreContainer = document.getElementById('show-more-container-finished');
+    const upcomingHeader = document.getElementById('upcoming-header'); // Get upcoming header element
+    const finishedHeader = document.getElementById('finished-header'); // Get finished header element
 
     let visibleUpcomingCount = 0;
     let totalUpcomingInCategory = 0;
@@ -74,7 +76,7 @@ function filterByCategory(selectedCategory) {
     if (upcomingShowMoreContainer) {
         if (totalUpcomingInCategory > 10) {
             upcomingShowMoreContainer.style.display = 'block';
-            showMoreUpcomingLink.textContent = `Show ${totalUpcomingInCategory - 11} More`;
+            showMoreUpcomingLink.textContent = `Show ${totalUpcomingInCategory - 10} More`; // Corrected count
             showMoreUpcomingLink.style.display = 'inline-block';
             showLessUpcomingLink.style.display = 'none';
             showMoreUpcomingLink.onclick = (e) => { e.preventDefault(); showMoreRows('upcoming', selectedCategory); };
@@ -87,7 +89,7 @@ function filterByCategory(selectedCategory) {
     if (finishedShowMoreContainer) {
         if (totalFinishedInCategory > 10) {
             finishedShowMoreContainer.style.display = 'block';
-            showMoreFinishedLink.textContent = `Show ${totalFinishedInCategory - 10} More`;
+            showMoreFinishedLink.textContent = `Show ${totalFinishedInCategory - 10} More`; // Consistent calculation
             showMoreFinishedLink.style.display = 'inline-block';
             showLessFinishedLink.style.display = 'none';
             showMoreFinishedLink.onclick = (e) => { e.preventDefault(); showMoreRows('finished', selectedCategory); };
