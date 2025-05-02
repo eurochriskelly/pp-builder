@@ -16,8 +16,11 @@ async function playMatch(fixture, score, category) {
         const safeName1 = name1 && typeof name1 === 'string' ? name1 : 'Team1';
         const safeName2 = name2 && typeof name2 === 'string' ? name2 : 'Team2';
         return {
-            team1: { name: safeName1, goals: getRandomInt(6), points: getRandomInt(23) },
-            team2: { name: safeName2, goals: getRandomInt(6), points: getRandomInt(23) },
+            scores: {
+              team1: { name: safeName1, goals: getRandomInt(6), points: getRandomInt(23) },
+              team2: { name: safeName2, goals: getRandomInt(6), points: getRandomInt(23) },
+            },
+            outcome: 'played'
         };
     };
     const { tournamentId, matchId, team1, team2 } = fixture || {};

@@ -152,6 +152,8 @@ SpecialNames.args = {
         { name: '~match:123/p:1', showLogo: true, height: '30px' }, // Winner #123
         { name: '~match:456/p:2', showLogo: true, height: '30px' }, // Loser #456
         { name: '~match:007/p:1', showLogo: true, height: '30px' }, // Winner #007
+        { name: '~best:1/p:4', showLogo: true, height: '30px' }, // Winner #007
+        { name: '~best:3/p:2', showLogo: true, height: '30px' }, // Winner #007
         { name: '~invalid:format', showLogo: true, height: '30px' }, // Should display raw
         { name: '~group:1/p:10', showLogo: true, height: '30px' }, // Invalid M, should display raw
         { name: '~match:123/p:3', showLogo: true, height: '30px' }, // Invalid M, should display raw
