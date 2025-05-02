@@ -95,7 +95,7 @@ const parseTeamColumn = (
     const stage = stageCol[i].toLowerCase();
     if (val.startsWith('~')) {
       // Handle special ~format:foo:N/p:M syntax
-      const match = val.match(/^~([^:]+):([^\/]+)\/p:(\d+)/);
+      const match = val.match(/^~([^:]+):([^\/]+)\/p:(\d+)$/);
       if (match) {
         team.push('~');
         pool.push(match[1]); // foo
