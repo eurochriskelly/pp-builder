@@ -47,8 +47,8 @@ class TeamName extends HTMLElement {
                 return `<span>${type} #${paddedN}</span>`;
             }
 
-            // Fallback for unrecognised ~ format
-            return `<span>${name}</span>`;
+            // Fallback for unrecognised ~ format: strip leading '~' and render normally
+            return this.renderNameParts(name.slice(1));
         }
 
         // Original logic for regular names
