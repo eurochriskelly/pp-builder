@@ -1,13 +1,11 @@
+// Sample data reflecting the expected TSV structure for pasting
 const sample = [
-  {
-    foo: "121",
-    bar: "hello"
-  },
-  {
-    foo: "123",
-    bar: "hello 3"
-  }
-]
+  { MATCH: "U12.1", STAGE: "Grp.1", TEAM1: "St Marys", TEAM2: "Westport", UMPIRES: "John Doe", DURATION: "15", TIME: "09:00", PITCH: "Pitch 1", COMPETITION: "U12 Cup" },
+  { MATCH: "U14.1", STAGE: "Grp.A", TEAM1: "Castlebar", TEAM2: "Ballina", UMPIRES: "Jane Smith", DURATION: "20", TIME: "09:00", PITCH: "Pitch 2", COMPETITION: "U14 Shield" },
+  { MATCH: "U12.101", STAGE: "Cup.SF1", TEAM1: "Winner U12.1", TEAM2: "Winner U12.2", UMPIRES: "Winner U12.3", DURATION: "15", TIME: "11:00", PITCH: "Pitch 1", COMPETITION: "U12 Cup" },
+  { MATCH: "U12.201", STAGE: "Cup.Fin", TEAM1: "Winner U12.101", TEAM2: "Winner U12.102", UMPIRES: "Winner U12.103", DURATION: "20", TIME: "14:00", PITCH: "Main Field", COMPETITION: "U12 Cup" },
+  { MATCH: "U12.202", STAGE: "Cup.3/4", TEAM1: "Loser U12.101", TEAM2: "Loser U12.102", UMPIRES: "Loser U12.103", DURATION: "15", TIME: "13:00", PITCH: "Pitch 2", COMPETITION: "U12 Cup" }
+];
 
 
 module.exports = function (
