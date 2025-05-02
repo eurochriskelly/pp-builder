@@ -162,23 +162,42 @@ const toCSV = (data: FixtureData, headers: string[]): string => {
 };
 
 export const processPastedFixtures = (tsvData: string) => {
-  console.log('processing parse fixtures', tsvData)
+  console.log('--- Raw TSV Data ---');
+  console.log(tsvData);
   const lines = tsvData.split('\n').filter(line => line.trim());
-  const headers = lines.shift()!.split('\t').map(x => x.trim());
+  if (lines.length === 0) {
+    throw new Error("No data provided or only empty lines found.");
+  }
 
+  // --- Step 1: Clean Headers ---
+  const originalHeaders = lines.shift()!.split('\t').map(x => x.trim());
+  const headers = originalHeaders.map(h => h.toUpperCase());
+  console.log('Cleaned Headers:', headers);
+
+  // Initialize data structure with uppercase headers
   const data: FixtureData = headers.reduce((acc, header) => {
     acc[header] = [];
     return acc;
   }, {} as FixtureData);
 
+  // Populate data using original headers for indexing but uppercase for keys
   lines.forEach(line => {
     const values = line.split('\t');
-    headers.forEach((header, i) => {
-      data[header].push(values[i].trim() || '');
+    originalHeaders.forEach((_originalHeader, i) => {
+      const headerKey = headers[i]; // Use the uppercase header
+      if (headerKey) { // Ensure header exists
+          data[headerKey].push(values[i]?.trim() || '');
+      } else {
+          console.warn(`Skipping value at index ${i} due to missing header mapping: "${values[i]}"`);
+      }
     });
   });
 
-  const categories = getCategories(data["MATCH"]);
+  console.log('--- Data after Header Cleaning ---');
+  console.log(JSON.stringify(data, null, 2)); // Print the data structure
+
+  // --- Proceed with existing parsing logic using uppercase headers ---
+  const categories = getCategories(data["MATCH"]); // Assumes MATCH header exists and is uppercase
   data["matchId"] = computeMatchIds(data["MATCH"], categories);
   data["stage"] = computeStageColumn(data["STAGE"]);
   data["group"] = computeGroupColumn(data["STAGE"]);
