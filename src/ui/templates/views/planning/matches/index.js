@@ -47,7 +47,7 @@ module.exports = function generateMatchesPlanning(data) {
 
     html += `<h3 id="finished-header" style="font-size: 1.25em; margin-top: 30px;">FINISHED GAMES (0)</h3>`;
     html += '<table id="finished-table" style="margin-top: 10px; width: 100%; border-collapse: collapse;">';
-    const finishedHeaders = ['ID', 'Category', 'Stage', 'Pitch', 'Time', 'Team 1', 'Score', 'Score', 'Team 2'];
+    const finishedHeaders = ['ID', 'Category', 'Stage',  'Team 1', 'Score', 'Score', 'Team 2'];
     html += `<thead><tr>${finishedHeaders.map(h => `<th style="background-color: transparent; padding: 8px; text-align: left; border-bottom: 1px solid #ccc;">${h.toUpperCase()}</th>`).join('')}</tr></thead>`;
     html += '<tbody>';
     finishedMatches.forEach((row, index) => {

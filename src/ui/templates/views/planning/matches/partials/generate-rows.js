@@ -95,8 +95,6 @@ function generateFinishedRow(row, index, isHidden) {
       <td style="background-color: #808080; color: white;">${row.id ? row.id.toString().slice(-3) : 'N/A'}</td>
       <td><span style="${pillStyle(categoryColor)}">${row.category || 'N/A'}</span></td>
       <td><knockout-level match-id="${row.id || ''}" stage="${row.stage || ''}" category="${row.category || ''}" group="${row.grp || ''}" no-id></knockout-level></td>
-      <td><span style="${pillStyle(pitchColor)}">${row.pitch || 'N/A'}</span></td>
-      <td>${row.scheduledTime || 'N/A'}</td>
       <td><team-name direction="r2l" name="${row.team1}" maxchars="25"></team-name></td>
       <td style="${score1Style}">${team1Score}</td>
       <td style="${score2Style}">${team2Score}</td>
