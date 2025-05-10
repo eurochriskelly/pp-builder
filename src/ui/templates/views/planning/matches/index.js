@@ -8,10 +8,14 @@ const { generateFinishedRow, generateUpcomingRow } = require('./partials/generat
 module.exports = function generateMatchesPlanning(data) {
     const categories = [...new Set(data.matches.map(match => match.category || 'Uncategorized'))].sort();
 
-    let html = simulateHeader(data.tournamentId, categories);
+    // Pass the selectedCategory to the simulateHeader function
+    let html = simulateHeader(data.tournamentId, categories, data.selectedCategory);
 
     // Add message div, initially hidden or shown based on selectedCategory
-    html += `<div id="no-category-message" style="text-align: center; margin-top: 20px; ${data.selectedCategory ? 'display: none;' : ''}">Please select a category to continue.</div>`;
+    html += `<div id="no-category-message" 
+                  style="text-align: center; margin-top: 20px; ${data.selectedCategory ? 'display: none;' : ''}">
+                  Please select a category to continue.
+            </div>`;
 
     // Wrap tables in a container, initially hidden or shown based on selectedCategory
     html += `<div id="matches-tables-container" style="${!data.selectedCategory ? 'display: none;' : ''}">`;
@@ -57,6 +61,7 @@ module.exports = function generateMatchesPlanning(data) {
     html += '</div>'; // Close matches-tables-container
 
     html += `
+        <link rel="stylesheet" href="/styles/matches.style.css">
         <script src="/scripts/matches.public.js"></script>
         <script>
             function updatePlayNextEndpoint(category) {

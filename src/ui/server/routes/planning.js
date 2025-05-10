@@ -63,6 +63,35 @@ router.get('/planning/:id/matches', async (req, res) => {
     }
 });
 
+// Add route for matches with category filter
+router.get('/planning/:id/matches/category/:category', async (req, res) => {
+    const tournamentId = parseInt(req.params.id, 10);
+    const { category } = req.params;
+
+    try {
+        const matches = await getAllMatches(tournamentId);
+
+        // Get the official nextup order from API
+        const nextupResponse = await apiRequest('get', `/tournaments/${tournamentId}/fixtures/nextup`);
+        const nextupOrder = nextupResponse.data.map(m => m.id);
+        const isLoggedIn = !!req.session.user;
+        const content = generateMatchesPlanning({
+            tournamentId,
+            matches,
+            selectedCategory: category, // Pass the selected category to the view
+            nextupOrder
+        });
+        const html = `
+          ${generateHeader('Planning - Tournament ' + tournamentId, tournamentId, 'planning', null, isLoggedIn)}
+          <div id="content">${content}</div>
+          ${generateFooter()}`;
+        res.send(html);
+    } catch (error) {
+        console.error('Error in /planning/:id/matches/category/:category:', error.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 router.get('/planning/:id/reset', async (req, res) => {
     const tournamentId = parseInt(req.params.id, 10);
     try {
@@ -80,13 +109,29 @@ router.get('/planning/:id/reset', async (req, res) => {
 const fnSimulate = async (req, res) => {
     const tournamentId = parseInt(req.params.id, 10);
     const count = parseInt(req.params.count, 10);
-    const { category } = req.params
+    const { category } = req.params;
+    // Also get the category from the form if present (for HTMX requests)
+    const categoryParam = req.body['category-param'] || category;
+
     try {
-        console.log(`Simulating ${count} matches for tournament ${tournamentId}...`);
-        await play(tournamentId, category, count);
+        console.log(`Simulating ${count} matches for tournament ${tournamentId}, category: ${categoryParam || 'all'}...`);
+        await play(tournamentId, categoryParam, count);
+
+        // If we have a category, redirect to the category-specific URL to maintain filtering
+        if (categoryParam) {
+            // Redirect to the category filter route with a special htmx header to make it work with htmx
+            res.header('HX-Redirect', `/planning/${tournamentId}/matches/category/${encodeURIComponent(categoryParam)}`);
+            res.send('');
+            return;
+        }
+
+        // No category selected, proceed with regular view
         const matches = await getAllMatches(tournamentId);
         console.log(`Post-simulation matches: ${matches.length} found`);
-        const content = generateMatchesPlanning({ tournamentId, matches });
+        const content = generateMatchesPlanning({
+            tournamentId,
+            matches
+        });
         res.send(content);
     } catch (error) {
         console.error('Error simulating matches:', error.message);

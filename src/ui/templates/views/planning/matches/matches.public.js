@@ -1,14 +1,40 @@
-async function playNextNMatches(n, tournamentId) {
+async function playNextNMatches(n, tournamentId, category) {
     for (let i = 0; i < n; i++) {
-        await htmx.ajax('POST', '/planning/' + tournamentId + '/simulate/1', {
+        // Construct the proper URL with the category if provided
+        // Determine category from URL if not provided
+        let urlCategory = category;
+        const segments = window.location.pathname.split('/');
+        const idx = segments.indexOf('category');
+        if (!urlCategory && idx !== -1 && segments[idx + 1]) {
+            urlCategory = decodeURIComponent(segments[idx + 1]);
+        }
+        const finalCategory = urlCategory || 'Men';
+        const simulateUrl = `/planning/${tournamentId}/simulate/1/${encodeURIComponent(finalCategory)}`;
+
+        await htmx.ajax('POST', simulateUrl, {
             target: '#planning-matches',
             swap: 'outerHTML'
         });
     }
 }
+
+function updatePlayNextEndpoint(category) {
+    // Update the hidden input for the current category
+    const categoryInput = document.querySelector('input[name="category-param"]');
+    if (categoryInput) {
+        categoryInput.value = category || '';
+    }
+}
+
 function filterByCategory(selectedCategory) {
     const matchesTablesContainer = document.getElementById('matches-tables-container');
     const noCategoryMessage = document.getElementById('no-category-message');
+
+    // Store the selected category globally for persistence
+    window.selectedCategory = selectedCategory;
+
+    // Update the hidden input field for category parameter
+    updatePlayNextEndpoint(selectedCategory);
 
     if (!selectedCategory) {
         if (matchesTablesContainer) matchesTablesContainer.style.display = 'none';
@@ -27,6 +53,8 @@ function filterByCategory(selectedCategory) {
     const playControls = document.getElementById('play-controls');
     if (playControls) playControls.style.display = 'block';
 
+    // Update the hidden category parameter
+    updatePlayNextEndpoint(selectedCategory);
 
     const upcomingTableBody = document.querySelector('#upcoming-table tbody');
     const finishedTableBody = document.querySelector('#finished-table tbody');
@@ -132,14 +160,43 @@ window.addEventListener('load', () => {
     filterByCategory(initialCategory); // Apply filter based on initial value
 });
 
-// Reapply after HTMX swap
-document.body.addEventListener('htmx:afterSwap', (event) => {
-    // Check if the swapped element contains our category filter or tables
+// Reapply after HTMX swap - with improved handling to prevent flashing
+document.body.addEventListener('htmx:beforeSwap', function (event) {
+    // Store the current category before the swap happens
+    if (window.selectedCategory) {
+        // Save it to session storage for extra resilience
+        sessionStorage.setItem('selectedMatchCategory', window.selectedCategory);
+    }
+});
+
+document.body.addEventListener('htmx:afterSwap', function (event) {
+// If we're dealing with the planning-matches container or anything that has our filter
     if (event.detail.target.id === 'planning-matches' || event.detail.target.querySelector('#category-filter')) {
         const categoryFilter = document.getElementById('category-filter');
-        const currentCategory = categoryFilter ? categoryFilter.value : '';
-        window.selectedCategory = currentCategory; // Update global state
-        filterByCategory(currentCategory); // Re-apply filter
+
+        // Try these sources in order: 
+        // 1. Dropdown's selected value (set by server)
+        // 2. Global variable from previous state
+        // 3. Session storage as backup
+        // 4. Empty string as fallback
+        const dropdownValue = categoryFilter ? categoryFilter.value : '';
+        const storedCategory = sessionStorage.getItem('selectedMatchCategory');
+        const categoryToUse = dropdownValue || window.selectedCategory || storedCategory || '';
+
+        // If we have a category to use and it's different from the dropdown
+        if (categoryToUse && categoryFilter && (!dropdownValue || dropdownValue !== categoryToUse)) {
+            // Update the dropdown selection
+            categoryFilter.value = categoryToUse;
+        }
+
+        // Store the category in the global variable
+        window.selectedCategory = categoryToUse;
+
+        // Apply filtering immediately - this prevents flashing
+        if (categoryToUse) {
+            // Use the minimum possible delay to let the DOM complete
+            setTimeout(() => filterByCategory(categoryToUse), 0);
+        }
     }
 });
 
@@ -151,5 +208,18 @@ document.addEventListener('change', function (event) {
         const selectedCategory = event.target.value;
         window.selectedCategory = selectedCategory; // Store globally
         filterByCategory(selectedCategory);
+    }
+});
+
+// Add an auto-initialization function that's called on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize the selected category on page load
+    const categoryFilter = document.getElementById('category-filter');
+    if (categoryFilter) {
+        const category = categoryFilter.value;
+        if (category) {
+            window.selectedCategory = category;
+            filterByCategory(category);
+        }
     }
 });

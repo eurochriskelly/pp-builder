@@ -8,6 +8,7 @@
     height: 4rem;
     text-align: center;
 }
+
 .competition-link {
     margin-right: 10px;
     height: 4rem;
@@ -16,6 +17,7 @@
     text-decoration: none;
     transition: color 0.2s ease;
     font-size: 3rem;
+    color: #77777744;
 }
 
 .competition-link:hover {
