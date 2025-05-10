@@ -40,16 +40,35 @@ const computeMatchIds = (matches: string[], categories: string[]) =>
 
 const computeStageColumn = (stages: string[]) =>
   stages.map(stageRaw => {
-    const parts = stageRaw.toLowerCase().split('.');
-    const first = parts[0];
+    const parts = stageRaw.includes('.')
+      ? stageRaw.toLowerCase().split('.')
+      : stageRaw.toLowerCase().split(' ')
+    const first = parts[0].trim();
     if (groupTypes.has(first)) return 'group';
-    let second = parts[1] || '';
-    if (second === "3/4") second = "3rd4th";
-    else if (second === "4/5") second = "5th6th";
-    else if (second === "7/8") second = "7th8th";
-    else if (second.startsWith("sf")) second = "semis";
-    else if (second.startsWith("qf")) second = "quarters";
-    else if (second === "fin") second = "finals";
+    let second = parts[1].trim() || '';
+    const slashMatch = second.match(/^(\d+)\/(\d+)$/);
+    if (slashMatch) {
+      const [, a, b] = slashMatch;
+      const toOrdinal = (n: number) => {
+        const rem10 = n % 10, rem100 = n % 100;
+        if (rem10 === 1 && rem100 !== 11) return `${n}st`;
+        if (rem10 === 2 && rem100 !== 12) return `${n}nd`;
+        if (rem10 === 3 && rem100 !== 13) return `${n}rd`;
+        return `${n}th`;
+      };
+      second = `${toOrdinal(+a)}${toOrdinal(+b)}`;
+    } else if (second.startsWith("rr")) {
+      second = "roundrobin";
+    } else if (second.startsWith("sf")) {
+      second = "semis";
+    } else if (second.startsWith("ef")) {
+      second = "eights";
+    } else if (second.startsWith("qf")) {
+      second = "quarters";
+    } else if (/^fin(al)?$/.test(second)) {
+      second = "finals";
+    }
+    console.log(`Stage: ${stageRaw} -> ${first}_${second}`);
     return `${first}_${second}`;
   });
 
@@ -153,30 +172,17 @@ const parseTeamColumn = (
         poolId.push(matchId.toString());
         position.push(isWinner ? "1" : "2");
       } else {
-        // Handle positional group format, e.g., "1st Gp.1", "3rd Gp.2"
         const parts = v.split(' ');
         const posMatch = parts[0].match(/^(\d+)/); // Extract numeric part of position
         position.push(posMatch ? posMatch[1] : ''); // Store only the number
-
         const poolPart = parts.length > 1 ? parts.slice(1).join(' ') : ''; // Join remaining parts for pool info
-        if (poolPart.includes('/')) { // Handle cases like "3rd Gp.1/2" - treat as group 1 for now
-            pool.push("group");
-            poolId.push("1");
-        } else {
-            const poolMatch = poolPart.match(/^(.*?)(?:\.(\d+))?$/); // Match pool key and optional ID
-            if (poolMatch) {
-                const poolKeyRaw = poolMatch[1].trim();
-                const poolVal = poolMatch[2] || "1"; // Default pool ID to 1 if not present
-                pool.push(groupTypes.has(poolKeyRaw) ? "group" : poolKeyRaw);
-                poolId.push(poolVal);
-            } else {
-                // Fallback if parsing fails
-                pool.push('');
-                poolId.push('');
-            }
+        if (poolPart.startsWith('gp')) {
+          pool.push("group");
+          poolId.push(poolPart.split('.')[1] || '1'); // Default to 1 if no ID present
         }
       }
     }
+    // console.log(`Convert team [${val}] to:`, team[i], pool[i], poolId[i], position[i]);
   });
 
   data[teamKey] = team;
@@ -193,7 +199,6 @@ const normalizeDurationColumn = (rawDurations: string[]): string[] =>
 
 
 const toCSV = (data: FixtureData, headers: string[]): string => {
-  console.log('data is ', data)
   const rows: string[] = [];
   // Header
   rows.push(headers.join(';'));
@@ -245,6 +250,7 @@ export const processPastedFixtures = (tsvData: string) => {
   const categories = getCategories(data["MATCH"]); // Assumes MATCH header exists and is uppercase
   data["matchId"] = computeMatchIds(data["MATCH"], categories);
   data["stage"] = computeStageColumn(data["STAGE"]);
+  console.log('Stage...:', data["stage"]);
   data["group"] = computeGroupColumn(data["STAGE"]);
 
   parseTeamColumn("TEAM1", 1, data, categories);

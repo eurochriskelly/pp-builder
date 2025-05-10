@@ -29,9 +29,10 @@ async function playMatch(fixture, score, category) {
         return;
     }
     try {
-        const res = await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/start?category=category`);
+        const res = await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/start?category=${category}`);
         const data = generateTeamData(team1, team2);
         await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/score`, data);
+        await apiRequest('post', `/tournaments/${tournamentId}/fixtures/${matchId}/end?category=${category}`, data);
     } catch (error) {
         console.error('Error playing match:', error.message);
     }
