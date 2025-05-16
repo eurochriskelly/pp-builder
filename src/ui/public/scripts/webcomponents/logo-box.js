@@ -1,4 +1,3 @@
-
 class LogoBox extends HTMLElement {
     constructor() {
         super();

@@ -41,8 +41,8 @@ class FixtureRow extends HTMLElement {
     const stageLevel = this.getAttribute('stage-level') || '';
     const category = this.getAttribute('category') || '';
     const debug = this.hasAttribute('debug');
-      const rowIndex = parseInt(this.getAttribute('row-index'), 10);
-      const bgColor = !isNaN(rowIndex) && rowIndex % 2 === 0 ? '#f9fafb' : '#fff'; // gray-50 or white
+    const rowIndex = parseInt(this.getAttribute('row-index'), 10);
+    const bgColor = !isNaN(rowIndex) && rowIndex % 2 === 0 ? '#f9fafb' : '#fff'; // gray-50 or white
 
     // Calculate total scores
     const team1Total = team1Goals * 3 + team1Points;
@@ -159,6 +159,7 @@ class FixtureRow extends HTMLElement {
             match-id="${matchId}"
             stage="${stage}"
             stage-level="${stageLevel}"
+            group="${category}"
             category="${category}">
           </knockout-level>
         </div>
