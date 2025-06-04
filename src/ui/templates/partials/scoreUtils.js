@@ -106,15 +106,15 @@ function getFinalScoreDisplay(goals1, points1, goals2, points2, outcome) {
     let team2ScoreFinal = formatScore(goals2, points2);
 
     // Override with special strings if the outcome is 'not played' and scores match walkover patterns
-    if (outcome === 'not played') {
+    if (outcome === 'skipped') {
         // Standard walkover/concession logic (adjust if your point system differs)
         // Assumes 0-01 (1) point awarded for a walkover win, 0-00 (0) for concession/loss.
         if (goals1 === 0 && points1 === 0 && goals2 === 0 && points2 === 1) { // Team 2 wins walkover
-            team1ScoreFinal = 'concede';
-            team2ScoreFinal = 'walked';
+            team1ScoreFinal = 'scratch';
+            team2ScoreFinal = 'walk over';
         } else if (goals2 === 0 && points2 === 0 && goals1 === 0 && points1 === 1) { // Team 1 wins walkover
-            team1ScoreFinal = 'walked';
-            team2ScoreFinal = 'concede';
+            team1ScoreFinal = 'walk over';
+            team2ScoreFinal = 'scratch';
         } else if (goals1 === 0 && points1 === 0 && goals2 === 0 && points2 === 0) { // Both teams 0-00, could be 'shared' or 'not played'
             team1ScoreFinal = 'shared'; // Or 'N/P' for Not Played, depending on desired display
             team2ScoreFinal = 'shared'; // Or 'N/P'

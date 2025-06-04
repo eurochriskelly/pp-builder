@@ -39,19 +39,20 @@ class GaelicScore extends HTMLElement {
     const pointsAgainst = parseInt(this.getAttribute('pointsagainst') || '0', 10);
     const played = this.getAttribute('played') !== 'false';
 
+
     // Handle unplayed matches
     if (!played) {
       // Check for walkover scenario (1-1 vs 0-0)
-      if (goals === 0 && points === 1 && goalsAgainst === 0 && pointsAgainst === 0) {
+      if (goals === 0 && points === 1) {
         this.shadowRoot.innerHTML = '<div class="unplayed"><span style="font-size:70%;">WALK OVER</span></div>';
         return;
       }
-      if (goals === 0 && points === 0 && goalsAgainst === 0 && pointsAgainst === 1) {
+      if (goals === 0 && points === 0) {
         this.shadowRoot.innerHTML = '<div class="unplayed"><span style="font-size:70%;">SCR</span></div>';
         return;
       }
       // Check for shared points scenario (0-0 vs 0-0)
-      if (goals === 0 && points === 0 && goalsAgainst === 0 && pointsAgainst === 0) {
+      if (goals === 0 && points === 0) {
         this.shadowRoot.innerHTML = '<div class="unplayed"><span style="font-size:70%;">SHARE</span></div>';
         return;
       }

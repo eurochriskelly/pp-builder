@@ -1,4 +1,5 @@
 type FixtureData = Record<string, string[]>;
+const II = (msg: string) => console.log(`II ${new Date().toISOString()}: ${msg}`);
 
 const groupTypes = new Set(['gp', 'grp', 'group', 'pool', 'ple', 'poule']);
 
@@ -42,7 +43,8 @@ const computeStageColumn = (stages: string[]) =>
   stages.map(stageRaw => {
     const parts = stageRaw.includes('.')
       ? stageRaw.toLowerCase().split('.')
-      : stageRaw.toLowerCase().split(' ')
+      : stageRaw.toLowerCase().split(' ');
+    console.log(`Stage raw: ${stageRaw} -> parts:`, parts);
     const first = parts[0].trim();
     if (groupTypes.has(first)) return 'group';
     let second = parts[1].trim() || '';
@@ -120,7 +122,7 @@ const parseTeamColumn = (
         pool.push(match[1]); // foo
         poolId.push(match[2]); // N
         position.push(match[3]); // M
-        console.log(`Parsed special team format:`, { 
+        console.log(`Parsed special team format:`, {
           input: val, 
           pool: match[1], 
           poolId: match[2], 
@@ -245,25 +247,29 @@ export const processPastedFixtures = (tsvData: string) => {
 
   console.log('--- Data after Header Cleaning ---');
   console.log(JSON.stringify(data, null, 2)); // Print the data structure
+  try {
+    // --- Proceed with existing parsing logic using uppercase headers ---
 
-  // --- Proceed with existing parsing logic using uppercase headers ---
-  const categories = getCategories(data["MATCH"]); // Assumes MATCH header exists and is uppercase
-  data["matchId"] = computeMatchIds(data["MATCH"], categories);
-  data["stage"] = computeStageColumn(data["STAGE"]);
-  console.log('Stage...:', data["stage"]);
-  data["group"] = computeGroupColumn(data["STAGE"]);
-
-  parseTeamColumn("TEAM1", 1, data, categories);
-  parseTeamColumn("TEAM2", 2, data, categories);
-  parseTeamColumn("UMPIRES", "U", data, categories, {
-    teamKey: "umpireTeam",
-    poolKey: "poolUmp",
-    poolIdKey: "poolUmpId",
-    positionKey: "positionUmp"
-  });
-  data["duration"] = normalizeDurationColumn(data["DURATION"]);
-  data["category"] = populateCategoryColumn(data, categories);
-
+    const categories = getCategories(data["MATCH"]); // Assumes MATCH header exists and is uppercase
+    console.log('Derived Categories:', categories);
+    data["matchId"] = computeMatchIds(data["MATCH"], categories);
+    data["stage"] = computeStageColumn(data["STAGE"]);
+    data["group"] = computeGroupColumn(data["STAGE"]);
+   
+    parseTeamColumn("TEAM1", 1, data, categories);
+    parseTeamColumn("TEAM2", 2, data, categories);
+    parseTeamColumn("UMPIRES", "U", data, categories, {
+      teamKey: "umpireTeam",
+      poolKey: "poolUmp",
+      poolIdKey: "poolUmpId",
+      positionKey: "positionUmp"
+    });
+    data["duration"] = normalizeDurationColumn(data["DURATION"]);
+    data["category"] = populateCategoryColumn(data, categories);
+  } catch (error) {
+    console.error('Error during parsing:', error);
+    throw new Error(`Parsing error: ${error}`);
+  }
   // Normalize time and pitch (just alias with lowercase keys)
   data["time"] = data["TIME"];
   data["pitch"] = data["PITCH"];

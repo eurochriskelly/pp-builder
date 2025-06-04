@@ -11,16 +11,7 @@ const sample = [
 module.exports = function (
   tournamentId,
 ) {
-    
-  return `
-      <form 
-        id="import-form"
-        hx-post="/planning/${tournamentId}/import-fixtures" 
-        hx-target="#import-fixtures" 
-        hx-swap="outerHTML" 
-        enctype="multipart/form-data" 
-        class="mb-4"
-      >
+  const input1 = `
         <div class="mb-4">
           <label class="block mb-2 font-semibold">Import Method:</label>
           <div class="flex items-center mb-2">
@@ -35,6 +26,18 @@ module.exports = function (
             >
             <label for="upload-csv">Upload CSV File</label>
           </div>
+ ` 
+  const form = ``
+  return `
+      <form 
+        id="import-form"
+        hx-post="/planning/${tournamentId}/import-fixtures" 
+        hx-target="#import-fixtures" 
+        hx-swap="outerHTML" 
+        enctype="multipart/form-data" 
+        class="mb-4"
+      >
+      ${input1}
           <div class="flex items-center mb-4">
             <input 
               type="radio" 
