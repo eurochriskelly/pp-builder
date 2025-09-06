@@ -16,6 +16,7 @@ help:
 	@echo "  make uninstall  Remove the pp script from $(INSTALL_DIR)"
 	@echo "  make deps       Install project dependencies"
 	@echo "  make watch-activity Run the activity watcher script"
+	@echo "  make watch-remaining Run the remaining fixtures watcher script"
 	@echo ""
 
 # Install dependencies
@@ -43,4 +44,9 @@ uninstall:
 .PHONY: watch-activity
 watch-activity:
 	@./scripts/watch-activity.sh
+
+# Watch remaining fixtures
+.PHONY: watch-remaining
+watch-remaining:
+	@./scripts/watch-remaining.sh
 
