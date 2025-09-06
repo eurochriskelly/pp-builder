@@ -15,6 +15,7 @@ help:
 	@echo "  make install    Install the pp script to $(INSTALL_DIR)"
 	@echo "  make uninstall  Remove the pp script from $(INSTALL_DIR)"
 	@echo "  make deps       Install project dependencies"
+	@echo "  make watch-activity Run the activity watcher script"
 	@echo ""
 
 # Install dependencies
@@ -37,4 +38,9 @@ uninstall:
 	@echo "Uninstalling $(NAME) from $(INSTALL_DIR)..."
 	@sudo rm -f $(INSTALL_DIR)/$(NAME)
 	@echo "Uninstallation complete."
+
+# Watch activity
+.PHONY: watch-activity
+watch-activity:
+	@./scripts/watch-activity.sh
 
