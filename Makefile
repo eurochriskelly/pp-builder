@@ -43,10 +43,10 @@ uninstall:
 # Watch activity
 .PHONY: watch-activity
 watch-activity:
-	@./scripts/watch-activity.sh
+	@./scripts/watch-activity.sh $(tournamentId)
 
 # Watch remaining fixtures
 .PHONY: watch-remaining
 watch-remaining:
-	@./scripts/watch-remaining.sh
+	@./scripts/watch-remaining.sh $(tournamentId)
 

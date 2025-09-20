@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if [ -z "$1" ]; then
+  echo "Usage: $0 <tournamentId>"
+  exit 1
+fi
+
+TOURNAMENT_ID="$1"
+
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_PORT="${DB_PORT:-3306}"
 DB_USER="${DB_USER:-root}"
@@ -23,7 +30,7 @@ while :; do
   FROM
       EuroTourno.fixtures
   WHERE
-      tournamentId = 31 and goals1 is null;"
+      tournamentId = $TOURNAMENT_ID and goals1 is null;"
 
   echo "Monitoring Remaining Fixtures in EuroTourno"
   echo "-------------------------------------------"

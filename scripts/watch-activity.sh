@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if [ -z "$1" ]; then
+  echo "Usage: $0 <tournamentId>"
+  exit 1
+fi
+
+TOURNAMENT_ID="$1"
+
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_PORT="${DB_PORT:-3306}"
 DB_USER="${DB_USER:-root}"
@@ -16,7 +23,7 @@ trap 'echo; echo "Exiting."; exit 0' INT
 while :; do
   clear
   NOW="$(date '+%F %T')"
-  QUERY="SELECT COUNT(*) FROM fixtures WHERE tournamentId=31 AND updated > '${START_TS}';"
+  QUERY="SELECT COUNT(*) FROM fixtures WHERE tournamentId=$TOURNAMENT_ID AND updated > '${START_TS}';"
   COUNT=$(mysql -N -s -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -D "$DB_NAME" -e "$QUERY" 2>/tmp/mysql_poll.err)
 
   echo "Monitoring EuroTourno.fixtures"
