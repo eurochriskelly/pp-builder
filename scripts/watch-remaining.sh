@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ $# -eq 0 ]; then
-  echo "Usage: $0 <tournamentId> or $0 tournamentId=<id>"
+  echo "Usage: make watch-remaining tournamentId=<id> (e.g., make watch-remaining tournamentId=12)"
   exit 1
 fi
 
@@ -12,7 +12,7 @@ else
 fi
 
 if [ -z "$TOURNAMENT_ID" ] || ! [[ "$TOURNAMENT_ID" =~ ^[0-9]+$ ]]; then
-  echo "Invalid tournamentId: must be a positive integer"
+  echo "Invalid tournamentId: must be a positive integer. Usage: make watch-remaining tournamentId=<id>"
   exit 1
 fi
 
