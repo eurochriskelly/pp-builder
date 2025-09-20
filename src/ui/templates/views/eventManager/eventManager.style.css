@@ -119,24 +119,27 @@ article {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  border-radius: 18px;
+  border-radius: 0;
 }
 
 .event-info-details {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: no-wrap;
   gap: 1rem;
-  font-size: 2.6rem;
+  font-size: 2.2rem;
   flex: 1 1 300px;
+  padding-left: 1rem;
 }
 
 .event-refresh-banner {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  flex: 1 1 320px;
+  flex: 1 1 280px;
   gap: 1.2rem;
+  height: 6rem;
+  padding-right: 1rem;
 }
 
 .event-refresh-text {

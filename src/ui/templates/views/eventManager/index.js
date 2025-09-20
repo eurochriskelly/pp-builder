@@ -33,7 +33,6 @@ function generateEventManager(uuid, tournament, loggedIn = false, editable = fal
                 <h2 class="m-0 p-3 event-info-title" style="margin-bottom:0">
                     <span>${tournament.Title || tournament.title || 'Event'}</span>
                     <span class="event-info-icon" style="float: right;">
-                        <i data-lucide="toggle-left" class="toggle-icon" style="transform: scale(1.5);" onclick="toggleIcon(this)"></i>
                     </span>
                 </h2>
                 <div class="event-info-banner text-3xl m-4 mb-8 mx-auto bg-rose-300 text-white p-8">

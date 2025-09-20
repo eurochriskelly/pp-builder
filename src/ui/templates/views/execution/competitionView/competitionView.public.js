@@ -82,7 +82,7 @@ function setupTabs() {
 
             // Add active class to clicked button and show corresponding content
             button.classList.add('active');
-            button.style.background = '#d5a8b6';
+            button.style.background = '#c48296';
             button.style.color = 'white';
             button.style.fontWeight = 'bold';
             
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set initial active tab styles
     const activeTab = document.querySelector('.tab-button.active');
     if (activeTab) {
-        activeTab.style.background = '#d5a8b6';
+        button.style.background = '#c48296';
         activeTab.style.color = 'white';
         activeTab.style.fontWeight = 'bold';
         
