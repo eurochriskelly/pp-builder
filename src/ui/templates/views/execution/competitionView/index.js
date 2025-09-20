@@ -25,6 +25,57 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
         knockoutFixtures,
     } = data;
 
+    const rawGroupsData = groupStandings && groupStandings[competitionName];
+    const groupsData = Array.isArray(rawGroupsData) ? [...rawGroupsData] : [];
+    const hasGroupContent = groupsData.length > 0;
+    const isFixturePlayed = fixture =>
+        typeof fixture.goals1 === 'number' && typeof fixture.points1 === 'number' &&
+        typeof fixture.goals2 === 'number' && typeof fixture.points2 === 'number';
+
+    let processedCategoryFixtures = [];
+    let hasPendingGroupFixtures = false;
+
+    if (hasGroupContent) {
+        processedCategoryFixtures = (groupFixtures || [])
+            .filter(f => f.category === competitionName)
+            .map(f => {
+                const { goals1, points1, goals2, points2 } = f;
+                const g1 = goals1 ?? 0;
+                const p1 = points1 ?? 0;
+                const g2 = goals2 ?? 0;
+                const p2 = points2 ?? 0;
+                const score1 = g1 * 3 + p1;
+                const score2 = g2 * 3 + p2;
+                return {
+                    ...f,
+                    goals1,
+                    points1,
+                    goals2,
+                    points2,
+                    score1,
+                    score2,
+                    diff1: score1 - score2,
+                    diff2: score2 - score1,
+                };
+            });
+
+        hasPendingGroupFixtures = processedCategoryFixtures.some(f => !isFixturePlayed(f));
+        groupsData.sort((a, b) => (a.groupName || '').localeCompare(b.groupName || ''));
+    }
+
+    const hasKnockoutFixtures = Array.isArray(knockoutFixtures) && knockoutFixtures.length > 0;
+    let defaultTab = 'knockout';
+    if (hasGroupContent && (hasPendingGroupFixtures || !hasKnockoutFixtures)) {
+        defaultTab = 'groups';
+    }
+
+    const knockoutTabActiveClass = defaultTab === 'knockout' ? 'active' : '';
+    const groupsTabActiveClass = defaultTab === 'groups' ? 'active' : '';
+    const knockoutSectionDisplay = defaultTab === 'knockout' ? 'block' : 'none';
+    const groupsSectionDisplay = defaultTab === 'groups' ? 'block' : 'none';
+    const knockoutSectionClass = `tab-content${defaultTab === 'knockout' ? ' active' : ''}`;
+    const groupsSectionClass = `tab-content${defaultTab === 'groups' ? ' active' : ''}`;
+
     // Use a container div for the whole competition view
     let html = `
     <div id="competition-${encodeURIComponent(competitionName)}" class="competition-view p-4 space-y-6">
@@ -71,59 +122,25 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
     </style>
     <div class="competition-tabs">
         <div class="flex">
-            <button class="tab-button active" data-tab="knockout-tab">Knockout Games</button>
-            <button class="tab-button" data-tab="groups-tab">Group Games</button>
+            <button class="tab-button${knockoutTabActiveClass ? ` ${knockoutTabActiveClass}` : ''}" data-tab="knockout-tab">Knockout Games</button>
+            <button class="tab-button${groupsTabActiveClass ? ` ${groupsTabActiveClass}` : ''}" data-tab="groups-tab">Group Games</button>
         </div>
     </div>
     `;
 
     // Section: Knockout Fixtures
-    if (knockoutFixtures && knockoutFixtures.length > 0) {
-        html += '<section id="comp-knockout-fixtures" class="tab-content active" data-tab-content="knockout-tab" style="display: block;">';
+    html += `<section id="comp-knockout-fixtures" class="${knockoutSectionClass}" data-tab-content="knockout-tab" style="display: ${knockoutSectionDisplay};">`;
+    if (hasKnockoutFixtures) {
         html += generateKnockoutFixtures(knockoutFixtures, editable, tournamentId);
-        html += '</section>';
     } else {
-        html += '<section id="comp-knockout-fixtures" class="tab-content active" data-tab-content="knockout-tab" style="display: block;">';
         html += '<p>No knockout fixtures found.</p>';
-        html += '</section>';
     }
+    html += '</section>';
 
     // Section: Groups (Standings + Fixtures)
-    html += '<section id="comp-groups" class="tab-content hidden" data-tab-content="groups-tab">'; // Container for all groups
+    html += `<section id="comp-groups" class="${groupsSectionClass}" data-tab-content="groups-tab" style="display: ${groupsSectionDisplay};">`; // Container for all groups
 
-    // groupStandings is an object keyed by category, e.g., { "Cup": [ { groupName: 'A', rows: [...] }, { groupName: 'B', ... } ] }
-    // We expect only one category (competitionName) in the passed groupStandings object here.
-    const groupsData = groupStandings && groupStandings[competitionName];
-
-    if (groupsData && Array.isArray(groupsData) && groupsData.length > 0) {
-        // Process all fixtures for this competition *once* before looping through groups
-        const processedCategoryFixtures = (groupFixtures || [])
-            .filter(f => f.category === competitionName) // Ensure we only use fixtures for this competition
-            .map(f => {
-                const { goals1, points1, goals2, points2 } = f;
-                // Ensure scores are numbers, default to 0 if null/undefined for calculation
-                const g1 = goals1 ?? 0;
-                const p1 = points1 ?? 0;
-                const g2 = goals2 ?? 0;
-                const p2 = points2 ?? 0;
-                const score1 = g1 * 3 + p1;
-                const score2 = g2 * 3 + p2;
-                return {
-                    ...f,
-                    // Keep original scores as well
-                    goals1, points1, goals2, points2,
-                    // Calculated scores/diffs
-                    score1,
-                    score2,
-                    diff1: score1 - score2,
-                    diff2: score2 - score1,
-                };
-            });
-
-        // Sort groups alphabetically by name for consistent order
-        groupsData.sort((a, b) => (a.groupName || '').localeCompare(b.groupName || ''));
-
-
+    if (hasGroupContent) {
         // Loop through each group within the competition
         groupsData.forEach(groupData => {
             const groupName = groupData.groupName;

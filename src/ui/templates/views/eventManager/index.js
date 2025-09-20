@@ -1,5 +1,9 @@
 // Lucide CDN and web component usage: no need to import Calendar, MapPin
 
+function escapeAttribute(value = '') {
+    return `${value}`.replace(/"/g, '&quot;');
+}
+
 function generateEventManager(uuid, tournament, loggedIn = false, editable = false) {
     // Check if tournament.categories is a non-empty array
     const competitions = Array.isArray(tournament.categories) ? tournament.categories : [];
@@ -11,11 +15,12 @@ function generateEventManager(uuid, tournament, loggedIn = false, editable = fal
         const encodedFirstCompName = encodeURIComponent(currentCompetition);
         const initialLoadUrl = `/event/${uuid}/competition-update${editable ? '/edit' : ''}?competition=${encodedFirstCompName}`;
         initialLoadAttributes = `
-            hx-get="${initialLoadUrl}"
-            hx-trigger="load"
-            hx-target="#content"
-            hx-swap="innerHTML"
-            data-current-competition="${currentCompetition}"
+            data-default-competition="${escapeAttribute(currentCompetition)}"
+            data-default-url="${initialLoadUrl}"
+            data-content-target="#content"
+            data-editable="${editable ? 'true' : 'false'}"
+            data-event-uuid="${escapeAttribute(uuid)}"
+            data-preference-cookie="preferredCompetition"
         `;
     }
 
@@ -31,17 +36,23 @@ function generateEventManager(uuid, tournament, loggedIn = false, editable = fal
                         <i data-lucide="toggle-left" class="toggle-icon" style="transform: scale(1.5);" onclick="toggleIcon(this)"></i>
                     </span>
                 </h2>
-                <p class="text-3xl m-4 mb-8 mx-auto bg-rose-300 text-white p-8" style="padding:1rem">
-                    <span class="inline-icon-text">
-                        <span class="icon"><i data-lucide="calendar" style="transform: scale(1.5);"></i></span>
-                        ${tournament.Date ? tournament.Date.substring(0, 10) : tournament.date || ''}
-                    </span>
-                    <span class="mx-2">&nbsp;</span>
-                    <span class="inline-icon-text">
-                        <span class="icon"><i data-lucide="map-pin" style="transform: scale(1.5);"></i></span>
-                        ${tournament.Location || tournament.location || ''}
-                    </span>
-                </p>
+                <div class="event-info-banner text-3xl m-4 mb-8 mx-auto bg-rose-300 text-white p-8">
+                    <div class="event-info-details">
+                        <span class="inline-icon-text">
+                            <span class="icon"><i data-lucide="calendar" style="transform: scale(1.5);"></i></span>
+                            ${tournament.Date ? tournament.Date.substring(0, 10) : tournament.date || ''}
+                        </span>
+                        <span class="mx-2">&nbsp;</span>
+                        <span class="inline-icon-text">
+                            <span class="icon"><i data-lucide="map-pin" style="transform: scale(1.5);"></i></span>
+                            ${tournament.Location || tournament.location || ''}
+                        </span>
+                    </div>
+                    <div class="event-refresh-banner">
+                        <span class="event-refresh-text">Last updated <span data-role="last-updated">never</span></span>
+                        <button type="button" class="event-refresh-button" data-role="refresh-button" aria-label="Refresh competition view">Refresh</button>
+                    </div>
+                </div>
              </div>`;
 
     // Add the toggleIcon function to handle the icon toggle
@@ -49,8 +60,9 @@ function generateEventManager(uuid, tournament, loggedIn = false, editable = fal
              </script>`;
 
     html += '<nav class="event-manager-nav competition-nav mb-4 mt-4">';
-    html += '  <div class="mr-4 mt-4 font-semibold">Competitions:</div>'; // Keep "Competitions:" text directly inside <nav>
-    html += '  <div class="competition-links-container">'; // Add a container div for the links
+    html += '  <div class="competition-info-group">';
+    html += '    <div class="mr-4 mt-4 font-semibold" data-role="competition-label">Competitions:</div>';
+    html += '    <div class="competition-links-container" data-role="links-container">';
 
     // Generate links for Competitions
     if (competitions.length > 0) {
@@ -86,8 +98,35 @@ function generateEventManager(uuid, tournament, loggedIn = false, editable = fal
         html += '</div>';
     }
 
-    html += '  </div>'; // Close competition-links-container
+    html += '    </div>'; // Close competition-links-container
+    html += '    <div class="competition-selection-display hidden" data-role="selection-display">';
+    html += '        <span class="competition-selection-label">Competition:</span>';
+    html += '        <span class="competition-selection-value" data-role="selection-value"></span>';
+    html += '    </div>';
+    html += '  </div>'; // Close competition-info-group
+    html += '  <button type="button" class="competition-preferences-trigger" aria-label="Change default competition">...</button>';
     html += '</nav>';
+
+    const modalOptions = competitions.map(compName => `
+            <button type="button" class="competition-preferences-option" data-preference="${escapeAttribute(compName)}">${compName}</button>
+        `).join('');
+
+    html += `
+        <div id="competition-preferences-modal" class="competition-preferences-modal hidden" role="dialog" aria-modal="true" aria-labelledby="competition-preferences-title">
+            <div class="competition-preferences-content">
+                <h3 id="competition-preferences-title" class="competition-preferences-heading">Select default competition</h3>
+                <p class="competition-preferences-description">Choose which competition loads automatically when you open the event.</p>
+                <div class="competition-preferences-options">
+                    <button type="button" class="competition-preferences-option" data-preference="__ALL__">All competitions</button>
+                    ${modalOptions}
+                </div>
+                <div class="competition-preferences-actions">
+                    <button type="button" class="competition-preferences-close">Close</button>
+                </div>
+            </div>
+        </div>
+    `;
+
     html += '</div>'; // Close event-manager-container
 
     html += `<link rel="stylesheet" href="/styles/eventManager.style.css" />`;

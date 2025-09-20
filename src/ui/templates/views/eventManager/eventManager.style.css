@@ -5,8 +5,13 @@
 }
   
 .competition-links-container {
-    height: 4rem;
+    height: auto;
     text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .competition-link {
@@ -33,11 +38,48 @@
   text-align: center;
   margin-bottom: 3rem; 
 }
-.event-manager-nav> div:first-child {
+.event-manager-nav > div:first-child {
   margin-top: 20px;
   height: 3rem;
   font-style: italic;
   text-align: center;
+}
+
+.event-manager-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.competition-info-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.competition-selection-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #5b3f47;
+}
+
+.competition-selection-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 2rem;
+}
+
+.competition-selection-value {
+  font-weight: 700;
+  font-size: 3rem;
+  text-transform: uppercase;
+  color: #ff6b97;
+  letter-spacing: 0.04em;
 }
 
 .event-h2 {
@@ -70,4 +112,171 @@ article {
 }
 .event-info-icon {
     color: #ffffffbb;
+}
+
+.event-info-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border-radius: 18px;
+}
+
+.event-info-details {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 2.6rem;
+  flex: 1 1 300px;
+}
+
+.event-refresh-banner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 1 320px;
+  gap: 1.2rem;
+}
+
+.event-refresh-text {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.event-refresh-button {
+  border: none;
+  background: #ffe0ea;
+  color: #5b3f47;
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 0.6rem 1.6rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.event-refresh-button:focus-visible {
+  outline: 3px solid #f7bdd3;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .event-info-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+
+  .event-refresh-banner {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .event-refresh-text {
+    font-size: 1.4rem;
+  }
+
+  .event-refresh-button {
+    width: auto;
+  }
+}
+
+.competition-preferences-trigger {
+    border: 1px solid #d5a8b6;
+    background: #fff;
+    color: #5b3f47;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.competition-preferences-trigger:hover,
+.competition-preferences-trigger:focus {
+    background: #d5a8b6;
+    color: #fff;
+    border-color: #d5a8b6;
+}
+
+.competition-preferences-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 1.5rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.competition-preferences-content {
+    background: #fff;
+    border-radius: 12px;
+    padding: 3rem;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+    text-align: left;
+}
+
+.competition-preferences-heading {
+    margin: 0 0 1.25rem 0;
+    font-size: 2.2rem;
+    color: #333;
+}
+
+.competition-preferences-description {
+    margin: 0 0 2rem 0;
+    color: #555;
+    font-size: 1.3rem;
+}
+
+.competition-preferences-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.competition-preferences-option {
+    border: 1px solid #d5a8b6;
+    background: #fff;
+    color: #5b3f47;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    font-size: 1.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.competition-preferences-option:hover,
+.competition-preferences-option:focus {
+    background: #d5a8b6;
+    color: #fff;
+}
+
+.competition-preferences-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.competition-preferences-close {
+    border: none;
+    background: transparent;
+    color: #555;
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+}
+
+.competition-preferences-close:hover,
+.competition-preferences-close:focus {
+    color: #ff6b97;
 }
