@@ -15,8 +15,8 @@ help:
 	@echo "  make install    Install the pp script to $(INSTALL_DIR)"
 	@echo "  make uninstall  Remove the pp script from $(INSTALL_DIR)"
 	@echo "  make deps       Install project dependencies"
-	@echo "  make watch-activity Run the activity watcher script"
-	@echo "  make watch-remaining Run the remaining fixtures watcher script"
+	@echo "  make watch-activity tournamentId=<id>   Run the activity watcher script (e.g., make watch-activity tournamentId=12)"
+	@echo "  make watch-remaining tournamentId=<id>  Run the remaining fixtures watcher script (e.g., make watch-remaining tournamentId=12)"
 	@echo ""
 
 # Install dependencies
