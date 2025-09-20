@@ -1,14 +1,56 @@
 const { apiRequest } = require('../../api');
 
+const unwrapApiData = payload => {
+    let current = payload;
+    while (current && typeof current === 'object' && Object.prototype.hasOwnProperty.call(current, 'data')) {
+        current = current.data;
+    }
+    return current;
+};
+
 // Fetch group standings, optionally filtered by competition
 async function getGroupStandings(tournamentId, competitionName = null) {
-    const data = await apiRequest('get', `/tournaments/${tournamentId}/group-standings`);
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/group-standings`);
+    const data = unwrapApiData(response) || {};
     // Transform nested object into the expected grouped format
     let byCategory = {};
+
+    const normalizeStandings = standings => {
+        if (Array.isArray(standings)) {
+            return standings;
+        }
+        if (standings && typeof standings === 'object') {
+            return Object.keys(standings)
+                .sort((a, b) => {
+                    const aNum = Number(a);
+                    const bNum = Number(b);
+                    const aIsNum = !Number.isNaN(aNum);
+                    const bIsNum = !Number.isNaN(bNum);
+                    if (aIsNum && bIsNum) {
+                        return aNum - bNum;
+                    }
+                    if (aIsNum) return -1;
+                    if (bIsNum) return 1;
+                    return a.localeCompare(b);
+                })
+                .reduce((acc, key) => {
+                    const value = standings[key];
+                    if (Array.isArray(value)) {
+                        acc.push(...value);
+                    } else if (value && typeof value === 'object') {
+                        acc.push(value);
+                    }
+                    return acc;
+                }, []);
+        }
+        return [];
+    };
+
     for (const [category, groups] of Object.entries(data)) {
         byCategory[category] = [];
         for (const [groupName, standings] of Object.entries(groups)) {
-            const rows = standings.map(row => ({
+            const normalizedRows = normalizeStandings(standings);
+            const rows = normalizedRows.map(row => ({
                 team: row.team || 'N/A',
                 MatchesPlayed: row.MatchesPlayed || '0',
                 Wins: row.Wins || '0',
@@ -36,8 +78,10 @@ async function getGroupStandings(tournamentId, competitionName = null) {
 
 // Fetch recent matches, optionally filtered by competition
 async function getRecentMatches(tournamentId, competitionName = null) {
-    const data = await apiRequest('get', `/tournaments/${tournamentId}/recent-matches`);
-    let matches = data.matches.map(match => ({
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/recent-matches`);
+    const data = unwrapApiData(response) || {};
+    const matchesSource = Array.isArray(data.matches) ? data.matches : [];
+    let matches = matchesSource.map(match => ({
         id: match.id,
         start: match.start || 'N/A',
         pitch: match.pitch || 'N/A',
@@ -66,11 +110,11 @@ async function getRecentMatches(tournamentId, competitionName = null) {
 
 // Fetch group fixtures, optionally filtered by competition
 async function getGroupFixtures(tournamentId, competitionName = null) {
-    let data = await apiRequest('get', `/tournaments/${tournamentId}/group-fixtures`);
-
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/group-fixtures`);
+    let data = unwrapApiData(response) || [];
     // Filter by competition if provided
     if (competitionName) {
-        data = data.filter(fixture => fixture.category === competitionName);
+        data = data?.filter(fixture => fixture.category === competitionName);
     }
 
     return data.map(fixture => ({
@@ -93,7 +137,8 @@ async function getGroupFixtures(tournamentId, competitionName = null) {
 
 // Fetch knockout fixtures, optionally filtered by competition
 async function getKnockoutFixtures(tournamentId, competitionName = null) {
-    let data = await apiRequest('get', `/tournaments/${tournamentId}/knockout-fixtures`);
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/knockout-fixtures`);
+    let data = unwrapApiData(response) || [];
 
     // Filter by competition if provided
     if (competitionName) {
@@ -120,7 +165,8 @@ async function getKnockoutFixtures(tournamentId, competitionName = null) {
 
 // Fetch matches by pitch, optionally filtered by competition
 async function getMatchesByPitch(tournamentId, competitionName = null) {
-    let data = await apiRequest('get', `/tournaments/${tournamentId}/matches-by-pitch`);
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/matches-by-pitch`);
+    let data = unwrapApiData(response) || [];
 
     // Filter by competition if provided
     if (competitionName) {
@@ -147,7 +193,8 @@ async function getMatchesByPitch(tournamentId, competitionName = null) {
 // Fetch carded players (Filtering by competition might not be applicable here based on data structure)
 // Add competitionName parameter for consistency, but don't filter unless API supports it or data includes category
 async function getCardedPlayers(tournamentId, competitionName = null) { 
-    const data = await apiRequest('get', `/tournaments/${tournamentId}/carded-players`);
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/carded-players`);
+    const data = unwrapApiData(response) || [];
     
     // TODO: If the API response for carded players includes a category/competition field,
     // add filtering logic here similar to other functions.
@@ -165,7 +212,8 @@ async function getCardedPlayers(tournamentId, competitionName = null) {
 
 // Fetch finals results, optionally filtered by competition
 async function getFinalsResults(tournamentId, competitionName = null) {
-    let data = await apiRequest('get', `/tournaments/${tournamentId}/finals-results`);
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/finals-results`);
+    let data = unwrapApiData(response) || [];
 
     // Filter by competition if provided
     if (competitionName) {
@@ -187,9 +235,13 @@ async function getFinalsResults(tournamentId, competitionName = null) {
 }
 
 async function getFixtureData(tournamentId, matchId) {
-    const data = await apiRequest('get', `/tournaments/${tournamentId}/fixtures/${matchId}`);
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/fixtures/${matchId}`);
+    const data = unwrapApiData(response) || {};
     console.log('data is ', data);
-    return data?.data? data.data : {
+    if (data && typeof data === 'object' && Object.keys(data).length) {
+        return data;
+    }
+    return {
         id: data.id,
         category: data.category || 'N/A',
         stage: data.stage || 'N/A',
@@ -208,8 +260,12 @@ async function getFixtureData(tournamentId, matchId) {
 }
 
 async function getCategoryTeams(tournamentId, stage, category) {
-    const data = await apiRequest('get', `/tournaments/${tournamentId}/fixtures/${matchId}`);
-    return data?.data? data.data : {
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/fixtures/${matchId}`);
+    const data = unwrapApiData(response) || {};
+    if (data && typeof data === 'object' && Object.keys(data).length) {
+        return data;
+    }
+    return {
         id: data.id,
         category: data.category || 'N/A',
         stage: data.stage || 'N/A',

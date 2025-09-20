@@ -11,7 +11,7 @@ const router = express.Router();
 async function getTournamentAndHandleErrors(uuid, res) {
     try {
         const response = await getTournamentByUuid(uuid);
-        const tournament = response.data;
+        const tournament = response && response.data ? response.data : response;
         if (!tournament || !tournament.id) {
             const html = `${generateHeader('Not Found', null, null, null, false, false)}<p>Tournament not found for UUID: ${uuid}</p>${generateFooter()}`;
             res.status(404).send(html);

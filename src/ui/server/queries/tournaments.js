@@ -1,7 +1,16 @@
 const { apiRequest } = require('../../api');
 
+const unwrapApiData = payload => {
+    let current = payload;
+    while (current && typeof current === 'object' && Object.prototype.hasOwnProperty.call(current, 'data')) {
+        current = current.data;
+    }
+    return current;
+};
+
 async function getAllMatches(tournamentId) {
-    const data = await apiRequest('get', `/tournaments/${tournamentId}/all-matches`);
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/all-matches`);
+    const data = unwrapApiData(response) || [];
     return data.map(fixture => ({
         id: fixture.id,
         category: fixture.category || 'N/A',
@@ -21,12 +30,45 @@ async function getAllMatches(tournamentId) {
 }
 
 async function getGroupStandings(tournamentId) {
-    const data = await apiRequest('get', `/tournaments/${tournamentId}/group-standings`);
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/group-standings`);
+    const data = unwrapApiData(response) || {};
     const byCategory = {};
+    const normalizeStandings = standings => {
+        if (Array.isArray(standings)) {
+            return standings;
+        }
+        if (standings && typeof standings === 'object') {
+            return Object.keys(standings)
+                .sort((a, b) => {
+                    const aNum = Number(a);
+                    const bNum = Number(b);
+                    const aIsNum = !Number.isNaN(aNum);
+                    const bIsNum = !Number.isNaN(bNum);
+                    if (aIsNum && bIsNum) {
+                        return aNum - bNum;
+                    }
+                    if (aIsNum) return -1;
+                    if (bIsNum) return 1;
+                    return a.localeCompare(b);
+                })
+                .reduce((acc, key) => {
+                    const value = standings[key];
+                    if (Array.isArray(value)) {
+                        acc.push(...value);
+                    } else if (value && typeof value === 'object') {
+                        acc.push(value);
+                    }
+                    return acc;
+                }, []);
+        }
+        return [];
+    };
+
     for (const [category, groups] of Object.entries(data)) {
         byCategory[category] = [];
         for (const [groupName, standings] of Object.entries(groups)) {
-            const rows = standings.map(row => ({
+            const normalizedRows = normalizeStandings(standings);
+            const rows = normalizedRows.map(row => ({
                 team: row.team || 'N/A',
                 MatchesPlayed: row.MatchesPlayed || '0',
                 Wins: row.Wins || '0',
@@ -43,7 +85,8 @@ async function getGroupStandings(tournamentId) {
 }
 
 async function getFinalsResults(tournamentId) {
-    const data = await apiRequest('get', `/tournaments/${tournamentId}/finals-results`);
+    const response = await apiRequest('get', `/tournaments/${tournamentId}/finals-results`);
+    const data = unwrapApiData(response) || [];
     return data.map(result => ({
         category: result.category || 'N/A',
         division: result.division || 'N/A',
@@ -60,12 +103,12 @@ async function getFinalsResults(tournamentId) {
 
 async function createTournament(tournamentData) {
     const response = await apiRequest('post', '/tournaments', tournamentData);
-    return response; 
+    return unwrapApiData(response);
 }
 
 async function getTournamentByUuid(uuid) {
-    const tournament = await apiRequest('get', `/tournaments/by-uuid/${uuid}`);
-    return tournament;
+    const response = await apiRequest('get', `/tournaments/by-uuid/${uuid}`);
+    return unwrapApiData(response);
 }
 
 module.exports = { getAllMatches, getGroupStandings, getFinalsResults, createTournament, getTournamentByUuid };
