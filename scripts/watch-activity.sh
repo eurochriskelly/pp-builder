@@ -1,11 +1,20 @@
 #!/usr/bin/env bash
 
-if [ -z "$1" ]; then
-  echo "Usage: $0 <tournamentId>"
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 <tournamentId> or $0 tournamentId=<id>"
   exit 1
 fi
 
-TOURNAMENT_ID="$1"
+if [[ $1 =~ ^tournamentId=([0-9]+)$ ]]; then
+  TOURNAMENT_ID="${BASH_REMATCH[1]}"
+else
+  TOURNAMENT_ID="$1"
+fi
+
+if [ -z "$TOURNAMENT_ID" ] || ! [[ "$TOURNAMENT_ID" =~ ^[0-9]+$ ]]; then
+  echo "Invalid tournamentId: must be a positive integer"
+  exit 1
+fi
 
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_PORT="${DB_PORT:-3306}"
