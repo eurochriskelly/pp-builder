@@ -1,0 +1,349 @@
+@import "tailwindcss";
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    box-sizing: border-box;
+    /* Removed padding: 0 to let Tailwind utilities apply */
+    padding: 0;
+}
+.score-winner {
+  text-transform: uppercase;
+    color: darkgreen;
+}
+.score-loser {
+  text-transform: uppercase;
+    color: darkred;
+}
+.score-draw {
+  text-transform: uppercase;
+    color: darkorange;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    @apply bg-gray-100 text-gray-800 leading-6 pt-12 text-xl; /* Increased base font size */
+}
+
+/* Article container */
+article {
+    @apply max-w-7xl mx-auto p-5;
+    margin: 0;
+}
+
+/* Headings */
+h1 {
+    @apply text-6xl mb-4; /* 4rem = 6xl in Tailwind */
+}
+h2 {
+    @apply text-4xl text-gray-600 mb-4;
+}
+
+/* Navbar */
+nav.navbar {
+    @apply fixed top-0 left-0 w-full bg-gray-800 p-2 shadow-md z-[1000] flex justify-between items-center;
+}
+
+nav.navbar .breadcrumbs {
+    @apply flex items-center text-sm;
+}
+
+nav.navbar .breadcrumbs a {
+    @apply text-gray-100 uppercase px-2 py-1 rounded transition-colors hover:bg-gray-700;
+}
+
+nav.navbar .breadcrumbs a.active {
+    @apply bg-blue-600 text-white;
+}
+
+nav.navbar .breadcrumbs span.separator {
+    @apply text-gray-100 mx-1;
+}
+
+/* Dropdown */
+nav.navbar .dropdown {
+    @apply relative inline-block;
+}
+
+nav.navbar .dropdown-content {
+    @apply hidden absolute bg-gray-700 min-w-40 shadow-lg z-[1001] rounded-md top-full left-0;
+}
+
+nav.navbar .dropdown-content a {
+    @apply block px-4 py-2 text-gray-100 uppercase hover:bg-gray-600;
+}
+
+nav.navbar .dropdown.active .dropdown-content {
+    @apply block;
+}
+
+/* Login dropdown */
+nav.navbar .login-dropdown {
+    @apply relative inline-block;
+}
+
+nav.navbar .login-dropdown a {
+    @apply text-white;
+}
+
+nav.navbar .login-dropdown-content {
+    @apply hidden absolute bg-gray-700 min-w-[300px] shadow-lg z-[1001] rounded-md top-full right-0 p-4;
+}
+
+nav.navbar .login-dropdown.active .login-dropdown-content {
+    @apply block;
+}
+
+/* Login form */
+.login-form {
+    @apply flex flex-col gap-2;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    @apply p-2 border border-gray-300 rounded text-base;
+}
+
+.login-form button {
+    @apply bg-blue-600 text-white p-2 rounded cursor-pointer hover:bg-blue-700 transition-colors;
+}
+
+.login-form a {
+    @apply text-gray-100 underline text-sm text-center hover:text-blue-600;
+}
+
+/* Tournament selection table */
+#tournament-selection table {
+    @apply w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden;
+}
+
+#tournament-selection th,
+#tournament-selection td {
+    @apply p-4 text-left border-b border-gray-200;
+}
+
+#tournament-selection th {
+    @apply bg-gray-700 text-gray-100 uppercase font-bold;
+}
+
+#tournament-selection tr:nth-child(even) {
+    @apply bg-gray-50;
+}
+
+#tournament-selection tr:hover {
+    @apply bg-gray-100;
+}
+
+/* General tables (execution/planning views) */
+table {
+    @apply w-full border-collapse bg-white shadow-md rounded-lg mb-5;
+}
+
+th, td {
+    @apply px-3 py-4 border border-gray-200; /* Increased vertical padding */
+}
+
+th {
+    @apply bg-gray-100 uppercase font-bold text-gray-800;
+}
+
+td {
+    @apply text-gray-600;
+}
+
+tr:nth-child(even) {
+    @apply bg-gray-50;
+}
+
+tr:hover {
+    @apply bg-gray-100;
+}
+
+.id-column {
+    @apply bg-green-100 font-bold;
+}
+
+
+body > article.execution table {
+    @apply w-full border-collapse bg-white shadow-md rounded-lg mb-5;
+}
+
+body > article.execution table tr th[colspan] {
+    @apply bg-gray-300 text-center text-xl p-2;
+}
+
+body > article.execution .score-winner {
+    @apply uppercase text-green-800 font-bold;
+}
+
+body > article.execution .score-loser {
+    @apply uppercase text-red-800;
+}
+
+body > article.execution .score-draw {
+    @apply uppercase text-orange-600 font-bold;
+}
+
+body > article.execution .team-winner {
+    @apply font-bold;
+}
+
+body > article.execution .category-header {
+    @apply bg-gray-300 text-center text-4xl font-bold p-2;
+  font-size: 2rem !important;
+}
+
+body > article.execution .group-header {
+    @apply bg-gray-200 text-center text-xl p-2;
+  font-size: 1.6rem !important;
+}
+
+body > article.execution .table-header {
+    @apply text-gray-500 text-left font-normal;
+    background-color: #eee;
+}
+
+body > article.execution .id-column {
+    @apply bg-green-100 font-bold;
+}
+
+/* Table column widths - carefully preserved from original */
+body > article.execution .knockout-table .col-stage {
+    width: 14% !important;
+}
+body > article.execution .knockout-table .col-team {
+    width: 28% !important;
+}
+body > article.execution .knockout-table .col-score {
+    width: 15% !important;
+}
+
+body > article.execution .standings-table tr th {
+  background-color: #eee;
+}
+body > article.execution .standings-table tr>th.table-header {
+  whitespace: no-wrap;
+}
+body > article.execution .standings-table .col-team {
+  width: 70% !important;
+  @apply uppercase;
+}
+body > article.execution .standings-table td .col-stat {
+    width: 60px !important;
+}
+body > article.execution .standings-table td .col-stat-wide {
+    width: 60px !important;
+}
+
+body > article.execution .fixtures-table .col-team {
+    width: 35% !important;
+}
+body > article.execution .fixtures-table .col-score {
+    width: 15% !important;
+}
+
+body > article.execution .finals-table .col-level {
+    width: 20% !important;
+}
+body > article.execution .finals-table .col-team {
+    width: 30% !important;
+}
+body > article.execution .finals-table .col-score {
+    width: 10% !important;
+}
+
+/* HR */
+hr {
+    @apply border-0 h-px bg-gray-300 my-5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    nav.navbar {
+        @apply p-2;
+    }
+
+    nav.navbar .breadcrumbs a {
+        @apply text-sm px-2 py-1;
+    }
+
+    body {
+        @apply pt-20; /* More space for wrapping */
+    }
+
+    nav.navbar .dropdown-content {
+        @apply min-w-32;
+    }
+
+    table, th, td {
+        @apply text-sm p-2;
+    }
+}
+
+/* Event manager responsive styles */
+#event-manager {
+  /* Default styles if needed */
+}
+@media (max-width: 999px) {
+  #event-manager {
+    background-color: #f0f0f0;
+  }
+  #event-manager table {
+    display: block;
+    width: 100%;
+  }
+  #event-manager table tr {
+    display: block;
+    margin-bottom: 10px;
+  }
+  #event-manager nav {
+    /* display: flex; */
+        /* Removed flex to allow block layout */
+        /* flex-wrap: wrap; */
+        /* Removed flex wrap */
+        /* gap: 10px; */
+        /* Removed gap */
+  }
+}
+
+.vertical-head {
+  transform: rotate(90deg); /* or -90deg */
+  transform-origin: center middle; 
+  white-space: nowrap;
+}
+
+table.util-table td {
+  text-transform: uppercase;
+}
+
+/* Add styles for icons */
+.icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    vertical-align: middle !important;
+    gap: 0.25em;
+}
+.icon svg {
+    display: inline-block !important;
+        width: 1em !important;
+        height: 1em !important;
+        vertical-align: middle !important;
+        margin-right: 0.25em !important;
+        margin-left: 0 !important;
+        /* Remove float or absolute if inherited */
+        float: none !important;
+        position: static !important;
+        max-width: none !important;
+        max-height: none !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        box-sizing: content-box !important;
+    }
+    
+    /* Utility for icon+text inline grouping */
+    .inline-icon-text {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.25em;
+}
