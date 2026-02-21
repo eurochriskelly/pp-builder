@@ -1,0 +1,22 @@
+image: pp-planner
+
+proxy:
+  ssl: true
+  app_port: <%= ENV['PP_PORT_REPORT_FE'] %>
+  healthcheck:
+    path: /up
+    timeout: 10
+    interval: 2
+
+env:
+  clear:
+    SMTP_PORT: <%= ENV['SMTP_PORT'] %>
+    PORT: <%= ENV['PP_PORT_REPORT_FE'] %>
+
+registry:
+  server: localhost:5555
+
+builder:
+  dockerfile: ./Dockerfile
+  local: false
+

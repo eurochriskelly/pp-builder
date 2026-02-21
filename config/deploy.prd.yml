@@ -1,0 +1,25 @@
+service: pp-planner-prd
+
+env:
+  clear:
+    API_URL: <%= ENV["VITE_API_BASE_URL_PRD"] %>
+    API_HOST: <%= ENV["PP_LINK_API_PRD"] %>
+    PP_DB_HOST: <%= ENV["PP_HOSTNAME_DB_PRD"] %>
+    PP_DB_PORT: <%= ENV["PP_PORT_API"] %>
+
+servers:
+  web:
+    hosts:
+      - '<%= ENV["PP_HOSTNAME_SSH_PRD"] %>'
+
+ssh:
+  user: '<%= ENV["PP_USR_SSH_PRD"] %>'
+
+proxy:
+  host: planner.pitchperfect.eu.com
+  ssl: true
+
+builder:
+  arch: amd64
+  remote: 'ssh://<%= ENV["PP_USR_SSH_PRD"] %>@<%= ENV["PP_HOSTNAME_SSH_PRD"] %>'
+

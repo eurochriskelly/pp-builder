@@ -1,0 +1,46 @@
+{
+  "name": "gcp-core",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "jest",
+    "watch:esm": "tsc -p tsconfig.esm.json --watch",
+    "watch:cjs": "tsc -p tsconfig.cjs.json --watch",
+    "watch": "npm run watch:esm & npm run watch:cjs",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build": "npm run build:esm & npm run build:cjs",
+    "test:summary": "jest --silent",
+    "test:fail": "jest --onlyFailures",
+    "test:watch": "jest --watch",
+    "test:one": "bash ./scripts/test-one.sh"
+  },
+  "main": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/src/index.js",
+      "require": "./dist/cjs/src/index.js"
+    },
+    "./types": "./types/index.ts",
+    "./test-data": {
+      "import": "./dist/esm/test/test-data.js",
+      "require": "./dist/cjs/test/test-data.js"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.12.2",
+    "@types/react": "^18.2.73",
+    "@types/react-dom": "^18.2.23",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "js-yaml": "^4.1.0"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",        // Ensure this is set to 'commonjs'
+    "target": "es6",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",  // Change 'bundler' to 'node' for CommonJS
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "outDir": "./dist/cjs",
+    "strict": true
+  },
+  "include": ["src/**/*"]
+}
+

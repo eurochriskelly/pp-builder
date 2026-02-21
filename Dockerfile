@@ -2,6 +2,9 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
+# Copy vendored dependencies FIRST
+COPY vendor ./vendor
+
 # Install dependencies
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -17,6 +20,9 @@ FROM node:20-alpine
 WORKDIR /app
 
 ENV NODE_ENV=production
+
+# Copy vendored dependencies
+COPY --from=build /app/vendor ./vendor
 
 # Install only production dependencies
 COPY package.json package-lock.json ./
