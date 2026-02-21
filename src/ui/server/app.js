@@ -18,7 +18,7 @@ function startServer(port, restPort, restHost, bypassAuth) {
   setup(restHost, port, restPort)
 
   // Allow API_URL to override constructed URL (e.g. for Docker/Kamal)
-  const API_BASE_URL = process.env.API_URL || `http://${restHost}:${restPort}/api`;
+  const API_BASE_URL = process.env.API_URL ? `${process.env.API_URL}/api` : `http://${restHost}:${restPort}/api`;
   
   console.log('API_BASE_URL set to:', API_BASE_URL);
   setApiBaseUrl(API_BASE_URL);

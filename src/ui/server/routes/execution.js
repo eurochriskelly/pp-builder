@@ -20,7 +20,6 @@ const generateEditFixtureForm = require('../../templates/views/execution/competi
 const generateCardedPlayers = require('../../templates/views/execution/competitionView/partials/cardedPlayers');
 const generateFinalsResults = require('../../templates/views/execution/competitionView/partials/finalsResults');
 const generateMatchesByPitch = require('../../templates/views/execution/matchesByPitch');
-const { data } = require('autoprefixer');
 
 const router = express.Router();
 
