@@ -64,16 +64,21 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
     }
 
     const hasKnockoutFixtures = Array.isArray(knockoutFixtures) && knockoutFixtures.length > 0;
-    let defaultTab = 'knockout';
-    if (hasGroupContent && (hasPendingGroupFixtures || !hasKnockoutFixtures)) {
-        defaultTab = 'groups';
+    // Default to groups tab when in group stage, knockout only when group stage is complete
+    let defaultTab = 'groups';
+    if (!hasGroupContent || (!hasPendingGroupFixtures && hasKnockoutFixtures)) {
+        defaultTab = 'knockout';
     }
 
     const knockoutTabActiveClass = defaultTab === 'knockout' ? 'active' : '';
     const groupsTabActiveClass = defaultTab === 'groups' ? 'active' : '';
-    const knockoutSectionDisplay = defaultTab === 'knockout' ? 'block' : 'none';
+    
+    // Always show tabs when there's group content
+    // Only show knockout tab when there are knockout fixtures
+    const showKnockoutTab = hasKnockoutFixtures;
+    const knockoutSectionDisplay = showKnockoutTab ? (defaultTab === 'knockout' ? 'block' : 'none') : 'none';
     const groupsSectionDisplay = defaultTab === 'groups' ? 'block' : 'none';
-    const knockoutSectionClass = `tab-content${defaultTab === 'knockout' ? ' active' : ''}`;
+    const knockoutSectionClass = `tab-content${(showKnockoutTab && defaultTab === 'knockout') ? ' active' : ''}`;
     const groupsSectionClass = `tab-content${defaultTab === 'groups' ? ' active' : ''}`;
 
     // Use a container div for the whole competition view
@@ -88,7 +93,7 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
     // Add sections, using the individual generators
     // Add checks to only render sections if data exists
 
-    // Tab Navigation
+    // Tab Navigation - always show Group Games tab, conditionally show Knockout Games tab
     html += `
     <style>
         .competition-tabs {
@@ -122,20 +127,11 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
     </style>
     <div class="competition-tabs">
         <div class="flex">
-            <button class="tab-button${knockoutTabActiveClass ? ` ${knockoutTabActiveClass}` : ''}" data-tab="knockout-tab">Knockout Games</button>
-            <button class="tab-button${groupsTabActiveClass ? ` ${groupsTabActiveClass}` : ''}" data-tab="groups-tab">Group Games</button>
+            <button class="tab-button${groupsTabActiveClass ? ` ${groupsTabActiveClass}` : ''}" data-tab="groups-tab">Group Games</button>${showKnockoutTab ? `
+            <button class="tab-button${knockoutTabActiveClass ? ` ${knockoutTabActiveClass}` : ''}" data-tab="knockout-tab">Knockout Games</button>` : ''}
         </div>
     </div>
     `;
-
-    // Section: Knockout Fixtures
-    html += `<section id="comp-knockout-fixtures" class="${knockoutSectionClass}" data-tab-content="knockout-tab" style="display: ${knockoutSectionDisplay};">`;
-    if (hasKnockoutFixtures) {
-        html += generateKnockoutFixtures(knockoutFixtures, editable, tournamentId);
-    } else {
-        html += '<p>No knockout fixtures found.</p>';
-    }
-    html += '</section>';
 
     // Section: Groups (Standings + Fixtures)
     html += `<section id="comp-groups" class="${groupsSectionClass}" data-tab-content="groups-tab" style="display: ${groupsSectionDisplay};">`; // Container for all groups
@@ -192,6 +188,13 @@ function generateCompetitionView(data, editable = false, tournamentId = '') {
     }
 
     html += '</section>'; // Close comp-groups section
+
+    // Section: Knockout Fixtures - only render if there are knockout fixtures
+    if (hasKnockoutFixtures) {
+        html += `<section id="comp-knockout-fixtures" class="${knockoutSectionClass}" data-tab-content="knockout-tab" style="display: ${knockoutSectionDisplay};">`;
+        html += generateKnockoutFixtures(knockoutFixtures, editable, tournamentId);
+        html += '</section>';
+    }
     // Add the styles previously removed from groupStandings.js
     html += `<link rel="text/css" href="/styles/competitionView.style.css" /> `;
     html += `<script src="/scripts/webcomponents/fixture-row.js"></script>`;

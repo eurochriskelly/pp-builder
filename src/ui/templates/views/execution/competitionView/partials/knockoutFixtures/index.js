@@ -1,4 +1,4 @@
-const { parseStageToLevel } = require('../../../../../../utils/stageParser');
+const { parseStageToLevel, isTournamentComplete, getPlayOrder } = require('../../../../../../utils/stageParser');
 
 // Define the desired order for tournament parts
 const tournamentPartOrder = ['cup', 'shield', 'plate'];
@@ -36,9 +36,25 @@ function createKnockoutHTML(categoryData, editable = false, tournamentId = '') {
         });
     });
 
-    // Sort each tournament part's fixtures by stage level
+    // Determine if tournament is complete to decide sorting strategy
+    const allFixtures = Object.values(fixturesByTournamentPart).flat();
+    const tournamentComplete = isTournamentComplete(allFixtures);
+
+    // Sort each tournament part's fixtures
     for (const tournamentPart in fixturesByTournamentPart) {
-        fixturesByTournamentPart[tournamentPart].sort((a, b) => a.stageLevel - b.stageLevel);
+        const fixtures = fixturesByTournamentPart[tournamentPart];
+
+        if (tournamentComplete) {
+            // Completed tournament: sort by stage importance (FIN, 3/4, SF, 5/6, 7/8, etc.)
+            fixtures.sort((a, b) => a.stageLevel - b.stageLevel);
+        } else {
+            // Ongoing tournament: sort by scheduled time (chronological)
+            fixtures.sort((a, b) => {
+                const orderA = getPlayOrder(a);
+                const orderB = getPlayOrder(b);
+                return orderA - orderB;
+            });
+        }
     }
 
     // Get sorted tournament part keys based on predefined order
@@ -165,12 +181,7 @@ module.exports = function generateKnockoutFixtures(data, editable = false, tourn
         return acc;
     }, {});
 
-    // Sort each category's matches by stage level (lowest first)
-    for (const category in groupedData) {
-        groupedData[category].sort((a, b) => a.stageLevel - b.stageLevel);
-    }
-
-    // Generate fixture-row HTML for each category
+    // Generate fixture-row HTML for each category (sorting is handled in createKnockoutHTML)
     for (const category in groupedData) {
         const categoryData = groupedData[category];
         html += createKnockoutHTML(categoryData, editable, tournamentId);
