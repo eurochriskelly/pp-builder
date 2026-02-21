@@ -7,3 +7,6 @@ main-compiled.css
 .aider*
 
 *storybook.log
+.kamal/
+config/
+.env

@@ -16,11 +16,20 @@ const chronicleRoutes = require('./routes/chronicle'); // added chronicle routes
 
 function startServer(port, restPort, restHost, bypassAuth) {
   setup(restHost, port, restPort)
-  const API_BASE_URL = `http://${restHost}:${restPort}/api`;
+
+  // Allow API_URL to override constructed URL (e.g. for Docker/Kamal)
+  const API_BASE_URL = process.env.API_URL || `http://${restHost}:${restPort}/api`;
+  
   console.log('API_BASE_URL set to:', API_BASE_URL);
   setApiBaseUrl(API_BASE_URL);
 
   const app = express();
+
+  // Health check endpoint for Kamal
+  app.get('/up', (req, res) => {
+    res.status(200).send('ok');
+  });
+
   app.use('/styles', express.static(__dirname + '/../public/styles'));
   app.use('/scripts', express.static(__dirname + '/../public/scripts'));
 

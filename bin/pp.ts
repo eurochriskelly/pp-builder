@@ -42,16 +42,16 @@ const main = async () => {
     program
         .command('serve')
         .description('Launch a web server to view tournament details')
-        .option('-p, --port <port>', 'Port to run the frontend server on', '5421')
+        .option('-p, --port <port>', 'Port to run the frontend server on')
         .option('--rest-port <port>', 'Port to run the REST API on', '4000')
         .option('--rest-host <host>', 'Host to run the REST API on', '192.168.1.147')
         .option('--bypass-auth', 'Bypass authentication for testing', false)
         .action((options) => {
-            const port = parseInt(options.port, 10) || 5421;
+            const port = parseInt(options.port || process.env.PORT || '5421', 10);
             const restPort = parseInt(options.restPort, 10) || 4000;
             const restHost = options.restHost || '192.168.1.147';
             process.env['PP_DB_HOST'] = restHost
-            process.env['PP_DB_PORT'] = restPort
+            process.env['PP_DB_PORT'] = restPort.toString()
             const bypassAuth = !!options.bypassAuth;
             console.log(`Starting web server on port ${port} with REST API at ${restHost}:${restPort}${bypassAuth ? ' with authentication bypassed' : ''}`);
             // Run server directly

@@ -11,11 +11,17 @@ async function apiRequest(method, endpoint, data = {}, params = {}) {
     if (!API_BASE_URL) {
         throw new Error('API_BASE_URL not set. Call setApiBaseUrl first.');
     }
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    if (process.env.API_HOST) {
+        headers['Host'] = process.env.API_HOST;
+    }
+
     const apiClient = axios.create({
         baseURL: API_BASE_URL,
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers,
     });
     console.log(`Making ${method} request to: ${API_BASE_URL}${endpoint}`);
     try {
