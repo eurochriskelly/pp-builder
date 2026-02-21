@@ -9,29 +9,18 @@ const { processTeamName } = require('../../../../../../utils/teamName');
 function generateGroupMatrixHeaders(groupRows) {
     const vsHeaders = {};
     const numTeams = groupRows.length;
-    const totalVsColumns = 5;
-    const placeholderStyle = { 'background-color': '#f0f0f0' }; // Updated to light gray to match other headers
+    const totalVsColumns = numTeams;
 
     // Iterate in forward order to add headers from left to right, up to totalVsColumns
     for (let i = 0; i < totalVsColumns; i++) {
         const fieldName = `vs${i}`;
-        if (i < numTeams) {
-            // Actual team header
-            const row = groupRows[i];
-            vsHeaders[fieldName] = {
-                label: `<logo-box size="calc(30px * 1.3)" title="${row.team}" />`,
-                align: 'center',
-                width: '60px' // Set fixed width
-            };
-        } else {
-            // Placeholder header
-            vsHeaders[fieldName] = {
-                label: '&nbsp;', // Empty label
-                align: 'center',
-                width: '60px', // Set fixed width
-                style: placeholderStyle // Apply light grey background
-            };
-        }
+        // Actual team header
+        const row = groupRows[i];
+        vsHeaders[fieldName] = {
+            label: `<logo-box size="calc(30px * 1.3)" title="${row.team}" />`,
+            align: 'center',
+            width: '60px' // Set fixed width
+        };
     }
     return vsHeaders;
 }
@@ -45,18 +34,13 @@ function generateGroupMatrixHeaders(groupRows) {
  */
 function generateGroupMatrixRow(utilRow, groupRows, rowIndex, fixtures) {
     const numTeams = groupRows.length;
-    const totalVsColumns = 5;
-    const placeholderStyle = { 'background-color': '#888' }; // Keep this darker for row cells
+    const totalVsColumns = numTeams;
 
     // Iterate columns in forward order to match the updated header order
     for (let colIndex = 0; colIndex < totalVsColumns; colIndex++) {
         const fieldName = `vs${colIndex}`;
 
-        if (colIndex >= numTeams) {
-            // This is a placeholder column
-            utilRow.setField(fieldName, '&nbsp;')
-                   .setStyle(fieldName, placeholderStyle);
-        } else if (colIndex === rowIndex) {
+        if (colIndex === rowIndex) {
             // This is an actual team column intersecting itself
             utilRow.setField(fieldName, '&nbsp;') // Keep content empty
                 .setStyle(fieldName, {
